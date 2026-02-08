@@ -1,10 +1,7 @@
-import { ResponsiveContainer } from 'recharts';
+import {ResponsiveContainer} from 'recharts';
 
 function SignUp() {
-  
-  return(
-    <></>
-  )
+  return <></>;
 }
 
 export default SignUp;
