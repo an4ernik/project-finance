@@ -7,5 +7,5 @@
  */
 
 export type ResetPasswordParams = {
-token: string;
+  token: string;
 };

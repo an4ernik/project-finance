@@ -1,10 +1,10 @@
-import axios from 'axios'
-import type { AxiosResponse, AxiosRequestConfig } from 'axios'
+import axios from 'axios';
+import type {AxiosResponse, AxiosRequestConfig} from 'axios';
 
 export const api = axios.create({
   baseURL: 'https://rbxepeq442.eu-central-1.awsapprunner.com',
   withCredentials: true,
-})
+});
 
 export const customInstance = <T>(
   config: AxiosRequestConfig,

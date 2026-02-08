@@ -7,5 +7,5 @@
  */
 
 export type SendResetPasswordTokenParams = {
-email: string;
+  email: string;
 };
