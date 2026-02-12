@@ -1,19 +1,22 @@
-import axios from 'axios'
-import type { AxiosResponse, AxiosRequestConfig } from 'axios'
+import axios from "axios";
 
 export const api = axios.create({
-  baseURL: 'https://rbxepeq442.eu-central-1.awsapprunner.com',
+  baseURL: "https://rbxepeq442.eu-central-1.awsapprunner.com",
   withCredentials: true,
-})
+});
 
-export const customInstance = <T>(
-  config: AxiosRequestConfig,
-  options?: AxiosRequestConfig,
+export const customInstance = async <T>(
+  url: string,
+  options?: RequestInit
 ): Promise<T> => {
-  return api({
-    ...config,
-    ...options,
-  }).then((response: AxiosResponse<T>) => response.data);
+  const response = await api({
+    url,
+    method: options?.method as any,
+    data: options?.body,
+    headers: options?.headers as any,
+  });
+
+  return response.data;
 };
 
 export type ErrorType<Error> = Error;

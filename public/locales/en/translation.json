@@ -1,6 +1,46 @@
 {
-  "home": "Homepage",
-  "changeLang": "Change the language to ukrainian",
+  "home": "Hero",
+  "changeLang": "UA",
   "signUp": "Sign Up",
-  "logIn": "LogIn"
+  "logIn": "Log In",
+  "auth": {
+    "title": "Create an account.",
+    "subtitle": "Fill out the form to get started.",
+    "requiredFields": "*Marked fields are required.",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "passwordRules": "minimum 8 characters, must contain uppercase and lowercase letters, numbers",
+    "confirmPassword": "Confirm password",
+    "fullName": "Full name",
+    "typeFullName": "Enter your full name",
+    "signUpSuccess": "Account created successfully!",
+    "emailExists": "An account with this email already exists",
+    "currency": "Currency",
+    "currencyPlaceholder": "Select currency",
+    "uah": "UAH — Ukrainian Hryvnia",
+    "usd": "USD — US Dollar",
+    "eur": "EUR — Euro",
+    "avatar": {
+      "label": "Avatar",
+      "upload": "Add photo +",
+      "change": "Change photo",
+      "hint": "JPG, PNG or GIF. Max size - 2 MB."
+    },
+    "errors": {
+      "invalidEmail": "Invalid email address",
+      "tooShort": "Min 8 characters, must include uppercase and lowercase letters",
+      "uppercase": "Uppercase letter required",
+      "lowercase": "Lowercase letter required",
+      "number": "Number required",
+      "confirmRequired": "Please confirm your password",
+      "required": "Required field is empty",
+      "mismatch": "Passwords do not match",
+      "fileSize": "Photo exceeds allowed size (2 MB)",
+      "fileType": "Only JPG, PNG or GIF allowed"
+    }
+  },
+  "common": {
+    "error": "Something went wrong",
+    "loading": "Creating..."
+  }
 }
