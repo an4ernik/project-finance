@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react'
+import { useState, useMemo } from 'react'
 import { useForm, Controller, type SubmitHandler } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import { z } from 'zod'
@@ -24,16 +24,6 @@ function SignUp() {
 
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-  
-  const avatarSchema = z.any()
-  .refine((files) => {
-    if (!files || files.length === 0) return true;
-    return files[0].size <= MAX_FILE_SIZE;
-  }, t("auth.errors.fileSize"))
-  .refine((files) => {
-    if (!files || files.length === 0) return true;
-    return ACCEPTED_IMAGE_TYPES.includes(files[0].type);
-  }, t("auth.errors.fileType"));
 
   const schema = useMemo(() => z.object({
     email: z.string().email(t("auth.errors.invalidEmail")),
@@ -44,8 +34,11 @@ function SignUp() {
       .regex(/[0-9]/, t("auth.errors.number")),
     confirmPassword: z.string().min(1, t("auth.errors.confirmRequired")),
     fullName: z.string().min(1, t("auth.errors.required")),
-    currencyCode: z.string().default("USD"),
-    avatar: avatarSchema,
+    currencyCode: z.string().default("UAH"),
+    avatar: z.any()
+      .refine((files) => !files || files.length === 0 || files[0].size <= MAX_FILE_SIZE, t("auth.errors.fileSize"))
+      .refine((files) => !files || files.length === 0 || ACCEPTED_IMAGE_TYPES.includes(files[0].type), t("auth.errors.fileType"))
+      .optional(),
   }).refine((data) => data.password === data.confirmPassword, {
     message: t("auth.errors.mismatch"),
     path: ["confirmPassword"],
@@ -56,12 +49,19 @@ function SignUp() {
   const { register, control, handleSubmit, setError, watch, formState: { errors } } = useForm<FormFields>({
     resolver: zodResolver(schema),
     mode: "onBlur",
-    defaultValues: { currencyCode: 'UAH', email: '', fullName: '', password: '', confirmPassword: '' }
+    defaultValues: { 
+      currencyCode: 'UAH', 
+      email: '', 
+      fullName: '', 
+      password: '', 
+      confirmPassword: '' 
+    }
   })
 
   const avatarFile = watch("avatar")
+  
   const previewUrl = useMemo(() => {
-    if (avatarFile && avatarFile instanceof FileList && avatarFile.length > 0) {
+    if (avatarFile instanceof FileList && avatarFile.length > 0) {
       return URL.createObjectURL(avatarFile[0])
     }
     return null
@@ -76,7 +76,7 @@ function SignUp() {
           fullName: values.fullName,
           currencyCode: values.currencyCode,
         },
-        avatar: values.avatar?.[0],
+        avatar: (values.avatar as FileList)?.[0],
       }
     }, {
       onSuccess: () => {
@@ -103,7 +103,6 @@ function SignUp() {
 
       <form className="space-y-6" onSubmit={handleSubmit(onSubmit)}>
         <FieldGroup>
-          {/* Email */}
           <Field data-invalid={!!errors.email}>
             <FieldLabel>Email *</FieldLabel>
             <FieldContent className="relative">
