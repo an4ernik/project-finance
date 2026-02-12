@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 import { useSignUp } from '@/shared/api/generated/authentication/authentication'
+import { type SignUpBody} from '@/shared/api/models'
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/gif"]
@@ -34,7 +35,7 @@ function SignUp() {
       .regex(/[0-9]/, t("auth.errors.number")),
     confirmPassword: z.string().min(1, t("auth.errors.confirmRequired")),
     fullName: z.string().min(1, t("auth.errors.required")),
-    currencyCode: z.string().default("UAH"),
+    currencyCode: z.string(),
     avatar: z.any()
       .refine((files) => !files || files.length === 0 || files[0].size <= MAX_FILE_SIZE, t("auth.errors.fileSize"))
       .refine((files) => !files || files.length === 0 || ACCEPTED_IMAGE_TYPES.includes(files[0].type), t("auth.errors.fileType"))
@@ -68,17 +69,18 @@ function SignUp() {
   }, [avatarFile])
 
   const onSubmit: SubmitHandler<FormFields> = (values) => {
-    mutate({
-      data: {
-        dto: {
-          email: values.email,
-          password: values.password,
-          fullName: values.fullName,
-          currencyCode: values.currencyCode,
-        },
-        avatar: (values.avatar as FileList)?.[0],
-      }
-    }, {
+    const payload: SignUpBody = {
+      dto: {
+        email: values.email,
+        password: values.password,
+        fullName: values.fullName,
+        currencyCode: values.currencyCode,
+      },
+      avatar: values.avatar?.[0],
+    }
+  
+    mutate(
+      { data: payload }, {
       onSuccess: () => {
         toast.success(t("auth.signUpSuccess"))
         setTimeout(() => navigate('/login'), 2000)
