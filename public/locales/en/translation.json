@@ -42,5 +42,27 @@
   "common": {
     "error": "Something went wrong",
     "loading": "Creating..."
+  },
+  "login": {
+    "title": "Welcome back!",
+    "subtitle": "Enter your credentials",
+    "email": "Email",
+    "emailPlaceholder": "name@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "Enter password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "loginButton": "Log In",
+    "loading": "Loading...",
+    "noAccount": "Don't have an account?",
+    "signUpLink": "Sign up",
+    "success": "Login successful!",
+    "errors": {
+      "invalidEmail": "Enter a valid email address",
+      "requiredPassword": "Enter password",
+      "wrongCredentials": "Invalid email or password",
+      "emailNotVerified": "Please verify your email",
+      "loginError": "Login error. Please try again"
+    }
   }
 }

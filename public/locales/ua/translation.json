@@ -42,5 +42,27 @@
   "common": {
     "error": "Щось пішло не так",
     "loading": "Створення..."
+  },
+  "login": {
+    "title": "Раді знову вас бачити!",
+    "subtitle": "Введіть свої дані",
+    "email": "Email",
+    "emailPlaceholder": "name@example.com",
+    "password": "Пароль",
+    "passwordPlaceholder": "Введіть пароль",
+    "rememberMe": "Запам'ятати мене",
+    "forgotPassword": "Забули пароль?",
+    "loginButton": "Увійти",
+    "loading": "Завантаження...",
+    "noAccount": "Не має облікового запису?",
+    "signUpLink": "Зареєструватися",
+    "success": "Успішний вхід!",
+    "errors": {
+      "invalidEmail": "Введіть коректну email-адресу",
+      "requiredPassword": "Введіть пароль",
+      "wrongCredentials": "Невірний email або пароль",
+      "emailNotVerified": "Будь ласка, підтвердіть свій email",
+      "loginError": "Помилка входу. Спробуйте ще раз"
+    }
   }
 }
