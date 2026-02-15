@@ -11,9 +11,9 @@ import { cn } from "@/lib/utils"
 import vectors from "@/assets/base-vectors.png"
 import arrow from "@/assets/icons/arrow-icon.svg"
 import { useSendResetPasswordToken } from "@/shared/api/generated/authentication/authentication"
-import { Input } from "@/components/ui/input"
-import { Field, FieldLabel, FieldContent, FieldError } from "@/components/ui/field"
 import { ResetConfirmationModal } from "@/components/ResetConfirmationModal/ResetConfirmationModal"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
 
 type ForgotPasswordFormData = {
   email: string
@@ -140,50 +140,22 @@ function ForgotPassword() {
 
               <div className="flex w-full flex-col items-end gap-5.5">
                 <form onSubmit={handleSubmit(onSubmit)} className="flex w-full flex-col gap-5.5">
-                  <Field>
-                    <FieldLabel className="text-[16px] leading-[1.167] text-[#bfd9d2]">
-                      {t("forgotPassword.email")}
-                    </FieldLabel>
-                    <FieldContent>
-                      <div
-                        className={cn(
-                          "flex h-10 items-center gap-2.5 rounded-[10px] border px-2.5 transition-colors",
-                          "bg-linear-to-b from-[rgba(11,21,20,0.03)] via-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)]",
-                          errors.email
-                            ? "border-[#ce0000]"
-                            : "border-white/[0.14] focus-within:border-white/65"
-                        )}
-                      >
-                        <Mail className="size-4 shrink-0 text-[#bfd9d2]" />
-                        <Input
-                          type="email"
-                          placeholder={t("forgotPassword.emailPlaceholder")}
-                          className="border-0 bg-transparent p-0 text-[16px] leading-[1.167] text-[#eaf6f3] placeholder:text-[#bfd9d2] shadow-none focus-visible:ring-0"
-                          aria-invalid={!!errors.email}
-                          {...register("email")}
-                        />
-                      </div>
-                      <FieldError className="text-[10px] leading-[1.167] text-[#ce0000]">
-                        {errors.email?.message}
-                      </FieldError>
-                    </FieldContent>
-                  </Field>
+                  <Input
+                    label={t("forgotPassword.email")}
+                    icon={<Mail className="size-4" />}
+                    type="email"
+                    placeholder={t("forgotPassword.emailPlaceholder")}
+                    error={!!errors.email}
+                    errorMessage={errors.email?.message}
+                    {...register("email")}
+                  />
 
-                  <button
+                  <Button
                     type="submit"
                     disabled={isPending || !isValid}
-                    className={cn(
-                      "flex h-12.5 w-full items-center justify-center gap-3.5 rounded-[10px] border border-white/65",
-                      "bg-linear-to-b from-[rgba(49,95,85,0.55)] to-[rgba(49,95,85,0.18)]",
-                      "backdrop-blur-[7px] shadow-[0px_14px_26px_0px_rgba(0,0,0,0.35)]",
-                      "[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_14px_26px_0px_rgba(0,0,0,0.35)]",
-                      "text-[16px] font-medium leading-[1.167] letter-spacing-[-1.5px] text-[#eaf6f3]",
-                      "cursor-pointer transition-opacity hover:opacity-90",
-                      "disabled:opacity-50 disabled:cursor-not-allowed"
-                    )}
                   >
                     {isPending ? t("forgotPassword.loading") : t("forgotPassword.sendButton")}
-                  </button>
+                  </Button>
                 </form>
               </div>
             </div>
