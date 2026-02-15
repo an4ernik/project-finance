@@ -64,5 +64,50 @@
       "emailNotVerified": "Please verify your email",
       "loginError": "Login error. Please try again"
     }
+  },
+  "forgotPassword": {
+    "title1": "Don't worry — it happens.",
+    "title2": "We'll help you regain access.",
+    "subtitle": "Enter the email associated with your account. We'll send you a password recovery link.",
+    "email": "Email",
+    "emailPlaceholder": "name@example.com",
+    "sendButton": "Send to email",
+    "loading": "Sending...",
+    "rememberPassword": "Remember password?",
+    "loginLink": "Log in",
+    "success": "Recovery link sent to your email!",
+    "resendSuccess": "New link has been send",
+    "errors": {
+      "invalidEmail": "Enter a valid email address",
+      "sendError": "Failed to send. Please try again",
+      "userNotFound": "User with this email not found"
+    }
+  },
+  "resetPassword": {
+    "title": "Time to create a new password!",
+    "subtitle": "Enter a new password for your account. Make sure it's strong and you'll remember it.",
+    "newPassword": "New password",
+    "newPasswordPlaceholder": "Enter new password",
+    "confirmPassword": "Confirm password",
+    "confirmPasswordPlaceholder": "Confirm password",
+    "passwordRules": "minimum 8 characters, must contain uppercase and lowercase letters, numbers",
+    "updateButton": "Update password",
+    "loading": "Updating...",
+    "success": "Password successfully updated!",
+    "errors": {
+      "invalidPassword": "Password does not meet requirements",
+      "mismatch": "Passwords do not match",
+      "tokenInvalid": "Invalid or expired recovery link",
+      "resetError": "Failed to reset password. Please try again"
+    }
+  },
+  "changePassword": {
+    "title": "We’re here — and it’s all set!",
+    "subtitle": "We’ve sent you an email with a password reset link. Follow the link to create a new password",
+    "emailFolder": "If you don’t see the email, please check your Spam folder.",
+    "backToLoginButton": "Back to login",
+    "retry": "Resend available in",
+    "resendNow": "Resend link",
+    "loading": "Loading..."
   }
 }
