@@ -24,7 +24,7 @@ function ResetPassword() {
   const [searchParams] = useSearchParams()
   const { mutate: resetPassword, isPending } = useResetPassword()
 
-  const token = searchParams.get("token")
+  const token = searchParams.get("resetToken")
 
   useEffect(() => {
     if (!token) {
