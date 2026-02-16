@@ -12,4 +12,6 @@
 export interface JwtResponseDTO {
   /** JWT token */
   accessToken?: string;
+  /** JWT refresh token */
+  refreshToken?: string;
 }
