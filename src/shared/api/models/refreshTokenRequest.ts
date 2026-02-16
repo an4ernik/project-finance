@@ -7,11 +7,12 @@
  */
 
 /**
- * JWT response
+ * Payload for refreshing authentication token
  */
-export interface JwtResponseDTO {
-  /** JWT token */
-  accessToken?: string;
-  /** JWT refresh token */
-  refreshToken?: string;
+export interface RefreshTokenRequest {
+  /**
+   * Valid refresh token
+   * @minLength 1
+   */
+  refreshToken: string;
 }

@@ -5,13 +5,9 @@
  * REST API Documentation for MT Service
  * OpenAPI spec version: 1.0
  */
+import type { UpdateUserProfileDTO } from './updateUserProfileDTO';
 
-/**
- * JWT response
- */
-export interface JwtResponseDTO {
-  /** JWT token */
-  accessToken?: string;
-  /** JWT refresh token */
-  refreshToken?: string;
-}
+export type UpdateMeBody = {
+  dto?: UpdateUserProfileDTO;
+  avatar?: Blob;
+};

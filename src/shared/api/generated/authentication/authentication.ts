@@ -29,6 +29,7 @@ import type {
   JwtResponseDTO,
   LoginRequestDto,
   ProblemDetail,
+  RefreshTokenRequest,
   ResetPasswordDTO,
   ResetPasswordParams,
   SendResetPasswordTokenParams,
@@ -256,6 +257,99 @@ export const useResetPassword = <TError = ErrorType<Blob | ProblemDetail>,
         TContext
       > => {
       return useMutation(getResetPasswordMutationOptions(options), queryClient);
+    }
+    /**
+ * Generates a new access token using a valid refresh token
+ * @summary Refresh token
+ */
+export type refreshTokenResponse400 = {
+  data: ProblemDetail
+  status: 400
+}
+
+export type refreshTokenResponse401 = {
+  data: ProblemDetail
+  status: 401
+}
+
+export type refreshTokenResponse409 = {
+  data: ProblemDetail
+  status: 409
+}
+    
+;
+export type refreshTokenResponseError = (refreshTokenResponse400 | refreshTokenResponse401 | refreshTokenResponse409) & {
+  headers: Headers;
+};
+
+export type refreshTokenResponse = (refreshTokenResponseError)
+
+export const getRefreshTokenUrl = () => {
+
+
+  
+
+  return `/api/v1/auth/refresh`
+}
+
+export const refreshToken = async (refreshTokenRequest: RefreshTokenRequest, options?: RequestInit): Promise<refreshTokenResponse> => {
+  
+  return customInstance<refreshTokenResponse>(getRefreshTokenUrl(),
+  {      
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      refreshTokenRequest,)
+  }
+);}
+
+
+
+
+export const getRefreshTokenMutationOptions = <TError = ErrorType<ProblemDetail>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof refreshToken>>, TError,{data: RefreshTokenRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof refreshToken>>, TError,{data: RefreshTokenRequest}, TContext> => {
+
+const mutationKey = ['refreshToken'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof refreshToken>>, {data: RefreshTokenRequest}> = (props) => {
+          const {data} = props ?? {};
+
+          return  refreshToken(data,requestOptions)
+        }
+
+
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type RefreshTokenMutationResult = NonNullable<Awaited<ReturnType<typeof refreshToken>>>
+    export type RefreshTokenMutationBody = RefreshTokenRequest
+    export type RefreshTokenMutationError = ErrorType<ProblemDetail>
+
+    /**
+ * @summary Refresh token
+ */
+export const useRefreshToken = <TError = ErrorType<ProblemDetail>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof refreshToken>>, TError,{data: RefreshTokenRequest}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof refreshToken>>,
+        TError,
+        {data: RefreshTokenRequest},
+        TContext
+      > => {
+      return useMutation(getRefreshTokenMutationOptions(options), queryClient);
     }
     /**
  * Logins user and returns an access token.
