@@ -26,7 +26,7 @@ function SignUp() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { mutate, isPending } = useSignUp()
-  const [isModal, setIsModal] = useState<Boolean>(false);
+  const [isModal, setIsModal] = useState<Boolean>(true);
 
   const schema = useMemo(() => z.object({
     email: z.string().email(t("auth.errors.invalidEmail")),
@@ -132,7 +132,7 @@ function SignUp() {
         </div>
 
         <form className="flex w-full flex-col" onSubmit={handleSubmit(onSubmit)}>
-          <FieldGroup>
+          <FieldGroup className='gap-0'>
             <Field data-invalid={!!errors.email}>
               <FieldLabel>Email *</FieldLabel>
               <FieldContent className="relative">
@@ -257,8 +257,8 @@ function SignUp() {
       </div>
 
       {isModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
-          <div className="flex w-full max-w-md flex-col gap-6 rounded-xl border border-border bg-background p-8 shadow-lg">
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="flex w-full max-w-md flex-col gap-6 rounded-xl border border-border p-8 shadow-lg bg-card text-card-foreground">
             <h2 className="text-2xl font-bold">{t('auth.verify.title')}</h2>
             <p className="text-muted-foreground">{t('auth.verify.message')}.</p>
             <Button className="w-full" onClick={() => navigate('/login')}>
