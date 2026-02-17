@@ -11,6 +11,8 @@ import { Field, FieldLabel, FieldDescription, FieldError, FieldContent, FieldGro
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
+import franklinLight from '@/assets/franklin-light.png'
+import franklinDark from '@/assets/franklin-dark.png'
 import { useTheme } from '@/shared/providers/ThemeProvider'
 import { useSignUp } from '@/shared/api/generated/authentication/authentication'
 import { type SignUpBody } from '@/shared/api/models'
@@ -105,31 +107,36 @@ function SignUp() {
     )}>
       <div
         className={cn(
-          'absolute left-1/2 top-1/2 z-10 flex max-h-[90vh] w-[480px] -translate-x-1/2 -translate-y-1/2 flex-col items-start gap-6 rounded-[10px] px-12.5 py-8 overflow-y-auto',
+          'absolute right-1/2 z-50 top-1/2 flex h-full w-[480px] -translate-y-1/2 flex-col items-start gap-[14px] rounded-[10px] px-[50px] py-[118px] overflow-y-auto',
           'border border-white/[0.14] backdrop-blur-lg',
           'bg-linear-to-b from-[rgba(11,21,20,0.03)] via-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)]',
           'shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)]',
-          '[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_rgba(0,0,0,0.2)]'
+          '[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_0_rgba(0,0,0,0.2)]'
         )}
       >
-        <div className="flex flex-col gap-1.5">
-          <h1 className="text-[34px] font-bold leading-[1.167] tracking-[-1.5px] text-[#eaf6f3]">
-            {t('auth.title')}
-          </h1>
-          <p className="text-[20px] font-medium leading-[1.167] text-[#bfd9d2]">
-            {t('auth.subtitle')}
-          </p>
-          <p className="text-[12px] leading-[1.3] text-[#bfd9d2]">
-            {t('auth.requiredFields')}
-          </p>
+        <div className="flex flex-col">
+          <div className='flex flex-col justify-between gap-[28px]'>
+            
+            <h1 className={cn('text-[34px] font-bold leading-[1.167] tracking-[-1.5px]', theme === 'dark' && 'text-[#eaf6f3]')}>
+              {t('auth.title')}
+            </h1>
+            <div className={cn('flex flex-col justify-between gap-1.5', theme === 'dark' && 'text-[#bfd9d2]')}>
+              <p className="text-[20px] font-medium leading-[1.167]">
+                {t('auth.subtitle')}
+              </p>
+              <p className="text-[12px] leading-[1.3]">
+                {t('auth.requiredFields')}
+              </p>
+            </div>
+          </div>
         </div>
 
         <form className="flex w-full flex-col" onSubmit={handleSubmit(onSubmit)}>
-          <FieldGroup className='gap-0'>
+          <FieldGroup>
             <Field data-invalid={!!errors.email}>
               <FieldLabel>Email *</FieldLabel>
               <FieldContent className="relative">
-                <Input className='' icon={<Mail className="size-4" />} placeholder="name@example.com" {...register('email')} />
+                <Input icon={<Mail className="size-4" />} placeholder="name@example.com" {...register('email')} />
               </FieldContent>
               <FieldError>{errors.email?.message}</FieldError>
             </Field>
@@ -144,8 +151,8 @@ function SignUp() {
                   placeholder={t('auth.passwordPlaceholder')}
                   {...register('password')}
                 />
-              </FieldContent>
               <FieldError>{errors.password?.message}</FieldError>
+              </FieldContent>
             </Field>
 
             <Field data-invalid={!!errors.confirmPassword}>
@@ -157,8 +164,8 @@ function SignUp() {
                   placeholder={t('auth.confirmPassword')}
                   {...register('confirmPassword')}
                 />
+                <FieldError>{errors.confirmPassword?.message}</FieldError>
               </FieldContent>
-              <FieldError>{errors.confirmPassword?.message}</FieldError>
             </Field>
 
             <Field data-invalid={!!errors.fullName}>
@@ -218,12 +225,25 @@ function SignUp() {
             </Field>
           </FieldGroup>
 
-          <Button type="submit" className="w-full mt-8 py-6 text-lg" disabled={!isValid || isPending}>
+          <Button type="submit" className="w-full mt-[34px] py-6 text-lg" disabled={!isValid || isPending}>
             {isPending ? t('common.loading') : t('signUp')}
           </Button>
         </form>
       </div>
-      <div className="absolute bottom-10 right-10 z-10 flex flex-col items-start justify-center rounded-[10px] px-5 py-4 backdrop-blur-lg shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_rgba(0,0,0,0.2)]">
+
+      <div className="pointer-events-none absolute right-16 top-1/2 -translate-y-1/2 hidden lg:block">
+        <img
+          src={theme === 'dark' ? franklinDark : franklinLight}
+          alt="Franklin"
+          className="max-h-[480px] w-auto"
+        />
+      </div>
+
+      <div className="absolute bottom-10 right-10 z-10 flex flex-col items-start justify-center rounded-[10px] px-5 py-4 backdrop-blur-lg shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_rgba(0,0,0,0.2)]
+                'border border-white/[0.14] backdrop-blur-lg',
+                'bg-linear-to-b from-[rgba(11,21,20,0.03)] via-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)]',
+                'shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)]',
+                '[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_0_rgba(0,0,0,0.2)]'">
         <p className="text-[16px] leading-[1.167] text-[#eaf6f3]">
           {t('auth.haveAccount')}
         </p>
@@ -237,8 +257,8 @@ function SignUp() {
       </div>
 
       {isModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center">
-          <div className="flex w-full max-w-md flex-col gap-6 rounded-xl border border-border p-8 shadow-lg bg-card">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+          <div className="flex w-full max-w-md flex-col gap-6 rounded-xl border border-border bg-background p-8 shadow-lg">
             <h2 className="text-2xl font-bold">{t('auth.verify.title')}</h2>
             <p className="text-muted-foreground">{t('auth.verify.message')}.</p>
             <Button className="w-full" onClick={() => navigate('/login')}>
