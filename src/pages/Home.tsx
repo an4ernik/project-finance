@@ -1,14 +1,13 @@
-import { useTranslation } from "react-i18next"
-
+import {useTranslation} from 'react-i18next';
 
 function Home() {
-  const { t } = useTranslation()
-  
-  return(
+  const {t} = useTranslation();
+
+  return (
     <div className="m-20">
-      <p>{t("home")}</p>
+      <p>{t('home')}</p>
     </div>
-  )
+  );
 }
 
-export default Home
+export default Home;

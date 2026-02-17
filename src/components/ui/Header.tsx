@@ -1,12 +1,18 @@
-import { Link, useNavigate } from "react-router-dom"
-import { useTranslation } from "react-i18next"
-import logo from '@/assets/icons/logo.svg'
-import sun from '@/assets/icons/sun.svg'
-import { Button } from '@/components/ui/button'
-import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
+import {Link, useNavigate} from 'react-router-dom';
+import {useTranslation} from 'react-i18next';
+import logo from '@/assets/icons/logo.svg';
+import sun from '@/assets/icons/sun.svg';
+import {Button} from '@/components/ui/button';
+import {
+  Select,
+  SelectTrigger,
+  SelectValue,
+  SelectContent,
+  SelectItem,
+} from '@/components/ui/select';
 
 function Header() {
-  const { i18n, t } = useTranslation();
+  const {i18n, t} = useTranslation();
   const navigate = useNavigate();
 
   const handleLanguage = (value: string) => {
@@ -24,28 +30,31 @@ function Header() {
         <nav>
           <ul className="flex items-center gap-8">
             <li>
-              <Link 
-                className="text-sm font-medium transition-colors hover:text-primary" 
+              <Link
+                className="text-sm font-medium transition-colors hover:text-primary"
                 to="/signup"
               >
-                {t("signUp")}
+                {t('signUp')}
               </Link>
             </li>
             <li>
-              <Link 
-                className="text-sm font-medium transition-colors hover:text-primary" 
+              <Link
+                className="text-sm font-medium transition-colors hover:text-primary"
                 to="/login"
               >
-                {t("logIn")}
+                {t('logIn')}
               </Link>
             </li>
           </ul>
         </nav>
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" className="rounded-full"> 
+          <Button variant="ghost" size="icon" className="rounded-full">
             <img src={sun} alt="theme toggle" className="h-5 w-5" />
           </Button>
-          <Select onValueChange={handleLanguage} defaultValue={i18n.language.toUpperCase()}>
+          <Select
+            onValueChange={handleLanguage}
+            defaultValue={i18n.language.toUpperCase()}
+          >
             <SelectTrigger className="w-[70px] border-none shadow-none focus:ring-0">
               <SelectValue />
             </SelectTrigger>
@@ -55,12 +64,12 @@ function Header() {
             </SelectContent>
           </Select>
 
-          <Button 
-            variant="default" 
+          <Button
+            variant="default"
             className="hidden md:flex"
             onClick={() => navigate('/login')}
           >
-            {t("logIn")}
+            {t('logIn')}
           </Button>
         </div>
       </div>
@@ -68,4 +77,4 @@ function Header() {
   );
 }
 
-export default Header
+export default Header;

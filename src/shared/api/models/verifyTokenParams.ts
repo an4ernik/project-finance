@@ -7,8 +7,8 @@
  */
 
 export type VerifyTokenParams = {
-/**
- * Email verification token JWT with purpose=email_verification
- */
-token: string;
+  /**
+   * Email verification token JWT with purpose=email_verification
+   */
+  token: string;
 };
