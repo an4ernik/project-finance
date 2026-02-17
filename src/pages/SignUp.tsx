@@ -26,7 +26,7 @@ function SignUp() {
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { mutate, isPending } = useSignUp()
-  const [isModal, setIsModal] = useState<Boolean>(true);
+  const [isModal, setIsModal] = useState<Boolean>(false);
 
   const schema = useMemo(() => z.object({
     email: z.string().email(t("auth.errors.invalidEmail")),
