@@ -1,0 +1,130 @@
+{
+  "home": "Hero",
+  "changeLang": "UA",
+  "signUp": "Sign Up",
+  "logIn": "Log In",
+  "auth": {
+    "title": "Create an account.",
+    "subtitle": "Fill out the form to get started.",
+    "requiredFields": "*Marked fields are required.",
+    "password": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "passwordRules": "minimum 8 characters, must contain uppercase and lowercase letters, numbers",
+    "confirmPassword": "Confirm password",
+    "fullName": "Full name",
+    "typeFullName": "Enter your full name",
+    "signUpSuccess": "Account created successfully!",
+    "haveAccount": "Already have an account?",
+    "logInLink": "Log in",
+    "emailExists": "An account with this email already exists",
+    "currency": "Currency",
+    "currencyPlaceholder": "Select currency",
+    "uah": "UAH — Ukrainian Hryvnia",
+    "usd": "USD — US Dollar",
+    "eur": "EUR — Euro",
+    "avatar": {
+      "label": "Avatar",
+      "upload": "Add photo +",
+      "change": "Change photo",
+      "hint": "JPG, PNG or GIF. Max size - 2 MB."
+    },
+    "errors": {
+      "invalidEmail": "Invalid email address",
+      "tooShort": "Min 8 characters, must include uppercase and lowercase letters",
+      "uppercase": "Uppercase letter required",
+      "lowercase": "Lowercase letter required",
+      "number": "Number required",
+      "confirmRequired": "Please confirm your password",
+      "required": "Required field is empty",
+      "mismatch": "Passwords do not match",
+      "fileSize": "Photo exceeds allowed size (2 MB)",
+      "fileType": "Only JPG, PNG or GIF allowed"
+    },
+    "verify": {
+      "title": "Almost there — you’re all set!",
+      "message": "We've sent a confirmation email to your inbox. Click the link in the email to activate your account. The link is valid for 24 hours. If you don’t see the email, please check your Spam folder.",
+      "button": "Back to login",
+      "tokenDoesntExist": "Token doesn't exist",
+      "accountAlreadyActivated": "Account already activated",
+      "activationError": "Activation error. Maybe the token has expired.",
+      "activationSuccess": "Email successfully verified!",
+      "loading": "Verification in progress..."
+    },
+    "confirmed": {
+      "title": "Email verified.",
+      "message": "Your account has been activated.  Thank you for confirming your email address.",
+      "button": "Log in"
+    }
+  },
+  "common": {
+    "error": "Something went wrong",
+    "loading": "Creating..."
+  },
+  "login": {
+    "title": "Welcome back!",
+    "subtitle": "Enter your credentials",
+    "email": "Email",
+    "emailPlaceholder": "name@example.com",
+    "password": "Password",
+    "passwordPlaceholder": "Enter password",
+    "rememberMe": "Remember me",
+    "forgotPassword": "Forgot password?",
+    "loginButton": "Log In",
+    "loading": "Loading...",
+    "noAccount": "Don't have an account?",
+    "signUpLink": "Sign up",
+    "success": "Login successful!",
+    "errors": {
+      "invalidEmail": "Enter a valid email address",
+      "requiredPassword": "Enter password",
+      "wrongCredentials": "Invalid email or password",
+      "emailNotVerified": "Please verify your email",
+      "loginError": "Login error. Please try again"
+    }
+  },
+  "forgotPassword": {
+    "title1": "Don't worry — it happens.",
+    "title2": "We'll help you regain access.",
+    "subtitle": "Enter the email associated with your account. We'll send you a password recovery link.",
+    "email": "Email",
+    "emailPlaceholder": "name@example.com",
+    "sendButton": "Send to email",
+    "loading": "Sending...",
+    "rememberPassword": "Remember password?",
+    "loginLink": "Log in",
+    "success": "Recovery link sent to your email!",
+    "resendSuccess": "New link has been send",
+    "errors": {
+      "invalidEmail": "Enter a valid email address",
+      "sendError": "Failed to send. Please try again",
+      "userNotFound": "User with this email not found"
+    }
+  },
+  "resetPassword": {
+    "title": "Time to create a new password!",
+    "subtitle": "Enter a new password for your account. Make sure it's strong and you'll remember it.",
+    "newPassword": "New password",
+    "newPasswordPlaceholder": "Enter new password",
+    "confirmPassword": "Confirm password",
+    "confirmPasswordPlaceholder": "Confirm password",
+    "passwordRules": "minimum 8 characters, must contain uppercase and lowercase letters, numbers",
+    "updateButton": "Update password",
+    "loading": "Updating...",
+    "success": "Password successfully updated!",
+    "errors": {
+      "invalidPassword": "Password does not meet requirements",
+      "mismatch": "Passwords do not match",
+      "tokenInvalid": "Invalid or expired recovery link",
+      "resetError": "Failed to reset password. Please try again"
+    }
+  },
+  "changePassword": {
+    "title": "We’re here — and it’s all set!",
+    "subtitle": "We’ve sent you an email with a password reset link. Follow the link to create a new password",
+    "emailFolder": "If you don’t see the email, please check your Spam folder.",
+    "backToLoginButton": "Back to login",
+    "retry": "Resend available in",
+    "resendNow": "Resend link",
+    "loading": "Loading..."
+  }
+}
