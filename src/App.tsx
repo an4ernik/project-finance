@@ -6,6 +6,8 @@ import SignUp from "./pages/SignUp"
 import Login from "./pages/Login"
 import VerifyEmailPage from "@/pages/VerifyEmailPage"
 import ThemeProvider from "@/shared/providers/ThemeProvider"
+import ForgotPassword from "./pages/ForgotPassword"
+import ResetPassword from "./pages/ResetPassword"
 
 
 function App() {
@@ -15,11 +17,13 @@ function App() {
     <ThemeProvider>
       <Toaster />
       <Header />
-      <Routes >
+      <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
-        <Route path="/verify" element={<VerifyEmailPage />}/>
+        <Route path="/verify" element={<VerifyEmailPage />} />
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+        <Route path="/reset-password" element={<ResetPassword />} />
       </Routes>
     </ThemeProvider>
     </>

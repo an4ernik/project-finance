@@ -6,12 +6,7 @@
  * OpenAPI spec version: 1.0
  */
 
-/**
- * JWT response
- */
-export interface JwtResponseDTO {
-  /** JWT token */
-  accessToken?: string;
-  /** JWT refresh token */
-  refreshToken?: string;
+export interface UpdateUserProfileDTO {
+  /** User's full name */
+  fullName?: string;
 }
