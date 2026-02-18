@@ -89,7 +89,6 @@ function SignUp() {
     register,
     control,
     handleSubmit,
-    setError,
     watch,
     formState: {errors, isValid},
   } = useForm<FormFields>({
