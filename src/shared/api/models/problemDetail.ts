@@ -5,7 +5,7 @@
  * REST API Documentation for MT Service
  * OpenAPI spec version: 1.0
  */
-import type { ProblemDetailProperties } from './problemDetailProperties';
+import type {ProblemDetailProperties} from './problemDetailProperties';
 
 export interface ProblemDetail {
   type?: string;

@@ -18,8 +18,13 @@ import { useSignUp } from '@/shared/api/generated/authentication/authentication'
 import { type SignUpBody } from '@/shared/api/models'
 import { cn } from '@/lib/utils'
 
-const MAX_FILE_SIZE = 2 * 1024 * 1024
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/gif"]
+const MAX_FILE_SIZE = 2 * 1024 * 1024;
+const ACCEPTED_IMAGE_TYPES = [
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/gif',
+];
 
 function SignUp() {
   const { theme } = useTheme()
@@ -28,26 +33,44 @@ function SignUp() {
   const { mutate, isPending } = useSignUp()
   const [isModal, setIsModal] = useState<Boolean>(false);
 
-  const schema = useMemo(() => z.object({
-    email: z.string().email(t("auth.errors.invalidEmail")),
-    password: z.string()
-      .min(8, t("auth.errors.tooShort"))
-      .regex(/[A-Z]/, t("auth.errors.uppercase"))
-      .regex(/[a-z]/, t("auth.errors.lowercase"))
-      .regex(/[0-9]/, t("auth.errors.number")),
-    confirmPassword: z.string().min(1, t("auth.errors.confirmRequired")),
-    fullName: z.string().min(1, t("auth.errors.required")),
-    currencyCode: z.string(),
-    avatar: z.any()
-      .refine((files) => !files || files.length === 0 || files[0].size <= MAX_FILE_SIZE, t("auth.errors.fileSize"))
-      .refine((files) => !files || files.length === 0 || ACCEPTED_IMAGE_TYPES.includes(files[0].type), t("auth.errors.fileType"))
-      .optional(),
-  }).refine((data) => data.password === data.confirmPassword, {
-    message: t("auth.errors.mismatch"),
-    path: ["confirmPassword"],
-  }), [t])
+  const schema = useMemo(
+    () =>
+      z
+        .object({
+          email: z.string().email(t('auth.errors.invalidEmail')),
+          password: z
+            .string()
+            .min(8, t('auth.errors.tooShort'))
+            .regex(/[A-Z]/, t('auth.errors.uppercase'))
+            .regex(/[a-z]/, t('auth.errors.lowercase'))
+            .regex(/[0-9]/, t('auth.errors.number')),
+          confirmPassword: z.string().min(1, t('auth.errors.confirmRequired')),
+          fullName: z.string().min(1, t('auth.errors.required')),
+          currencyCode: z.string(),
+          avatar: z
+            .any()
+            .refine(
+              files =>
+                !files || files.length === 0 || files[0].size <= MAX_FILE_SIZE,
+              t('auth.errors.fileSize'),
+            )
+            .refine(
+              files =>
+                !files ||
+                files.length === 0 ||
+                ACCEPTED_IMAGE_TYPES.includes(files[0].type),
+              t('auth.errors.fileType'),
+            )
+            .optional(),
+        })
+        .refine(data => data.password === data.confirmPassword, {
+          message: t('auth.errors.mismatch'),
+          path: ['confirmPassword'],
+        }),
+    [t],
+  );
 
-  type FormFields = z.infer<typeof schema>
+  type FormFields = z.infer<typeof schema>;
 
   const { register, control, handleSubmit, setError, watch, formState: { errors, isValid } } = useForm<FormFields>({
     resolver: zodResolver(schema),
@@ -62,16 +85,14 @@ function SignUp() {
     }
   })
 
-  const avatarFile = watch("avatar")
-  
   const previewUrl = useMemo(() => {
     if (avatarFile instanceof FileList && avatarFile.length > 0) {
-      return URL.createObjectURL(avatarFile[0])
+      return URL.createObjectURL(avatarFile[0]);
     }
-    return null
-  }, [avatarFile])
+    return null;
+  }, [avatarFile]);
 
-  const onSubmit: SubmitHandler<FormFields> = (values) => {
+  const onSubmit: SubmitHandler<FormFields> = values => {
     const payload: SignUpBody = {
       dto: {
         email: values.email,
@@ -80,23 +101,16 @@ function SignUp() {
         currencyCode: values.currencyCode,
       },
       avatar: values.avatar?.[0],
-    }
-  
+    };
+
     mutate(
       { data: payload }, {
       onSuccess: () => {
         toast.success(t("auth.signUpSuccess"))
         setTimeout(() => setIsModal(true), 2000)
       },
-      onError: (error: any) => {
-        if (error?.response?.status === 409) {
-          setError("email", { message: t("auth.emailExists") })
-        } else {
-          toast.error(t("common.error"))
-        }
-      }
-    })
-  }
+    );
+  };
 
   return (
     <div className={cn(
@@ -268,7 +282,7 @@ function SignUp() {
         </div>
       )}
     </div>
-  )
+  );
 }
 
-export default SignUp
+export default SignUp;

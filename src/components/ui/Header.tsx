@@ -27,19 +27,19 @@ function Header() {
         <nav>
           <ul className="flex items-center gap-8">
             <li>
-              <Link 
-                className="text-sm font-medium transition-colors hover:text-primary" 
+              <Link
+                className="text-sm font-medium transition-colors hover:text-primary"
                 to="/signup"
               >
-                {t("signUp")}
+                {t('signUp')}
               </Link>
             </li>
             <li>
-              <Link 
-                className="text-sm font-medium transition-colors hover:text-primary" 
+              <Link
+                className="text-sm font-medium transition-colors hover:text-primary"
                 to="/login"
               >
-                {t("logIn")}
+                {t('logIn')}
               </Link>
             </li>
           </ul>
@@ -56,12 +56,12 @@ function Header() {
             </SelectContent>
           </Select>
 
-          <Button 
-            variant="default" 
+          <Button
+            variant="default"
             className="hidden md:flex"
             onClick={() => navigate('/login')}
           >
-            {t("logIn")}
+            {t('logIn')}
           </Button>
         </div>
       </div>
@@ -69,4 +69,4 @@ function Header() {
   );
 }
 
-export default Header
+export default Header;

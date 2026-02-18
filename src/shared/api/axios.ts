@@ -1,17 +1,17 @@
-import axios from "axios";
+import axios from 'axios';
 
 export const api = axios.create({
-  baseURL: "https://rbxepeq442.eu-central-1.awsapprunner.com",
+  baseURL: 'https://rbxepeq442.eu-central-1.awsapprunner.com',
   withCredentials: true,
 });
 
 export const customInstance = async <T>(
   url: string,
-  options?: RequestInit
+  options?: RequestInit,
 ): Promise<T> => {
   const response = await api({
     url,
-    method: options?.method as any,
+    method: options?.method,
     data: options?.body,
     headers: options?.headers as any,
   });

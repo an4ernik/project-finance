@@ -1,4 +1,4 @@
-import { defineConfig } from 'orval'
+import {defineConfig} from 'orval';
 
 export default defineConfig({
   financeApi: {
@@ -18,4 +18,4 @@ export default defineConfig({
       },
     },
   },
-})
+});

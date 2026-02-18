@@ -10,7 +10,6 @@ import ResetPassword from "./pages/ResetPassword"
 
 
 function App() {
-
   return (
     <>
     <ThemeProvider>
@@ -25,7 +24,7 @@ function App() {
       </Routes>
     </ThemeProvider>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

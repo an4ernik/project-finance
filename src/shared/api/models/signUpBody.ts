@@ -5,7 +5,7 @@
  * REST API Documentation for MT Service
  * OpenAPI spec version: 1.0
  */
-import type { AuthRequestDTO } from './authRequestDTO';
+import type {AuthRequestDTO} from './authRequestDTO';
 
 export type SignUpBody = {
   dto: AuthRequestDTO;
