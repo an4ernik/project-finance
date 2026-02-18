@@ -119,7 +119,12 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.556 0 0);
-  --glass-bg: linear-gradient(180deg, rgba(11,21,20,0.03) 0%, rgba(49,95,85,0.1) 50%, rgba(144,208,182,0.05) 100%);
+  --glass-bg: linear-gradient(
+    180deg,
+    rgba(11, 21, 20, 0.03) 0%,
+    rgba(49, 95, 85, 0.1) 50%,
+    rgba(144, 208, 182, 0.05) 100%
+  );
 }
 
 @layer base {
@@ -140,4 +145,15 @@
     transition: background-color 5000s ease-in-out 0s;
     box-shadow: inset 0 0 20px 20px transparent;
   }
+}
+
+@utility bg-radial-fade {
+  background: radial-gradient(
+    circle at 50% 50%,
+    #0d3d32 0%,
+    #0a2e26 25%,
+    #071e1a 50%,
+    #04120f 75%,
+    #020a08 100%
+  );
 }

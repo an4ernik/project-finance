@@ -31,7 +31,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="flex flex-col gap-1.5 items-start h-16">
         {label && (
-          <label className="text-[16px] leading-[1.167] text-[#bfd9d2]">
+          <label className="text-[16px] leading-[1.167] dark:text-[#bfd9d2]">
             {label}
           </label>
         )}
@@ -53,12 +53,12 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                     ),
             )}
           >
-            {icon && <div className="shrink-0 text-[#bfd9d2]">{icon}</div>}
+            {icon && <div className="shrink-0 dark:text-[#bfd9d2]">{icon}</div>}
             <input
               ref={ref}
               type={inputType}
               className={cn(
-                'h-full w-full flex-1 bg-transparent text-[16px] leading-[1.167] text-[#eaf6f3] placeholder:text-[#bfd9d2]',
+                'h-full w-full flex-1 bg-transparent text-[16px] leading-[1.167] dark:text-[#eaf6f3] placeholder:dark:text-[#bfd9d2]',
                 'border-0 p-0 outline-none ring-0 focus:outline-none focus:ring-0',
                 className,
               )}
@@ -68,7 +68,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="shrink-0 text-[#bfd9d2] transition-colors hover:text-[#eaf6f3]"
+                className="shrink-0 dark:text-[#bfd9d2] transition-colors hover:dark:text-[#eaf6f3]"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? (

@@ -29,12 +29,12 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         'bg-linear-to-b from-[rgba(49,95,85,0.55)] to-[rgba(49,95,85,0.18)]',
         'backdrop-blur-[7px] shadow-[0px_14px_26px_0px_rgba(0,0,0,0.35)]',
         '[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_14px_26px_0px_rgba(0,0,0,0.35)]',
-        'text-[#eaf6f3]',
+        'dark:text-[#eaf6f3]',
         'hover:opacity-90 active:opacity-80',
       ),
       secondary: cn(
         'border-transparent bg-transparent',
-        'text-[#02a078]',
+        'dark:text-[#02a078]',
         'hover:opacity-80 active:opacity-70',
       ),
       default: cn(
@@ -42,17 +42,17 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         'bg-linear-to-b from-[rgba(49,95,85,0.55)] to-[rgba(49,95,85,0.18)]',
         'backdrop-blur-[7px] shadow-[0px_14px_26px_0px_rgba(0,0,0,0.35)]',
         '[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_14px_26px_0px_rgba(0,0,0,0.35)]',
-        'text-[#eaf6f3]',
+        'dark:text-[#eaf6f3]',
         'hover:opacity-90 active:opacity-80',
       ),
       outline: cn(
         'border-white/[0.14] bg-transparent',
-        'text-[#eaf6f3]',
+        'dark:text-[#eaf6f3]',
         'hover:border-white/65 hover:bg-white/5',
       ),
       ghost: cn(
         'border-transparent bg-transparent',
-        'text-[#eaf6f3]',
+        'dark:text-[#eaf6f3]',
         'hover:bg-white/5',
       ),
     };

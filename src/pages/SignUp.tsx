@@ -138,15 +138,13 @@ function SignUp() {
   return (
     <div
       className={cn(
-        'relative flex h-screen w-full items-center justify-center overflow-hidden bg-cover bg-no-repeat bg-center',
-        theme === 'dark'
-          ? "bg-[url('/src/assets/background.png')] bg-[#020f0c]"
-          : 'bg-white',
+        'relative flex h-screen w-full items-center justify-center overflow-hidden',
+        'dark:bg-radial-fade',
       )}
     >
       <div
         className={cn(
-          'absolute right-1/2 z-50 top-1/2 flex h-full w-[480px] -translate-y-1/2 flex-col items-start gap-[14px] rounded-[10px] px-[50px] py-[118px] overflow-y-auto',
+          'sm:absolute right-1/2 z-50 top-1/2 flex h-full w-[480px] -translate-y-1/2 flex-col items-start gap-[14px] rounded-[10px] px-[50px] py-[118px] overflow-y-auto',
           'border border-white/[0.14] backdrop-blur-lg',
           'bg-linear-to-b from-[rgba(11,21,20,0.03)] via-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)]',
           'shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)]',
@@ -158,7 +156,7 @@ function SignUp() {
             <h1
               className={cn(
                 'text-[34px] font-bold leading-[1.167] tracking-[-1.5px]',
-                theme === 'dark' && 'text-[#eaf6f3]',
+                'dark:text-[#eaf6f3]',
               )}
             >
               {t('auth.title')}
@@ -166,7 +164,7 @@ function SignUp() {
             <div
               className={cn(
                 'flex flex-col justify-between gap-1.5',
-                theme === 'dark' && 'text-[#bfd9d2]',
+                'dark:text-[#bfd9d2]',
               )}
             >
               <p className="text-[20px] font-medium leading-[1.167]">
@@ -180,7 +178,7 @@ function SignUp() {
         </div>
 
         <form
-          className="flex w-full flex-col"
+          className="flex w-full h-[623px] flex-col"
           onSubmit={handleSubmit(onSubmit)}
         >
           <FieldGroup className="gap-0">
@@ -325,7 +323,7 @@ function SignUp() {
                 'shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)]',
                 '[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_0_rgba(0,0,0,0.2)]'"
       >
-        <p className="text-[16px] leading-[1.167] text-[#eaf6f3]">
+        <p className="text-[16px] leading-[1.167] dark:text-[#eaf6f3]">
           {t('auth.haveAccount')}
         </p>
         <Link

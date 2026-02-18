@@ -9,9 +9,11 @@ import {Mail, Lock, ChevronRight} from 'lucide-react';
 import {cn} from '@/lib/utils';
 
 import moneyBg from '@/assets/money-bg.png';
+import moneyBgLight from '@/assets/money-bg-light.png';
 import {useLogin} from '@/shared/api/generated/authentication/authentication';
 import {Input} from '@/components/ui/input';
 import {Button} from '@/components/ui/button';
+import {useTheme} from '@/shared/providers/ThemeProvider';
 
 type LoginFormData = {
   email: string;
@@ -19,6 +21,7 @@ type LoginFormData = {
 };
 
 function Login() {
+  const {theme} = useTheme();
   const {t} = useTranslation();
   const navigate = useNavigate();
   const {mutate: loginMutate, isPending} = useLogin();
@@ -80,17 +83,17 @@ function Login() {
   };
 
   return (
-    <div className="relative flex h-screen w-full overflow-hidden bg-[#0b1514]">
+    <div className="relative flex h-screen w-full overflow-hidden dark:bg-[#0b1514]">
       <div className="absolute -left-57.25 -top-98.75 flex h-371.75 w-341.25 items-center justify-center">
         <img
-          src={moneyBg}
+          src={theme === 'dark' ? moneyBg : moneyBgLight}
           alt=""
           className="h-309.25 w-206.25 rotate-33 object-cover opacity-20"
         />
       </div>
 
       <div className="absolute bottom-10 left-10 z-10 flex flex-col items-start justify-center rounded-[10px] px-5 py-4 backdrop-blur-lg shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_rgba(0,0,0,0.2)]">
-        <p className="text-[16px] leading-[1.167] text-[#eaf6f3]">
+        <p className="text-[16px] leading-[1.167] dark:text-[#eaf6f3]">
           {t('login.noAccount')}
         </p>
         <Link
@@ -112,10 +115,10 @@ function Login() {
         )}
       >
         <div className="flex flex-col gap-3.5">
-          <h1 className="text-[34px] font-bold leading-[1.167] tracking-[-1.5px] text-[#eaf6f3]">
+          <h1 className="text-[34px] font-bold leading-[1.167] tracking-[-1.5px] dark:text-[#eaf6f3]">
             {t('login.title')}
           </h1>
-          <p className="text-[20px] font-medium leading-[1.167] text-[#bfd9d2]">
+          <p className="text-[20px] font-medium leading-[1.167] dark:text-[#bfd9d2]">
             {t('login.subtitle')}
           </p>
         </div>
@@ -160,16 +163,16 @@ function Login() {
                   )}
                 >
                   {rememberMe && (
-                    <span className="size-1.75 rounded-full bg-[#eaf6f3]" />
+                    <span className="size-1.75 rounded-full dark:bg-[#eaf6f3]" />
                   )}
                 </span>
-                <span className="text-[16px] leading-[1.167] text-[#eaf6f3]">
+                <span className="text-[16px] leading-[1.167] dark:text-[#eaf6f3]">
                   {t('login.rememberMe')}
                 </span>
               </button>
               <Link
                 to="/forgot-password"
-                className="text-[16px] leading-[1.167] text-[#eaf6f3] transition-colors hover:text-[#bfd9d2]"
+                className="text-[16px] leading-[1.167] dark:text-[#eaf6f3] transition-colors dark:hover:text-[#bfd9d2]"
               >
                 {t('login.forgotPassword')}
               </Link>
