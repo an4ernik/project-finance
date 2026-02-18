@@ -1,18 +1,15 @@
-import {Link, useNavigate} from 'react-router-dom';
-import {useTranslation} from 'react-i18next';
-import logo from '@/assets/icons/logo.svg';
-import sun from '@/assets/icons/sun.svg';
-import {Button} from '@/components/ui/button';
-import {
-  Select,
-  SelectTrigger,
-  SelectValue,
-  SelectContent,
-  SelectItem,
-} from '@/components/ui/select';
+import { Link, useNavigate } from "react-router-dom"
+import { useTranslation } from "react-i18next"
+import logo from '@/assets/icons/logo.svg'
+import darkLogo from '@/assets/icons/logo-dark.svg'
+import { ThemeToggle } from "./ThemeToggle"
+import { Button } from '@/components/ui/button'
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from '@/components/ui/select'
+import { useTheme } from "@/shared/providers/ThemeProvider"
 
 function Header() {
-  const {i18n, t} = useTranslation();
+  const { theme } = useTheme()
+  const { i18n, t } = useTranslation();
   const navigate = useNavigate();
 
   const handleLanguage = (value: string) => {
@@ -24,7 +21,7 @@ function Header() {
       <div className="container mx-auto flex h-16 items-center justify-between px-4">
         <div className="flex items-center gap-2">
           <Link to="/" className="transition-opacity hover:opacity-80">
-            <img src={logo} alt="logo" className="h-8 w-auto" />
+            <img src={theme === 'dark'? darkLogo : logo} alt="logo" className="h-8 w-auto" />
           </Link>
         </div>
         <nav>
@@ -48,13 +45,8 @@ function Header() {
           </ul>
         </nav>
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon" className="rounded-full">
-            <img src={sun} alt="theme toggle" className="h-5 w-5" />
-          </Button>
-          <Select
-            onValueChange={handleLanguage}
-            defaultValue={i18n.language.toUpperCase()}
-          >
+          <ThemeToggle></ThemeToggle>
+          <Select onValueChange={handleLanguage} defaultValue={i18n.language.toUpperCase()}>
             <SelectTrigger className="w-[70px] border-none shadow-none focus:ring-0">
               <SelectValue />
             </SelectTrigger>
