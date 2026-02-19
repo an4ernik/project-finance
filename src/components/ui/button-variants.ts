@@ -1,6 +1,6 @@
 import {cn} from '@/lib/utils';
 
-export type ButtonVariant = 'primary';
+export type ButtonVariant = 'primary' | 'secondary' | 'default' | 'outline' | 'ghost';
 export type ButtonSize = 'default' | 'icon';
 
 export interface ButtonVariantsProps {

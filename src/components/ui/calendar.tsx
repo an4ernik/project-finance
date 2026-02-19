@@ -7,7 +7,7 @@ import {
 } from 'react-day-picker';
 
 import {cn} from '@/lib/utils';
-import {buttonVariants} from '@/components/ui/button-variants';
+import {buttonVariants, type ButtonVariant} from '@/components/ui/button-variants';
 import {Button} from './button';
 
 function Calendar({
@@ -20,7 +20,7 @@ function Calendar({
   components,
   ...props
 }: React.ComponentProps<typeof DayPicker> & {
-  buttonVariant?: React.ComponentProps<typeof Button>['variant'];
+  buttonVariant?: ButtonVariant;
 }) {
   const defaultClassNames = getDefaultClassNames();
 
@@ -190,7 +190,6 @@ function CalendarDayButton({
   return (
     <Button
       ref={ref}
-      variant="ghost"
       size="icon"
       data-day={day.date.toLocaleDateString()}
       data-selected-single={
