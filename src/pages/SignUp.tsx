@@ -1,4 +1,4 @@
-import {useState, useMemo} from 'react';
+import {useState, useMemo, useEffect} from 'react';
 import {useForm, Controller, type SubmitHandler} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {z} from 'zod';
@@ -28,6 +28,7 @@ import franklinLight from '@/assets/franklin-light.png';
 import franklinDark from '@/assets/franklin-dark.png';
 import {useTheme} from '@/shared/providers/ThemeProvider';
 import {useSignUp} from '@/shared/api/generated/authentication/authentication';
+import {AuthRequestDTOCurrencyCode} from '@/shared/api/models/authRequestDTOCurrencyCode';
 import {type SignUpBody} from '@/shared/api/models';
 import {cn} from '@/lib/utils';
 
@@ -89,6 +90,7 @@ function SignUp() {
     register,
     control,
     handleSubmit,
+    setError,
     watch,
     formState: {errors, isValid},
   } = useForm<FormFields>({
@@ -113,13 +115,19 @@ function SignUp() {
     return null;
   }, [avatarFile]);
 
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
+
   const onSubmit: SubmitHandler<FormFields> = values => {
     const payload: SignUpBody = {
       dto: {
         email: values.email,
         password: values.password,
         fullName: values.fullName,
-        currencyCode: values.currencyCode,
+        currencyCode: values.currencyCode as AuthRequestDTOCurrencyCode,
       },
       avatar: values.avatar?.[0],
     };
@@ -130,6 +138,14 @@ function SignUp() {
         onSuccess: () => {
           toast.success(t('auth.signUpSuccess'));
           setTimeout(() => setIsModal(true), 2000);
+        },
+        onError: (error: any) => {
+          if (error?.response?.status === 409) {
+            setError('email', {message: t('auth.emailExists')});
+            toast.error(t('auth.emailExists'));
+          } else {
+            toast.error(t('common.error'));
+          }
         },
       },
     );
@@ -144,7 +160,7 @@ function SignUp() {
     >
       <div
         className={cn(
-          'sm:absolute right-1/2 z-50 top-1/2 flex h-full w-120 -translate-y-1/2 flex-col items-start gap-3.5 rounded-[10px] px-12.5 py-29.5 overflow-y-auto',
+          'sm:absolute sm:right-1/2 z-50 sm:top-1/2 flex h-full w-120 sm:-translate-y-1/2 flex-col items-start gap-3.5 rounded-[10px] px-12.5 py-29.5 overflow-y-auto',
           'border border-white/[0.14] backdrop-blur-lg',
           'bg-linear-to-b from-[rgba(11,21,20,0.03)] via-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)]',
           'shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)]',
@@ -307,11 +323,11 @@ function SignUp() {
       </div>
 
       <div
-        className="absolute bottom-10 right-10 z-10 flex flex-col items-start justify-center rounded-[10px] px-5 py-4 backdrop-blur-lg shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_rgba(0,0,0,0.2)]
-                'border border-white/[0.14] backdrop-blur-lg',
-                'bg-linear-to-b from-[rgba(11,21,20,0.03)] via-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)]',
-                'shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)]',
-                '[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_0_rgba(0,0,0,0.2)]'"
+        className="hidden sm:flex absolute bottom-10 right-10 z-10 flex flex-col items-start justify-center rounded-[10px] px-5 py-4 backdrop-blur-lg shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_rgba(0,0,0,0.2)]
+        'border border-white/[0.14] backdrop-blur-lg',
+        'bg-linear-to-b from-[rgba(11,21,20,0.03)] via-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)]',
+        'shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)]',
+        '[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_0_rgba(0,0,0,0.2)]'"
       >
         <p className="text-[16px] leading-[1.167] text-foreground">
           {t('auth.haveAccount')}

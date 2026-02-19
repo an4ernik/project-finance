@@ -7,12 +7,15 @@
  */
 
 export * from './authRequestDTO';
+export * from './authRequestDTOCurrencyCode';
 export * from './authResponseDTO';
+export * from './authResponseDTOCurrencyCode';
 export * from './jwtResponseDTO';
 export * from './loginRequestDto';
 export * from './problemDetail';
 export * from './problemDetailProperties';
 export * from './refreshTokenRequest';
+export * from './requestUpdateUserEmailDTO';
 export * from './resetPasswordDTO';
 export * from './resetPasswordParams';
 export * from './responseUserProfileDTO';
@@ -20,4 +23,6 @@ export * from './sendResetPasswordTokenParams';
 export * from './signUpBody';
 export * from './updateMeBody';
 export * from './updateUserProfileDTO';
+export * from './updateUserProfileDTOCurrencyCode';
+export * from './verifyEmailParams';
 export * from './verifyTokenParams';
