@@ -31,7 +31,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="flex flex-col gap-1.5 items-start h-16">
         {label && (
-          <label className="text-[16px] leading-[1.167] dark:text-[#bfd9d2]">
+          <label className="text-[16px] leading-[1.167] text-muted-foreground">
             {label}
           </label>
         )}
@@ -43,22 +43,22 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               isPassword &&
                 'backdrop-blur-[7px] shadow-[0px_14px_26px_0px_rgba(0,0,0,0.35)] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_14px_26px_0px_rgba(0,0,0,0.35)]',
               error
-                ? 'border-[#ce0000]'
+                ? 'border-destructive'
                 : isPassword
                   ? 'border-white/65'
                   : cn(
                       'border-white/[0.14]',
-                      'hover:border-[#bfd9d2] hover:shadow-[0px_4px_4px_0px_rgba(75,75,75,0.35)] hover:backdrop-blur-[7px] hover:[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_4px_4px_0px_rgba(75,75,75,0.35)]',
-                      'focus-within:border-[#02a078] focus-within:backdrop-blur-[7px]',
+                      'hover:border-muted-foreground hover:shadow-[0px_4px_4px_0px_rgba(75,75,75,0.35)] hover:backdrop-blur-[7px] hover:[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_4px_4px_0px_rgba(75,75,75,0.35)]',
+                      'focus-within:border-primary focus-within:backdrop-blur-[7px]',
                     ),
             )}
           >
-            {icon && <div className="shrink-0 dark:text-[#bfd9d2]">{icon}</div>}
+            {icon && <div className="shrink-0 text-muted-foreground">{icon}</div>}
             <input
               ref={ref}
               type={inputType}
               className={cn(
-                'h-full w-full flex-1 bg-transparent text-[16px] leading-[1.167] dark:text-[#eaf6f3] placeholder:dark:text-[#bfd9d2]',
+                'h-full w-full flex-1 bg-transparent text-[16px] leading-[1.167] text-foreground placeholder:text-muted-foreground',
                 'border-0 p-0 outline-none ring-0 focus:outline-none focus:ring-0',
                 className,
               )}
@@ -68,7 +68,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="shrink-0 dark:text-[#bfd9d2] transition-colors hover:dark:text-[#eaf6f3]"
+                className="shrink-0 text-muted-foreground transition-colors hover:text-foreground"
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
               >
                 {showPassword ? (
@@ -80,7 +80,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             )}
           </div>
           {errorMessage && (
-            <p className="text-[10px] leading-[1.167] text-[#ce0000] min-h-2.75">
+            <p className="text-[10px] leading-[1.167] text-destructive min-h-2.75">
               {errorMessage}
             </p>
           )}

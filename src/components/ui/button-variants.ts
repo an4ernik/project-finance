@@ -19,14 +19,14 @@ export const buttonVariants = ({
 }: ButtonVariantsProps = {}) => {
   const variantClasses = {
     primary:
-      'border-white/65 bg-linear-to-b from-[rgba(49,95,85,0.55)] to-[rgba(49,95,85,0.18)] backdrop-blur-[7px] shadow-[0px_14px_26px_0px_rgba(0,0,0,0.35)] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_14px_26px_0px_rgba(0,0,0,0.35)] text-[#eaf6f3] hover:opacity-90 active:opacity-80',
+      'border-transparent bg-[var(--light-btn-bg)] text-white dark:border-white/65 dark:bg-linear-to-b dark:from-[rgba(49,95,85,0.55)] dark:to-[rgba(49,95,85,0.18)] dark:backdrop-blur-[7px] dark:[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_14px_26px_0px_rgba(0,0,0,0.35)] dark:text-foreground hover:opacity-90 active:opacity-80',
     secondary:
-      'border-transparent bg-transparent text-[#02a078] hover:opacity-80 active:opacity-70',
+      'border-transparent bg-transparent text-[var(--light-btn-bg)] dark:text-primary hover:opacity-80 active:opacity-70',
     default:
-      'border-white/65 bg-linear-to-b from-[rgba(49,95,85,0.55)] to-[rgba(49,95,85,0.18)] backdrop-blur-[7px] shadow-[0px_14px_26px_0px_rgba(0,0,0,0.35)] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_14px_26px_0px_rgba(0,0,0,0.35)] text-[#eaf6f3] hover:opacity-90 active:opacity-80',
+      'border-transparent bg-[var(--light-btn-bg)] text-white dark:border-white/65 dark:bg-linear-to-b dark:from-[rgba(49,95,85,0.55)] dark:to-[rgba(49,95,85,0.18)] dark:backdrop-blur-[7px] dark:[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_14px_26px_0px_rgba(0,0,0,0.35)] dark:text-foreground hover:opacity-90 active:opacity-80',
     outline:
-      'border-white/[0.14] bg-transparent text-[#eaf6f3] hover:border-white/65 hover:bg-white/5',
-    ghost: 'border-transparent bg-transparent text-[#eaf6f3] hover:bg-white/5',
+      'border-[var(--light-btn-bg)] bg-transparent text-[var(--light-btn-bg)] dark:border-white/[0.14] dark:text-foreground hover:opacity-90 dark:hover:border-white/65 dark:hover:bg-white/5',
+    ghost: 'border-transparent bg-transparent text-foreground hover:bg-[var(--light-btn-bg)]/10 dark:hover:bg-white/5',
   };
 
   const sizeClasses = {

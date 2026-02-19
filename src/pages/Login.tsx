@@ -83,22 +83,43 @@ function Login() {
   };
 
   return (
-    <div className="relative flex h-screen w-full overflow-hidden dark:bg-[#0b1514]">
-      <div className="absolute -left-57.25 -top-98.75 flex h-371.75 w-341.25 items-center justify-center">
-        <img
-          src={theme === 'dark' ? moneyBg : moneyBgLight}
-          alt=""
-          className="h-309.25 w-206.25 rotate-33 object-cover opacity-20"
-        />
-      </div>
+    <div className="relative flex h-screen w-full overflow-hidden bg-red">
+      {theme === 'dark' && (
+        <div className="absolute -left-57.25 -top-98.75 flex h-371.75 w-341.25 items-center justify-center">
+          <img
+            src={moneyBg}
+            alt=""
+            className="h-309.25 w-206.25 rotate-33 object-cover opacity-50"
+          />
+        </div>
+      )}
+
+      {theme === 'light' && (
+        <>
+          <div className="absolute left-0 top-0 h-screen w-full pointer-events-none overflow-hidden">
+            <img
+              src={moneyBgLight}
+              alt=""
+              className="w-290 object-cover object-center opacity-70"
+            />
+          </div>
+          <div
+            className="absolute inset-0 pointer-events-none"
+            style={{
+              background:
+                'linear-gradient(37deg, rgba(255,255,255,0.8) 0.6%, rgba(255,255,255,0.16) 20%), linear-gradient(122deg, rgba(255,255,255,0.1) 20%, rgb(255,255,255) 70%)',
+            }}
+          />
+        </>
+      )}
 
       <div className="absolute bottom-10 left-10 z-10 flex flex-col items-start justify-center rounded-[10px] px-5 py-4 backdrop-blur-lg shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_rgba(0,0,0,0.2)]">
-        <p className="text-[16px] leading-[1.167] dark:text-[#eaf6f3]">
+        <p className="text-[16px] leading-[1.167] text-foreground">
           {t('login.noAccount')}
         </p>
         <Link
           to="/signup"
-          className="flex items-center gap-1.5 text-[24px] font-semibold leading-[1.167] tracking-[-1.5px] text-[#315e55] transition-colors hover:text-[#3d7568]"
+          className="flex items-center gap-1.5 text-[24px] font-semibold leading-[1.167] tracking-[-1.5px] text-(--accent-interactive) transition-colors hover:text-primary"
         >
           {t('login.signUpLink')}
           <ChevronRight className="size-4" />
@@ -107,7 +128,7 @@ function Login() {
 
       <div
         className={cn(
-          'absolute right-40 top-0 flex h-full w-133.5 flex-col items-start justify-center gap-7 rounded-[10px] px-12.5',
+          'absolute right-67 top-0 flex h-full w-133.5 flex-col items-start justify-center gap-7 rounded-[10px] px-12.5',
           'border border-white/[0.14] backdrop-blur-lg',
           'bg-linear-to-b from-[rgba(11,21,20,0.03)] via-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)]',
           'shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)]',
@@ -115,10 +136,10 @@ function Login() {
         )}
       >
         <div className="flex flex-col gap-3.5">
-          <h1 className="text-[34px] font-bold leading-[1.167] tracking-[-1.5px] dark:text-[#eaf6f3]">
+          <h1 className="text-[34px] font-bold leading-[1.167] tracking-[-1.5px] text-foreground">
             {t('login.title')}
           </h1>
-          <p className="text-[20px] font-medium leading-[1.167] dark:text-[#bfd9d2]">
+          <p className="text-[20px] font-medium leading-[1.167] text-muted-foreground">
             {t('login.subtitle')}
           </p>
         </div>
@@ -158,21 +179,22 @@ function Login() {
               >
                 <span
                   className={cn(
-                    'flex size-4.25 items-center justify-center rounded-full border border-[#bfd9d2] transition-colors',
-                    rememberMe && 'border-[#315e55] bg-[#315e55]',
+                    'flex size-4.25 items-center justify-center rounded-full border border-muted-foreground transition-colors',
+                    rememberMe &&
+                      'border-(--accent-interactive) bg-(--accent-interactive)',
                   )}
                 >
                   {rememberMe && (
-                    <span className="size-1.75 rounded-full dark:bg-[#eaf6f3]" />
+                    <span className="size-1.75 rounded-full bg-foreground" />
                   )}
                 </span>
-                <span className="text-[16px] leading-[1.167] dark:text-[#eaf6f3]">
+                <span className="text-[16px] leading-[1.167] text-foreground">
                   {t('login.rememberMe')}
                 </span>
               </button>
               <Link
                 to="/forgot-password"
-                className="text-[16px] leading-[1.167] dark:text-[#eaf6f3] transition-colors dark:hover:text-[#bfd9d2]"
+                className="text-[16px] leading-[1.167] text-foreground transition-colors hover:text-muted-foreground"
               >
                 {t('login.forgotPassword')}
               </Link>

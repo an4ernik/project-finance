@@ -44,7 +44,7 @@ function SignUp() {
   const {t} = useTranslation();
   const navigate = useNavigate();
   const {mutate, isPending} = useSignUp();
-  const [isModal, setIsModal] = useState<Boolean>(false);
+  const [isModal, setIsModal] = useState<boolean>(false);
 
   const schema = useMemo(
     () =>
@@ -144,7 +144,7 @@ function SignUp() {
     >
       <div
         className={cn(
-          'sm:absolute right-1/2 z-50 top-1/2 flex h-full w-[480px] -translate-y-1/2 flex-col items-start gap-[14px] rounded-[10px] px-[50px] py-[118px] overflow-y-auto',
+          'sm:absolute right-1/2 z-50 top-1/2 flex h-full w-120 -translate-y-1/2 flex-col items-start gap-3.5 rounded-[10px] px-12.5 py-29.5 overflow-y-auto',
           'border border-white/[0.14] backdrop-blur-lg',
           'bg-linear-to-b from-[rgba(11,21,20,0.03)] via-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)]',
           'shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)]',
@@ -152,21 +152,11 @@ function SignUp() {
         )}
       >
         <div className="flex flex-col">
-          <div className="flex flex-col justify-between gap-[28px]">
-            <h1
-              className={cn(
-                'text-[34px] font-bold leading-[1.167] tracking-[-1.5px]',
-                'dark:text-[#eaf6f3]',
-              )}
-            >
+          <div className="flex flex-col justify-between gap-7">
+            <h1 className="text-[34px] font-bold leading-[1.167] tracking-[-1.5px] text-foreground">
               {t('auth.title')}
             </h1>
-            <div
-              className={cn(
-                'flex flex-col justify-between gap-1.5',
-                'dark:text-[#bfd9d2]',
-              )}
-            >
+            <div className="flex flex-col justify-between gap-1.5 text-muted-foreground">
               <p className="text-[20px] font-medium leading-[1.167]">
                 {t('auth.subtitle')}
               </p>
@@ -178,7 +168,7 @@ function SignUp() {
         </div>
 
         <form
-          className="flex w-full h-[623px] flex-col"
+          className="flex w-full h-155.75 flex-col"
           onSubmit={handleSubmit(onSubmit)}
         >
           <FieldGroup className="gap-0">
@@ -300,7 +290,7 @@ function SignUp() {
 
           <Button
             type="submit"
-            className="w-full mt-[34px] py-6 text-lg"
+            className="w-full mt-8.5 py-6 text-lg"
             disabled={!isValid || isPending}
           >
             {isPending ? t('common.loading') : t('signUp')}
@@ -312,7 +302,7 @@ function SignUp() {
         <img
           src={theme === 'dark' ? franklinDark : franklinLight}
           alt="Franklin"
-          className="max-h-[480px] w-auto"
+          className="max-h-120 w-auto"
         />
       </div>
 
@@ -323,12 +313,12 @@ function SignUp() {
                 'shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)]',
                 '[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_0_rgba(0,0,0,0.2)]'"
       >
-        <p className="text-[16px] leading-[1.167] dark:text-[#eaf6f3]">
+        <p className="text-[16px] leading-[1.167] text-foreground">
           {t('auth.haveAccount')}
         </p>
         <Link
           to="/login"
-          className="flex items-center gap-1.5 text-[24px] font-semibold leading-[1.167] tracking-[-1.5px] text-[#315e55] transition-colors hover:text-[#3d7568]"
+          className="flex items-center gap-1.5 text-[24px] font-semibold leading-[1.167] tracking-[-1.5px] text-(--accent-interactive) transition-colors hover:text-primary"
         >
           {t('auth.logInLink')}
           <ChevronRight className="size-4" />

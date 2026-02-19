@@ -24,11 +24,11 @@ export const ResetConfirmationModal = ({
   return (
     <div className="flex w-full flex-col gap-8.5">
       <div className="flex flex-col gap-9.5">
-        <h1 className="text-center text-[34px] font-bold leading-[1.167] tracking-[-1.5px] text-[#eaf6f3]">
+        <h1 className="text-center text-[34px] font-bold leading-[1.167] tracking-[-1.5px] text-foreground">
           {t('changePassword.title')}
         </h1>
 
-        <div className="flex flex-col gap-3 text-[16px] leading-[1.167] text-[#bfd9d2]">
+        <div className="flex flex-col gap-3 text-[16px] leading-[1.167] text-muted-foreground">
           <p>{t('changePassword.subtitle')}</p>
           <p>{t('changePassword.emailFolder')}</p>
         </div>
@@ -41,7 +41,7 @@ export const ResetConfirmationModal = ({
           'bg-linear-to-b from-[rgba(49,95,85,0.55)] to-[rgba(49,95,85,0.18)]',
           'backdrop-blur-[7px] shadow-[0px_14px_26px_0px_rgba(0,0,0,0.35)]',
           '[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_14px_26px_0px_rgba(0,0,0,0.35)]',
-          'text-[16px] font-medium leading-[1.167] tracking-[-1.5px] text-[#eaf6f3]',
+          'text-[16px] font-medium leading-[1.167] tracking-[-1.5px] text-foreground',
           'transition-opacity hover:opacity-90 cursor-pointer',
         )}
       >
@@ -59,12 +59,12 @@ export const ResetConfirmationModal = ({
             : 'border-white/65 cursor-pointer hover:opacity-90 bg-linear-to-b from-[rgba(49,95,85,0.55)] to-[rgba(49,95,85,0.18)]',
         )}
       >
-        <p className="text-[14px] leading-[1.167] tracking-[-1.5px] text-[#eaf6f3]">
+        <p className="text-[14px] leading-[1.167] tracking-[-1.5px] text-foreground">
           {isResendDisabled
             ? t('changePassword.retry')
             : t('changePassword.resendNow')}
         </p>
-        <span className="text-[24px] font-semibold leading-[1.167] tracking-[-1.5px] text-[#315e55]">
+        <span className="text-[24px] font-semibold leading-[1.167] tracking-[-1.5px] text-[var(--accent-interactive)]">
           {isResendDisabled ? formatTime(timeLeft) : ''}
         </span>
       </button>

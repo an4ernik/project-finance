@@ -112,7 +112,7 @@ function ResetPassword() {
   };
 
   return (
-    <div className="relative flex h-screen w-full overflow-hidden bg-[#0b1514]">
+    <div className="relative flex h-screen w-full overflow-hidden bg-background">
       <div className="absolute top-0 left-0 flex w-full h-dvh items-center justify-center">
         <div>
           <img src={vectors} alt="" className="w-full h-dvh object-cover" />
@@ -134,10 +134,10 @@ function ResetPassword() {
           className="flex w-full flex-col gap-10.75"
         >
           <div className="flex flex-col gap-9.5">
-            <p className="text-[34px] font-bold leading-[1.167] tracking-[-1.5px] text-[#eaf6f3]">
+            <p className="text-[34px] font-bold leading-[1.167] tracking-[-1.5px] text-foreground">
               {t('resetPassword.title')}
             </p>
-            <p className="text-[20px] font-medium leading-[1.167] text-[#bfd9d2] whitespace-pre-wrap">
+            <p className="text-[20px] font-medium leading-[1.167] text-muted-foreground whitespace-pre-wrap">
               {t('resetPassword.subtitle')}
             </p>
           </div>
@@ -145,10 +145,10 @@ function ResetPassword() {
           <div className="flex w-full flex-col gap-1">
             <div className="flex flex-col gap-1.75">
               <div className="flex items-center justify-between w-full">
-                <label className="text-[16px] leading-[1.167] text-[#bfd9d2]">
+                <label className="text-[16px] leading-[1.167] text-muted-foreground">
                   {t('resetPassword.newPassword')}
                 </label>
-                <p className="text-[10px] leading-[1.167] text-[rgba(127,158,151,0.8)]">
+                <p className="text-[10px] leading-[1.167] text-(--text-tertiary)/80">
                   {t('resetPassword.passwordRules')}
                 </p>
               </div>

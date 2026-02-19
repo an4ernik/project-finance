@@ -107,7 +107,7 @@ function ForgotPassword() {
     );
   };
   return (
-    <div className="relative flex h-screen w-full overflow-hidden bg-[#0b1514]">
+    <div className="relative flex h-screen w-full overflow-hidden bg-background">
       <div className="absolute top-0 left-0 flex w-full h-dvh items-center justify-center">
         <div>
           <img src={vectors} alt="" className="w-full h-dvh object-cover" />
@@ -129,14 +129,14 @@ function ForgotPassword() {
             <div className="flex w-full flex-col gap-5.5">
               <div className="flex flex-col gap-9.5">
                 <div className="flex flex-col gap-2">
-                  <p className="text-[34px] font-bold leading-[1.167] tracking-[-1.5px] text-[#eaf6f3]">
+                  <p className="text-[34px] font-bold leading-[1.167] tracking-[-1.5px] text-foreground">
                     {t('forgotPassword.title1')}
                   </p>
-                  <p className="text-[34px] font-bold leading-[1.167] tracking-[-1.5px] text-[#eaf6f3]">
+                  <p className="text-[34px] font-bold leading-[1.167] tracking-[-1.5px] text-foreground">
                     {t('forgotPassword.title2')}
                   </p>
                 </div>
-                <p className="text-[20px] font-medium leading-[1.167] text-[#bfd9d2] whitespace-pre-wrap">
+                <p className="text-[20px] font-medium leading-[1.167] text-muted-foreground whitespace-pre-wrap">
                   {t('forgotPassword.subtitle')}
                 </p>
               </div>
@@ -166,12 +166,12 @@ function ForgotPassword() {
             </div>
 
             <div className="flex w-full items-center justify-center gap-7">
-              <p className="text-[14px] leading-[1.167] tracking-[-1.5px] text-[rgba(127,158,151,0.8)]">
+              <p className="text-[14px] leading-[1.167] tracking-[-1.5px] text-[var(--text-tertiary)]/80">
                 {t('forgotPassword.rememberPassword')}
               </p>
               <Link
                 to="/login"
-                className="flex items-center gap-1.5 text-[16px] font-semibold leading-[1.167] tracking-[-1.5px] text-[#02a078] transition-colors hover:opacity-80"
+                className="flex items-center gap-1.5 text-[16px] font-semibold leading-[1.167] tracking-[-1.5px] text-primary transition-colors hover:opacity-80"
                 style={{
                   backgroundImage:
                     'linear-gradient(0deg, rgba(2, 160, 120, 0.3) 0%, rgba(2, 160, 120, 0.5) 20.192%, rgba(2, 160, 120, 0.8) 66.346%, rgb(2, 160, 120) 100%)',
