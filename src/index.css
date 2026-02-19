@@ -22,6 +22,7 @@
   --light-text-tertiary: #6f7e7c;
   --light-accent: #00aa85;
   --light-btn-bg: #005e46;
+  --light-btn-bg-full: radial-gradient(53.34% 54.31% at 46.66% 32.95%, rgba(255, 255, 255, 0.20) 0%, rgba(153, 153, 153, 0.00) 100%), #005e46;
 }
 
 @theme inline {

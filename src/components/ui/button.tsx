@@ -26,9 +26,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const variantClasses = {
       primary: cn(
         // light
-        'border-transparent bg-[var(--light-btn-bg)] text-white',
+        'border-white/65 [background:var(--light-btn-bg-full)] text-[#eaf6f3]',
+        'backdrop-blur-[5px]',
+        '[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.3),0px_10px_26px_0px_rgba(0,0,0,0.2)]',
         // dark
-        'dark:border-white/65 dark:bg-linear-to-b dark:from-[rgba(49,95,85,0.55)] dark:to-[rgba(49,95,85,0.18)]',
+        'dark:[background:linear-gradient(to_bottom,rgba(49,95,85,0.55),rgba(49,95,85,0.18))]',
         'dark:backdrop-blur-[7px]',
         'dark:[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_14px_26px_0px_rgba(0,0,0,0.35)]',
         'dark:text-foreground',
@@ -42,9 +44,11 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
       ),
       default: cn(
         // light
-        'border-transparent bg-[var(--light-btn-bg)] text-white',
+        'border-white/65 [background:var(--light-btn-bg-full)] text-[#eaf6f3]',
+        'backdrop-blur-[5px]',
+        '[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.3),0px_10px_26px_0px_rgba(0,0,0,0.2)]',
         // dark
-        'dark:border-white/65 dark:bg-linear-to-b dark:from-[rgba(49,95,85,0.55)] dark:to-[rgba(49,95,85,0.18)]',
+        'dark:[background:linear-gradient(to_bottom,rgba(49,95,85,0.55),rgba(49,95,85,0.18))]',
         'dark:backdrop-blur-[7px]',
         'dark:[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_14px_26px_0px_rgba(0,0,0,0.35)]',
         'dark:text-foreground',

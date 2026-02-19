@@ -151,9 +151,9 @@ function Login() {
           <div className="flex flex-col">
             <div className="flex flex-col gap-5 mb-6">
               <Input
+                type="email"
                 label={t('login.email')}
                 icon={<Mail className="size-4" />}
-                type="email"
                 placeholder={t('login.emailPlaceholder')}
                 error={!!errors.email}
                 errorMessage={errors.email?.message}
@@ -194,7 +194,7 @@ function Login() {
               </button>
               <Link
                 to="/forgot-password"
-                className="text-[16px] leading-[1.167] text-foreground transition-colors hover:text-muted-foreground"
+                className="text-[16px] leading-[1.167] text-(--light-accent) transition-colors"
               >
                 {t('login.forgotPassword')}
               </Link>

@@ -40,20 +40,18 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             className={cn(
               'flex h-10 items-center gap-2.5 rounded-[10px] border px-2.5 transition-all duration-200',
               'bg-linear-to-b from-[rgba(11,21,20,0.03)] from-[1.442%] via-[rgba(49,95,85,0.1)] via-[50.481%] to-[rgba(144,208,182,0.05)] to-[94.712%]',
-              isPassword &&
-                'backdrop-blur-[7px] shadow-[0px_14px_26px_0px_rgba(0,0,0,0.35)] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_14px_26px_0px_rgba(0,0,0,0.35)]',
+              'backdrop-blur-md dark:backdrop-blur-none',
+              '[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.35),0px_4px_4px_0px_rgba(75,75,75,0.25)] dark:shadow-none',
+              !error &&
+                'hover:border-muted-foreground focus-within:border-primary',
               error
                 ? 'border-destructive'
-                : isPassword
-                  ? 'border-white/65'
-                  : cn(
-                      'border-white/[0.14]',
-                      'hover:border-muted-foreground hover:shadow-[0px_4px_4px_0px_rgba(75,75,75,0.35)] hover:backdrop-blur-[7px] hover:[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_4px_4px_0px_rgba(75,75,75,0.35)]',
-                      'focus-within:border-primary focus-within:backdrop-blur-[7px]',
-                    ),
+                : 'border-[rgba(46,45,45,0.14)] dark:border-white/[0.14]',
             )}
           >
-            {icon && <div className="shrink-0 text-muted-foreground">{icon}</div>}
+            {icon && (
+              <div className="shrink-0 text-muted-foreground">{icon}</div>
+            )}
             <input
               ref={ref}
               type={inputType}
