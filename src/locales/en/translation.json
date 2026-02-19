@@ -126,5 +126,70 @@
     "retry": "Resend available in",
     "resendNow": "Resend link",
     "loading": "Loading..."
+  },
+  "landing": {
+    "nav": {
+      "about": "About the service",
+      "howItWorks": "How it works",
+      "security": "Security"
+    },
+    "hero": {
+      "word1": "Your",
+      "word2": "BUDGET-",
+      "word3": "TRANSPARENT",
+      "tagline": "See. Understand. Manage.",
+      "subtitle": "One space for all your finances.",
+      "cta": "Start controlling your budget",
+      "ctaNote1": "Free.",
+      "ctaNote2": "Start today"
+    },
+    "about": {
+      "titleAccent": "Finance,",
+      "titlePlain": "that becomes clear",
+      "subtitle": "Created for those who want to see the real picture of their finances — every day.",
+      "f1Title": "All your finances in one place",
+      "f1Desc": "Expenses, income, and goals — everything in a single space.",
+      "f2Title": "Full transparency",
+      "f2Desc": "See where your money goes. Know how much you have left.",
+      "f3Title": "Effortless control",
+      "f3Desc": "Automatic categorization, clear analytics, precise numbers.",
+      "f4Title": "Secure and under your control",
+      "f4Desc": "Your data is protected. Stored securely, only you."
+    },
+    "howItWorks": {
+      "titleWord1": "A simple path",
+      "titleWord2": "to budget",
+      "titleWord3": "control",
+      "subtitle": "No complex setup. No unnecessary steps. Everything — step by step.",
+      "note": "Transparent. Clear. Under your control.",
+      "s1Title": "Create an account",
+      "s1Desc": "Registration takes just a few minutes. No cards. No complicated forms.",
+      "s2Title": "Add your finances",
+      "s2Desc": "Income, expenses, recurring bills, and goals — manually or automatically.",
+      "s3Title": "See the real picture",
+      "s3Desc": "Analytics that shows your income, expenses and financial goals.",
+      "s4Title": "Manage and plan",
+      "s4Desc": "Adjust expenses, set goals, and monitor your budget daily.",
+      "s5Title": "Automate routine tasks",
+      "s5Desc": "Use manual input, integrations and smart reminders."
+    },
+    "security": {
+      "titleWord1": "Your finances —",
+      "titleWord2": "for your eyes only",
+      "subtitle": "We protect your data so you never have to worry about it.",
+      "i1Title": "Your data is protected",
+      "i1Desc": "All financial information is stored securely and encrypted.",
+      "i2Title": "Access only by you",
+      "i2Desc": "Only you have access.",
+      "i3Title": "No third-party services",
+      "i3Desc": "We never share your data with advertisers or third parties.",
+      "i4Title": "Full control at any time",
+      "i4Desc": "Change or delete your data anytime."
+    },
+    "footer": {
+      "rights": "All rights reserved",
+      "question": "Have questions?",
+      "contact": "Write to us"
+    }
   }
 }

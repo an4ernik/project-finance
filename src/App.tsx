@@ -1,6 +1,7 @@
 import { Routes, Route } from "react-router-dom"
 import { Toaster } from "sonner"
 import Home from "./pages/Home"
+import Landing from "./pages/Landing"
 import SignUp from "./pages/SignUp"
 import Login from "./pages/Login"
 import VerifyEmailPage from "@/pages/VerifyEmailPage"
@@ -15,7 +16,8 @@ function App() {
     <ThemeProvider>
       <Toaster />
       <Routes>
-        <Route path="/" element={<Home />} />
+        <Route path="/" element={<Landing />} />
+        <Route path="/home" element={<Home />} />
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/verify" element={<VerifyEmailPage />} />
