@@ -83,13 +83,13 @@ function Login() {
   };
 
   return (
-    <div className="relative flex h-screen w-full overflow-hidden bg-red">
+    <div className="relative flex h-screen w-full overflow-hidden ">
       {theme === 'dark' && (
-        <div className="absolute -left-57.25 -top-98.75 flex h-371.75 w-341.25 items-center justify-center">
+        <div className="absolute -left-20.25 -top-98.75 flex h-371.75 w-341.25 items-center justify-center">
           <img
             src={moneyBg}
             alt=""
-            className="h-309.25 w-206.25 rotate-33 object-cover opacity-50"
+            className="h-309.25 w-250 rotate-33 object-cover opacity-30"
           />
         </div>
       )}
