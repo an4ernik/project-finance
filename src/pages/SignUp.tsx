@@ -28,6 +28,7 @@ import franklinLight from '@/assets/franklin-light.png';
 import franklinDark from '@/assets/franklin-dark.png';
 import {useTheme} from '@/shared/providers/ThemeProvider';
 import {useSignUp} from '@/shared/api/generated/authentication/authentication';
+import {AuthRequestDTOCurrencyCode} from '@/shared/api/models/authRequestDTOCurrencyCode';
 import {type SignUpBody} from '@/shared/api/models';
 import {cn} from '@/lib/utils';
 
@@ -119,7 +120,7 @@ function SignUp() {
         email: values.email,
         password: values.password,
         fullName: values.fullName,
-        currencyCode: values.currencyCode,
+        currencyCode: values.currencyCode as AuthRequestDTOCurrencyCode,
       },
       avatar: values.avatar?.[0],
     };
@@ -308,10 +309,10 @@ function SignUp() {
 
       <div
         className="absolute bottom-10 right-10 z-10 flex flex-col items-start justify-center rounded-[10px] px-5 py-4 backdrop-blur-lg shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_rgba(0,0,0,0.2)]
-                'border border-white/[0.14] backdrop-blur-lg',
-                'bg-linear-to-b from-[rgba(11,21,20,0.03)] via-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)]',
-                'shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)]',
-                '[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_0_rgba(0,0,0,0.2)]'"
+        'border border-white/[0.14] backdrop-blur-lg',
+        'bg-linear-to-b from-[rgba(11,21,20,0.03)] via-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)]',
+        'shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)]',
+        '[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_0_rgba(0,0,0,0.2)]'"
       >
         <p className="text-[16px] leading-[1.167] text-foreground">
           {t('auth.haveAccount')}

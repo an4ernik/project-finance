@@ -5,8 +5,11 @@
  * REST API Documentation for MT Service
  * OpenAPI spec version: 1.0
  */
+import type { UpdateUserProfileDTOCurrencyCode } from './updateUserProfileDTOCurrencyCode';
 
 export interface UpdateUserProfileDTO {
   /** User's full name */
   fullName?: string;
+  /** User's main currency (ISO 4217) */
+  currencyCode?: UpdateUserProfileDTOCurrencyCode;
 }

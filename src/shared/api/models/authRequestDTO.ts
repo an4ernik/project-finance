@@ -5,6 +5,7 @@
  * REST API Documentation for MT Service
  * OpenAPI spec version: 1.0
  */
+import type { AuthRequestDTOCurrencyCode } from './authRequestDTOCurrencyCode';
 
 /**
  * User sign up request
@@ -25,10 +26,6 @@ export interface AuthRequestDTO {
    * @minLength 1
    */
   fullName: string;
-  /**
-   * User's main currency (ISO 4217)
-   * @minLength 1
-   * @pattern ^[A-Z]{3}$
-   */
-  currencyCode: string;
+  /** User's main currency (ISO 4217) */
+  currencyCode: AuthRequestDTOCurrencyCode;
 }

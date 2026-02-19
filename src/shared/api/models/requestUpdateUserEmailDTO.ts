@@ -5,9 +5,11 @@
  * REST API Documentation for MT Service
  * OpenAPI spec version: 1.0
  */
-import type { AuthRequestDTO } from './authRequestDTO';
 
-export type SignUpBody = {
-  dto: AuthRequestDTO;
-  avatar?: Blob;
-};
+/**
+ * Update user email request
+ */
+export interface RequestUpdateUserEmailDTO {
+  /** New email address */
+  email?: string;
+}
