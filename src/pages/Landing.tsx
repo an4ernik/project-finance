@@ -15,6 +15,10 @@ import {
 } from '@/components/landing/LandingComponents';
 import {getFeatures, getSteps, getSecurity} from '@/lib/landing-data';
 
+//  TODO: cursor-pointer on interactive elements 
+//        routing to the / page on the top OR creating a 'go up' button
+
+
 function Landing() {
   const navigate = useNavigate();
   const {theme} = useTheme();
@@ -40,24 +44,24 @@ function Landing() {
             <div className="flex flex-col gap-7">
               <div>
                 <div className="flex items-baseline gap-3.25">
-                  <span className="font-thin text-[80px] leading-none tracking-[1px] text-[#0b1514] dark:text-[#bfd9d2]">
+                  <span className="font-mplus font-thin text-[80px] leading-none tracking-[1px] text-[#0b1514] dark:text-[#bfd9d2]">
                     {t('landing.hero.word1')}
                   </span>
-                  <span className="font-normal text-[80px] leading-none tracking-[-2px] text-[#00aa85]">
+                  <span className="font-unbounded font-extralight text-[80px] leading-none tracking-[-2px] text-[#00aa85]">
                     {t('landing.hero.word2')}
                   </span>
                 </div>
                 <div className="relative">
-                  <span className="font-extralight text-[90px] leading-none tracking-[6px] text-[#0b1514] dark:text-[#eaf6f3]">
+                  <span className="font-unbounded font-extralight text-[90px] leading-none tracking-[6px] text-[#0b1514] dark:text-[#eaf6f3]">
                     {t('landing.hero.word3')}
                   </span>
                 </div>
               </div>
               <div className="flex flex-col gap-7">
-                <p className="font-medium text-[24px] leading-[1.167] tracking-[1px] text-[#0b1514] dark:text-(--dark-text-secondary)">
+                <p className="font-bold text-[24px] leading-[1.167] tracking-[1px] text-[#0b1514] dark:text-(--dark-text-secondary)">
                   {t('landing.hero.tagline')}
                 </p>
-                <p className="font-sans text-[20px] leading-[1.167] tracking-[0.5px] text-[#3a4a48] dark:text-(--dark-text-tertiary)">
+                <p className="font-semibold text-[20px] leading-[1.167] tracking-[0.5px] text-[#3a4a48] dark:text-(--dark-text-tertiary)">
                   {t('landing.hero.subtitle')}
                 </p>
               </div>
@@ -78,7 +82,7 @@ function Landing() {
       <section id="about" className="min-h-screen">
         <div className="px-12.5 py-14">
           <div className="flex flex-col  gap-3">
-            <h2 className="flex gap-3.75 justify-end items-center font-extralight text-[70px] leading-none tracking-[-1.5px]">
+            <h2 className="flex gap-3.75 justify-end items-center font-unbounded font-extralight text-[70px] leading-none tracking-[-1.5px]">
               <span className="text-[#00aa85]">
                 {t('landing.about.titleAccent')}
               </span>
@@ -110,7 +114,7 @@ function Landing() {
         <div className="px-12.5 py-14">
           <div className="flex justify-between items-start mb-4">
             <div>
-              <h2 className="flex gap-3 items-center flex-wrap font-extralight text-[70px] leading-none tracking-[-1.5px]">
+              <h2 className="flex gap-3 items-center flex-wrap font-unbounded font-extralight text-[70px] leading-none tracking-[-1.5px]">
                 <span className="text-[#0b1514] dark:text-[#eaf6f3]">
                   {t('landing.howItWorks.titleWord1')}
                 </span>
@@ -157,7 +161,7 @@ function Landing() {
         <div className="px-12.5 py-14">
           <div className="flex justify-between items-start mb-28">
             <div className="flex w-full flex-col gap-5.5 items-end">
-              <h2 className="flex  gap-3.7 items-center font-extralight text-[60px] leading-none tracking-[-1.5px]">
+              <h2 className="flex  gap-3.7 items-center font-unbounded font-extralight text-[60px] leading-none tracking-[-1.5px]">
                 <span className="text-[#0b1514] dark:text-[#eaf6f3]">
                   {t('landing.security.titleWord1')}
                 </span>

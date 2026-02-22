@@ -2,7 +2,6 @@ import {cn} from '@/lib/utils';
 import {useTranslation} from 'react-i18next';
 import arrowLight from '@/assets/icons/arrow-light.svg';
 
-
 export function FeatureCard({
   number,
   title,
@@ -20,7 +19,7 @@ export function FeatureCard({
         </p>
       </div>
       <div className="flex flex-col gap-2.5 w-114.25">
-        <p className="font-medium text-[24px] leading-[1.167] tracking-[-1.5px] text-[#0b1514] dark:text-[#bfd9d2]">
+        <p className="font-semibold text-[24px] leading-[1.167] tracking-[-1.5px] text-[#0b1514] dark:text-[#bfd9d2]">
           {title}
         </p>
         <p className="text-[16px] leading-[1.167] text-[#6f7e7c] dark:text-[rgba(127,158,151,0.8)]">
@@ -30,8 +29,6 @@ export function FeatureCard({
     </div>
   );
 }
-
-
 
 export function HeroCta({onClick}: {onClick: () => void}) {
   const {t} = useTranslation();
@@ -65,18 +62,16 @@ export function SecurityItem({
         {number}
       </p>
       <div className="flex flex-col gap-5.25 w-89">
-        <p className="font-medium text-[30px] leading-[1.167] tracking-[-1.5px] text-[#0b1514] dark:text-[#eaf6f3]">
+        <p className="font-bold text-[30px] leading-[1.167] tracking-[-1.5px] text-[#0b1514] dark:text-[#eaf6f3]">
           {title}
         </p>
-        <p className="font-normal text-[20px] leading-[1.167] tracking-[-1.5px] text-[#6f7e7c] dark:text-[#7f9e97]">
+        <p className="font-semibold text-[20px] leading-[1.167] tracking-[-1.5px] text-[#6f7e7c] dark:text-[#7f9e97]">
           {description}
         </p>
       </div>
     </div>
   );
 }
-
-
 
 export function StepCard({
   number,
@@ -98,10 +93,10 @@ export function StepCard({
           : 'bg-white/80 dark:bg-[#193432] border border-[rgba(0,0,0,0.08)] dark:border-transparent',
       )}
     >
-      <div className="flex items-center justify-center py-2.5 h-29.75 w-30">
+      <div className="flex items-center py-2.5 h-29.75 w-30">
         <p
           className={cn(
-            'font-extralight text-[90px] leading-[1.167] tracking-[-1.5px]',
+            'font-thin text-[90px] leading-[1.167] tracking-[-1.5px]',
             accent ? 'text-[#eaf6f3]' : 'text-[#0b1514] dark:text-[#eaf6f3]',
           )}
         >
@@ -111,7 +106,7 @@ export function StepCard({
       <div className="flex flex-col gap-6 w-full">
         <p
           className={cn(
-            'font-medium text-[20px] leading-[1.167] tracking-[-1px]',
+            'font-semibold text-[20px] leading-[1.167] tracking-[-1px]',
             accent ? 'text-[#bfd9d2]' : 'text-[#0b1514] dark:text-[#bfd9d2]',
           )}
         >
