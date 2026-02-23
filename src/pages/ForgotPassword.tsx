@@ -166,7 +166,7 @@ function ForgotPassword() {
             </div>
 
             <div className="flex w-full items-center justify-center gap-7">
-              <p className="text-[14px] leading-[1.167] tracking-[-1.5px] text-[var(--text-tertiary)]/80">
+              <p className="text-[14px] leading-[1.167] tracking-[-1.5px] text-(--text-tertiary)/80">
                 {t('forgotPassword.rememberPassword')}
               </p>
               <Link

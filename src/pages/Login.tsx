@@ -88,13 +88,13 @@ function Login() {
   };
 
   return (
-    <div className="relative flex h-screen w-full overflow-hidden bg-red">
+    <div className="relative flex h-screen w-full overflow-hidden ">
       {theme === 'dark' && (
-        <div className="absolute -left-57.25 -top-98.75 flex h-371.75 w-341.25 items-center justify-center">
+        <div className="absolute -left-20.25 -top-98.75 flex h-371.75 w-341.25 items-center justify-center">
           <img
             src={moneyBg}
             alt=""
-            className="h-309.25 w-206.25 rotate-33 object-cover opacity-50"
+            className="h-309.25 w-250 rotate-33 object-cover opacity-30"
           />
         </div>
       )}
@@ -156,9 +156,9 @@ function Login() {
           <div className="flex flex-col">
             <div className="flex flex-col gap-5 mb-6">
               <Input
+                type="email"
                 label={t('login.email')}
                 icon={<Mail className="size-4" />}
-                type="email"
                 placeholder={t('login.emailPlaceholder')}
                 error={!!errors.email}
                 errorMessage={errors.email?.message}
@@ -199,7 +199,7 @@ function Login() {
               </button>
               <Link
                 to="/forgot-password"
-                className="text-[16px] leading-[1.167] text-foreground transition-colors hover:text-muted-foreground"
+                className="text-[16px] leading-[1.167] text-(--light-accent) transition-colors"
               >
                 {t('login.forgotPassword')}
               </Link>

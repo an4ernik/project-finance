@@ -14,6 +14,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import AccountSettings from './pages/AccountSettings';
 import SecuritySettings from './pages/SecuritySettings';
 import NotificationsSettings from './pages/NotificationsSettings';
+import Landing from './pages/Landing';
 
 function App() {
   return (
@@ -34,7 +35,8 @@ function App() {
               </Route>
             </Route>
           </Route>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Landing />} />
+          <Route path="/Home" element={<Home />} />
           <Route path="/login" element={<Login />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/verify" element={<VerifyEmailPage />} />
