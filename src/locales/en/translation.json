@@ -3,6 +3,25 @@
   "changeLang": "UA",
   "signUp": "Sign Up",
   "logIn": "Log In",
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "income": "Income",
+    "expenses": "Expenses",
+    "settings": "Settings",
+    "help": "Help",
+    "logOut": "Log out"
+  },
+  "layout": {
+    "welcomeBack": "Welcome back!",
+    "welcomeSubtitle": "A great time to manage your finances.",
+    "userName": "Name"
+  },
+  "dashboard": {
+    "title": "Dashboard"
+  },
+  "settings": {
+    "title": "Settings"
+  },
   "auth": {
     "title": "Create an account.",
     "subtitle": "Fill out the form to get started.",

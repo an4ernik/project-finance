@@ -29,6 +29,7 @@ import type {
   RequestUpdateUserEmailDTO,
   ResponseUserProfileDTO,
   UpdateMeBody,
+  UserResponseDTO,
   VerifyEmailParams
 } from '../../models';
 
@@ -37,6 +38,117 @@ import type { ErrorType } from '../../axios';
 
 
 type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
+
+
+
+export type getUserProfileResponse200 = {
+  data: UserResponseDTO
+  status: 200
+}
+
+export type getUserProfileResponse409 = {
+  data: ProblemDetail
+  status: 409
+}
+    
+export type getUserProfileResponseSuccess = (getUserProfileResponse200) & {
+  headers: Headers;
+};
+export type getUserProfileResponseError = (getUserProfileResponse409) & {
+  headers: Headers;
+};
+
+export type getUserProfileResponse = (getUserProfileResponseSuccess | getUserProfileResponseError)
+
+export const getGetUserProfileUrl = () => {
+
+
+  
+
+  return `/api/v1/users/me`
+}
+
+export const getUserProfile = async ( options?: RequestInit): Promise<getUserProfileResponse> => {
+  
+  return customInstance<getUserProfileResponse>(getGetUserProfileUrl(),
+  {      
+    ...options,
+    method: 'GET'
+    
+    
+  }
+);}
+
+
+
+
+
+export const getGetUserProfileQueryKey = () => {
+    return [
+    `/api/v1/users/me`
+    ] as const;
+    }
+
+    
+export const getGetUserProfileQueryOptions = <TData = Awaited<ReturnType<typeof getUserProfile>>, TError = ErrorType<ProblemDetail>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserProfile>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetUserProfileQueryKey();
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getUserProfile>>> = ({ signal }) => getUserProfile({ signal, ...requestOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getUserProfile>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetUserProfileQueryResult = NonNullable<Awaited<ReturnType<typeof getUserProfile>>>
+export type GetUserProfileQueryError = ErrorType<ProblemDetail>
+
+
+export function useGetUserProfile<TData = Awaited<ReturnType<typeof getUserProfile>>, TError = ErrorType<ProblemDetail>>(
+  options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserProfile>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUserProfile>>,
+          TError,
+          Awaited<ReturnType<typeof getUserProfile>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetUserProfile<TData = Awaited<ReturnType<typeof getUserProfile>>, TError = ErrorType<ProblemDetail>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserProfile>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getUserProfile>>,
+          TError,
+          Awaited<ReturnType<typeof getUserProfile>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetUserProfile<TData = Awaited<ReturnType<typeof getUserProfile>>, TError = ErrorType<ProblemDetail>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserProfile>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+
+export function useGetUserProfile<TData = Awaited<ReturnType<typeof getUserProfile>>, TError = ErrorType<ProblemDetail>>(
+  options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserProfile>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetUserProfileQueryOptions(options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
 
 
 

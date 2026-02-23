@@ -6,6 +6,8 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {Link, useNavigate} from 'react-router-dom';
 import {toast} from 'sonner';
 import {Mail, Lock, User, Camera, ChevronRight} from 'lucide-react';
+import axios from 'axios';
+import {useMutation} from '@tanstack/react-query';
 
 import {
   Field,
@@ -27,9 +29,15 @@ import {
 import franklinLight from '@/assets/franklin-light.png';
 import franklinDark from '@/assets/franklin-dark.png';
 import {useTheme} from '@/shared/providers/ThemeProvider';
-import {useSignUp} from '@/shared/api/generated/authentication/authentication';
-import {AuthRequestDTOCurrencyCode} from '@/shared/api/models/authRequestDTOCurrencyCode';
-import {type SignUpBody} from '@/shared/api/models';
+import {
+  getSignUpUrl,
+  type signUpResponse,
+} from '@/shared/api/generated/authentication/authentication';
+import {customInstance} from '@/shared/api/axios';
+import {
+  AuthRequestDTOCurrencyCode,
+  type AuthRequestDTO,
+} from '@/shared/api/models';
 import {cn} from '@/lib/utils';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
@@ -44,8 +52,35 @@ function SignUp() {
   const {theme} = useTheme();
   const {t} = useTranslation();
   const navigate = useNavigate();
-  const {mutate, isPending} = useSignUp();
   const [isModal, setIsModal] = useState<boolean>(false);
+
+  const {mutate, isPending} = useMutation({
+    mutationFn: async (payload: {
+      dto: AuthRequestDTO;
+      avatarFile: File | null;
+    }) => {
+      const formData = new FormData();
+
+      // Append file first – some backends expect the binary part before the JSON part
+      if (payload.avatarFile) {
+        formData.append(
+          'avatar',
+          payload.avatarFile,
+          payload.avatarFile.name || 'avatar.png',
+        );
+      }
+
+      const dtoBlob = new Blob([JSON.stringify(payload.dto)], {
+        type: 'application/json',
+      });
+      formData.append('dto', dtoBlob, 'dto.json');
+
+      return customInstance<signUpResponse>(getSignUpUrl(), {
+        method: 'POST',
+        body: formData,
+      });
+    },
+  });
 
   const schema = useMemo(
     () =>
@@ -122,25 +157,24 @@ function SignUp() {
   }, [previewUrl]);
 
   const onSubmit: SubmitHandler<FormFields> = values => {
-    const payload: SignUpBody = {
-      dto: {
-        email: values.email,
-        password: values.password,
-        fullName: values.fullName,
-        currencyCode: values.currencyCode as AuthRequestDTOCurrencyCode,
-      },
-      avatar: values.avatar?.[0],
+    const dto: AuthRequestDTO = {
+      email: values.email,
+      password: values.password,
+      fullName: values.fullName,
+      currencyCode: values.currencyCode as AuthRequestDTOCurrencyCode,
     };
 
+    const avatarFile = values.avatar?.[0] ?? null;
+
     mutate(
-      {data: payload},
+      {dto, avatarFile},
       {
         onSuccess: () => {
           toast.success(t('auth.signUpSuccess'));
           setTimeout(() => setIsModal(true), 2000);
         },
-        onError: (error: any) => {
-          if (error?.response?.status === 409) {
+        onError: (error: unknown) => {
+          if (axios.isAxiosError(error) && error.response?.status === 409) {
             setError('email', {message: t('auth.emailExists')});
             toast.error(t('auth.emailExists'));
           } else {
@@ -323,11 +357,13 @@ function SignUp() {
       </div>
 
       <div
-        className="hidden sm:flex absolute bottom-10 right-10 z-10 flex flex-col items-start justify-center rounded-[10px] px-5 py-4 backdrop-blur-lg shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_rgba(0,0,0,0.2)]
-        'border border-white/[0.14] backdrop-blur-lg',
-        'bg-linear-to-b from-[rgba(11,21,20,0.03)] via-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)]',
-        'shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)]',
-        '[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_0_rgba(0,0,0,0.2)]'"
+        className={cn(
+          'hidden sm:flex absolute bottom-10 right-10 z-10 flex-col items-start justify-center rounded-[10px] px-5 py-4 backdrop-blur-lg',
+          'border border-white/[0.14]',
+          'bg-linear-to-b from-[rgba(11,21,20,0.03)] via-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)]',
+          'shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)]',
+          '[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_0_rgba(0,0,0,0.2)]',
+        )}
       >
         <p className="text-[16px] leading-[1.167] text-foreground">
           {t('auth.haveAccount')}

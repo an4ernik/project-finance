@@ -3,6 +3,25 @@
   "changeLang": "EN",
   "signUp": "Зареєструватися",
   "logIn": "Увійти",
+  "sidebar": {
+    "dashboard": "Головна",
+    "income": "Доходи",
+    "expenses": "Витрати",
+    "settings": "Налаштування",
+    "help": "Допомога",
+    "logOut": "Вийти"
+  },
+  "layout": {
+    "welcomeBack": "Раді вас бачити знову!",
+    "welcomeSubtitle": "Найкращий момент керувати своїми фінансами.",
+    "userName": "Імʼя"
+  },
+  "dashboard": {
+    "title": "Головна"
+  },
+  "settings": {
+    "title": "Налаштування"
+  },
   "auth": {
     "title": "Створіть обліковий запис.",
     "subtitle": "Заповніть форму, щоб розпочати.",

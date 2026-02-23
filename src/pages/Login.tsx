@@ -14,6 +14,8 @@ import {useLogin} from '@/shared/api/generated/authentication/authentication';
 import {Input} from '@/components/ui/input';
 import {Button} from '@/components/ui/button';
 import {useTheme} from '@/shared/providers/ThemeProvider';
+import {useAuthStore} from '@/shared/store/useAuthStore';
+import {type JwtResponseDTO} from '@/shared/api/models';
 
 type LoginFormData = {
   email: string;
@@ -21,6 +23,7 @@ type LoginFormData = {
 };
 
 function Login() {
+  const {setAuth} = useAuthStore();
   const {theme} = useTheme();
   const {t} = useTranslation();
   const navigate = useNavigate();
@@ -51,21 +54,23 @@ function Login() {
       {data: {email: data.email, password: data.password}},
       {
         onSuccess: response => {
-          if (
-            response?.data &&
-            'accessToken' in response.data &&
-            response.data.accessToken
-          ) {
-            localStorage.setItem('accessToken', response.data.accessToken);
+          const data = response as JwtResponseDTO;
+          if (data && 'accessToken' in data && data.accessToken) {
+            setAuth(
+              data.accessToken,
+              rememberMe ? data.refreshToken : undefined,
+            ); 
           }
 
           if (rememberMe) {
             localStorage.setItem('rememberMe', 'true');
+          } else {
+            localStorage.removeItem('rememberMe');
           }
 
           toast.success(t('login.success'));
 
-          setTimeout(() => navigate('/'), 500);
+          setTimeout(() => navigate('/dashboard'), 500);
         },
         onError: error => {
           if (error.status === 401) {
