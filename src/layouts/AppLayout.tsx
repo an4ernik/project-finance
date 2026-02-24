@@ -9,16 +9,15 @@ function AppLayout() {
   const {t} = useTranslation();
   const {user} = useMe();
   const userData = user as UserResponseDTO;
-  console.log(user);
 
   return (
-    <div className="h-screen flex">
+    <div className="flex h-screen bg-background text-foreground">
       <SideBar />
       <div className="flex flex-col flex-1 overflow-hidden h-full py-[33.5px] pl-[35px] pr-[50px]">
         <div className="flex flex-row justify-between w-full">
           <div>
-            <h2>{t('layout.welcomeBack')}</h2>
-            <p>{t('layout.welcomeSubtitle')}</p>
+            <h2 className="text-2xl font-semibold">{t('layout.welcomeBack')}</h2>
+            <p className="text-muted-foreground">{t('layout.welcomeSubtitle')}</p>
           </div>
           <div className="flex flex-row gap-[4.5px] items-center">
             <img
@@ -26,10 +25,10 @@ function AppLayout() {
               alt="avatar"
               className="h-[29px]"
             />
-            <p>{userData.fullName}</p>
+            <p>{userData?.fullName ?? t('layout.userName')}</p>
           </div>
         </div>
-        <main className="mt-[15px] h-full p-[32px]">
+        <main className="mt-[15px] h-full">
           <Outlet />
         </main>
       </div>

@@ -20,7 +20,30 @@
     "title": "Головна"
   },
   "settings": {
-    "title": "Налаштування"
+    "title": "Налаштування",
+    "tabs": {
+      "account": "Акаунт",
+      "security": "Безпека",
+      "notifications": "Сповіщення"
+    },
+    "account": {
+      "title": "Інформація профілю",
+      "subtitle": "Оновіть інформацію облікового запису та фото профілю",
+      "changePhoto": "Змінити фото",
+      "photoHint": "JPG, PNG або GIF. Макс. розмір - 2 МБ.",
+      "fullName": "Повне імʼя",
+      "fullNamePlaceholder": "Введіть повне ім'я",
+      "email": "Email",
+      "emailPlaceholder": "name@example.com",
+      "emailHint": "Після зміни адреси потрібно буде підтвердити її через лист.",
+      "currency": "Валюта",
+      "currencyPlaceholder": "Оберіть валюту",
+      "dateRegistered": "Дата реєстрації",
+      "datePlaceholder": "ДД.ММ.РР",
+      "save": "Зберегти зміни"
+    },
+    "securityPlaceholder": "Тут будуть налаштування безпеки.",
+    "notificationsPlaceholder": "Тут будуть налаштування сповіщень."
   },
   "auth": {
     "title": "Створіть обліковий запис.",

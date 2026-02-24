@@ -33,10 +33,11 @@ export const NavItem = ({to, icon, label}: NavItemProps) => {
           flex items-center gap-[12px]
           pl-[16px] py-[10px]
           rounded-[10px]
+          text-foreground
           ${
             isActive
               ? 'backdrop-blur-lg bg-white/60 dark:bg-transparent border border-[rgba(0,0,0,0.08)] dark:border-transparent [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_4px_4px_0px_rgba(75,75,75,0.2)]'
-              : 'hover:bg-white/5'
+              : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
           }
           `
       }
@@ -105,14 +106,14 @@ function SideBar() {
 
         <div className="pl-[50px] pb-[40px] space-y-[20px]">
           <ul className="space-y-[4px]">
-            <li className="flex items-center gap-[12px] pl-[16px] py-[10px]">
+            <li className="flex items-center gap-[12px] pl-[16px] py-[10px] text-muted-foreground">
               <CircleQuestionMark />
               {t('sidebar.help')}
             </li>
 
             <li
               onClick={handleLogout}
-              className="flex items-center gap-[12px] pl-[16px] py-[10px] cursor-pointer"
+              className="flex items-center gap-[12px] pl-[16px] py-[10px] cursor-pointer text-muted-foreground hover:text-foreground"
             >
               <LogOut />
               {t('sidebar.logOut')}
