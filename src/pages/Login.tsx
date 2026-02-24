@@ -1,4 +1,4 @@
-import {useState, useMemo} from 'react';
+import {useState, useMemo, useEffect, useRef} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
@@ -25,7 +25,7 @@ type LoginFormData = {
 function Login() {
   const {setAuth} = useAuthStore();
   const {theme} = useTheme();
-  const {t} = useTranslation();
+  const {t, i18n} = useTranslation();
   const navigate = useNavigate();
   const {mutate: loginMutate, isPending} = useLogin();
   const [rememberMe, setRememberMe] = useState(false);
@@ -42,12 +42,24 @@ function Login() {
   const {
     register,
     handleSubmit,
+    trigger,
     formState: {errors, isValid},
     setError,
   } = useForm<LoginFormData>({
     resolver: zodResolver(loginSchema),
     mode: 'onChange',
   });
+
+  const previousLanguage = useRef(i18n.language);
+
+  useEffect(() => {
+    if (previousLanguage.current === i18n.language) return;
+    previousLanguage.current = i18n.language;
+    const fieldsWithErrors = Object.keys(errors) as Array<keyof LoginFormData>;
+    if (fieldsWithErrors.length > 0) {
+      void trigger(fieldsWithErrors as any);
+    }
+  }, [i18n.language, errors, trigger]);
 
   const onSubmit = (data: LoginFormData) => {
     loginMutate(

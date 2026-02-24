@@ -1,4 +1,4 @@
-import {useState, useMemo, useEffect} from 'react';
+import {useState, useMemo, useEffect, useRef} from 'react';
 import {useForm, Controller, type SubmitHandler} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {z} from 'zod';
@@ -31,6 +31,7 @@ import {useSignUp} from '@/shared/api/generated/authentication/authentication';
 import {AuthRequestDTOCurrencyCode} from '@/shared/api/models/authRequestDTOCurrencyCode';
 import {type SignUpBody} from '@/shared/api/models';
 import {cn} from '@/lib/utils';
+import i18n from '@/i18n';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 const ACCEPTED_IMAGE_TYPES = [
@@ -92,6 +93,7 @@ function SignUp() {
     handleSubmit,
     setError,
     watch,
+    trigger,
     formState: {errors, isValid},
   } = useForm<FormFields>({
     resolver: zodResolver(schema),
@@ -120,6 +122,17 @@ function SignUp() {
       if (previewUrl) URL.revokeObjectURL(previewUrl);
     };
   }, [previewUrl]);
+
+  const previousLanguage = useRef(i18n.language);
+
+  useEffect(() => {
+    if (previousLanguage.current === i18n.language) return;
+    previousLanguage.current = i18n.language;
+    const fieldsWithErrors = Object.keys(errors) as Array<keyof FormFields>;
+    if (fieldsWithErrors.length > 0) {
+      void trigger(fieldsWithErrors as any);
+    }
+  }, [i18n.language, errors, trigger]);
 
   const onSubmit: SubmitHandler<FormFields> = values => {
     const payload: SignUpBody = {
@@ -160,7 +173,7 @@ function SignUp() {
     >
       <div
         className={cn(
-          'sm:absolute sm:right-1/2 z-50 sm:top-1/2 flex h-full w-120 sm:-translate-y-1/2 flex-col items-start gap-3.5 rounded-[10px] px-12.5 py-29.5 overflow-y-auto',
+          'sm:absolute sm:right-1/2 z-50 flex w-134 flex-col justify-center items-start gap-3.5 rounded-[10px] px-[50px] py-8 h-full',
           'border border-white/[0.14] backdrop-blur-lg',
           'bg-linear-to-b from-[rgba(11,21,20,0.03)] via-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)]',
           'shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)]',
@@ -184,11 +197,11 @@ function SignUp() {
         </div>
 
         <form
-          className="flex w-full h-155.75 flex-col"
+          className="flex w-full flex-col gap-4"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <FieldGroup className="gap-0">
-            <Field data-invalid={!!errors.email}>
+          <FieldGroup className="gap-3">
+            <Field className="gap-1" data-invalid={!!errors.email}>
               <FieldLabel>Email *</FieldLabel>
               <FieldContent className="relative">
                 <Input
@@ -196,15 +209,19 @@ function SignUp() {
                   placeholder="name@example.com"
                   {...register('email')}
                 />
+                <FieldError className="mt-0.5 text-[10px] leading-[1.2]">
+                  {errors.email?.message}
+                </FieldError>
               </FieldContent>
-              <FieldError>{errors.email?.message}</FieldError>
             </Field>
 
-            <Field data-invalid={!!errors.password}>
-              <FieldLabel>{t('auth.password')} *</FieldLabel>
-              <FieldDescription className="text-[10px]">
-                {t('auth.passwordRules')}
-              </FieldDescription>
+            <Field className="gap-1" data-invalid={!!errors.password}>
+              <div className="flex items-center justify-between">
+                <FieldLabel className="mb-0">{t('auth.password')} *</FieldLabel>
+                <FieldDescription className="mt-0 text-[10px] leading-[1.2] text-right">
+                  {t('auth.passwordRules')}
+                </FieldDescription>
+              </div>
               <FieldContent className="relative">
                 <Input
                   variant="password"
@@ -212,11 +229,13 @@ function SignUp() {
                   placeholder={t('auth.passwordPlaceholder')}
                   {...register('password')}
                 />
-                <FieldError>{errors.password?.message}</FieldError>
+                <FieldError className="mt-0.5 text-[10px] leading-[1.2]">
+                  {errors.password?.message}
+                </FieldError>
               </FieldContent>
             </Field>
 
-            <Field data-invalid={!!errors.confirmPassword}>
+            <Field className="gap-1" data-invalid={!!errors.confirmPassword}>
               <FieldLabel>{t('auth.confirmPassword')} *</FieldLabel>
               <FieldContent className="relative">
                 <Input
@@ -225,11 +244,13 @@ function SignUp() {
                   placeholder={t('auth.confirmPassword')}
                   {...register('confirmPassword')}
                 />
-                <FieldError>{errors.confirmPassword?.message}</FieldError>
+                <FieldError className="mt-0.5 text-[10px] leading-[1.2]">
+                  {errors.confirmPassword?.message}
+                </FieldError>
               </FieldContent>
             </Field>
 
-            <Field data-invalid={!!errors.fullName}>
+            <Field className="gap-1" data-invalid={!!errors.fullName}>
               <FieldLabel>{t('auth.fullName')} *</FieldLabel>
               <FieldContent className="relative">
                 <Input
@@ -237,11 +258,13 @@ function SignUp() {
                   placeholder={t('auth.typeFullName')}
                   {...register('fullName')}
                 />
+                <FieldError className="mt-0.5 text-[10px] leading-[1.2]">
+                  {errors.fullName?.message}
+                </FieldError>
               </FieldContent>
-              <FieldError>{errors.fullName?.message}</FieldError>
             </Field>
 
-            <Field>
+            <Field className="gap-1">
               <FieldLabel>{t('auth.currency')} *</FieldLabel>
               <Controller
                 name="currencyCode"
@@ -266,7 +289,7 @@ function SignUp() {
               />
             </Field>
 
-            <Field data-invalid={!!errors.avatar}>
+            <Field className="gap-1" data-invalid={!!errors.avatar}>
               <FieldLabel className="mb-0">{t('auth.avatar.label')}</FieldLabel>
               <FieldContent>
                 <div className="mt-2 flex items-center gap-4">
@@ -299,14 +322,16 @@ function SignUp() {
                     </p>
                   </div>
                 </div>
+                <FieldError className="mt-0.5 text-[10px] leading-[1.2]">
+                  {errors.avatar?.message?.toString()}
+                </FieldError>
               </FieldContent>
-              <FieldError>{errors.avatar?.message?.toString()}</FieldError>
             </Field>
           </FieldGroup>
 
           <Button
             type="submit"
-            className="w-full mt-8.5 py-6 text-lg"
+            className="w-full py-6 text-lg"
             disabled={!isValid || isPending}
           >
             {isPending ? t('common.loading') : t('signUp')}

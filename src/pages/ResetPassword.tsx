@@ -1,4 +1,4 @@
-import {useEffect, useMemo} from 'react';
+import {useEffect, useMemo, useRef} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
@@ -19,7 +19,7 @@ type ResetPasswordFormData = {
 };
 
 function ResetPassword() {
-  const {t} = useTranslation();
+  const {t, i18n} = useTranslation();
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const {mutate: resetPassword, isPending} = useResetPassword();
@@ -57,12 +57,26 @@ function ResetPassword() {
   const {
     register,
     handleSubmit,
+    trigger,
     formState: {errors, isValid},
     setError,
   } = useForm<ResetPasswordFormData>({
     resolver: zodResolver(resetPasswordSchema),
     mode: 'onChange',
   });
+
+  const previousLanguage = useRef(i18n.language);
+
+  useEffect(() => {
+    if (previousLanguage.current === i18n.language) return;
+    previousLanguage.current = i18n.language;
+    const fieldsWithErrors = Object.keys(errors) as Array<
+      keyof ResetPasswordFormData
+    >;
+    if (fieldsWithErrors.length > 0) {
+      void trigger(fieldsWithErrors as any);
+    }
+  }, [i18n.language, errors, trigger]);
 
   const onSubmit = (data: ResetPasswordFormData) => {
     if (!token) {

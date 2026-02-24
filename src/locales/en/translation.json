@@ -28,7 +28,7 @@
     "requiredFields": "*Marked fields are required.",
     "password": "Password",
     "passwordPlaceholder": "Enter your password",
-    "passwordRules": "minimum 8 characters, must contain uppercase and lowercase letters, numbers",
+    "passwordRules": "Minimum 8 characters, with upper and lower case letters and numbers",
     "confirmPassword": "Confirm password",
     "fullName": "Full name",
     "typeFullName": "Enter your full name",

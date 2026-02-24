@@ -9,6 +9,7 @@ function AppLayout() {
   const {t} = useTranslation();
   const {user} = useMe();
   const userData = user as UserResponseDTO;
+  console.log(user);
 
   return (
     <div className="h-screen flex">
