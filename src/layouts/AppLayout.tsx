@@ -7,7 +7,7 @@ import type {UserResponseDTO} from '@/shared/api/models';
 
 function AppLayout() {
   const {t} = useTranslation();
-  const {user, refetch} = useMe();
+  const {user} = useMe();
   const userData = user as UserResponseDTO;
 
   return (

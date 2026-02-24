@@ -8,7 +8,7 @@ import {
 import {useTranslation} from 'react-i18next';
 
 function LangSelect() {
-  const {i18n, t} = useTranslation();
+  const {i18n} = useTranslation();
 
   const handleLanguage = (value: string) => {
     i18n.changeLanguage(value.toLowerCase());
