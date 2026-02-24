@@ -6,8 +6,6 @@ import {zodResolver} from '@hookform/resolvers/zod';
 import {Link, useNavigate} from 'react-router-dom';
 import {toast} from 'sonner';
 import {Mail, Lock, User, Camera, ChevronRight} from 'lucide-react';
-import axios from 'axios';
-import {useMutation} from '@tanstack/react-query';
 
 import {
   Field,
@@ -29,15 +27,9 @@ import {
 import franklinLight from '@/assets/franklin-light.png';
 import franklinDark from '@/assets/franklin-dark.png';
 import {useTheme} from '@/shared/providers/ThemeProvider';
-import {
-  getSignUpUrl,
-  type signUpResponse,
-} from '@/shared/api/generated/authentication/authentication';
-import {customInstance} from '@/shared/api/axios';
-import {
-  AuthRequestDTOCurrencyCode,
-  type AuthRequestDTO,
-} from '@/shared/api/models';
+import {useSignUp} from '@/shared/api/generated/authentication/authentication';
+import {AuthRequestDTOCurrencyCode} from '@/shared/api/models/authRequestDTOCurrencyCode';
+import {type SignUpBody} from '@/shared/api/models';
 import {cn} from '@/lib/utils';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
@@ -52,35 +44,8 @@ function SignUp() {
   const {theme} = useTheme();
   const {t} = useTranslation();
   const navigate = useNavigate();
+  const {mutate, isPending} = useSignUp();
   const [isModal, setIsModal] = useState<boolean>(false);
-
-  const {mutate, isPending} = useMutation({
-    mutationFn: async (payload: {
-      dto: AuthRequestDTO;
-      avatarFile: File | null;
-    }) => {
-      const formData = new FormData();
-
-      // Append file first – some backends expect the binary part before the JSON part
-      if (payload.avatarFile) {
-        formData.append(
-          'avatar',
-          payload.avatarFile,
-          payload.avatarFile.name || 'avatar.png',
-        );
-      }
-
-      const dtoBlob = new Blob([JSON.stringify(payload.dto)], {
-        type: 'application/json',
-      });
-      formData.append('dto', dtoBlob, 'dto.json');
-
-      return customInstance<signUpResponse>(getSignUpUrl(), {
-        method: 'POST',
-        body: formData,
-      });
-    },
-  });
 
   const schema = useMemo(
     () =>
@@ -157,24 +122,25 @@ function SignUp() {
   }, [previewUrl]);
 
   const onSubmit: SubmitHandler<FormFields> = values => {
-    const dto: AuthRequestDTO = {
-      email: values.email,
-      password: values.password,
-      fullName: values.fullName,
-      currencyCode: values.currencyCode as AuthRequestDTOCurrencyCode,
+    const payload: SignUpBody = {
+      dto: {
+        email: values.email,
+        password: values.password,
+        fullName: values.fullName,
+        currencyCode: values.currencyCode as AuthRequestDTOCurrencyCode,
+      },
+      avatar: values.avatar?.[0],
     };
 
-    const avatarFile = values.avatar?.[0] ?? null;
-
     mutate(
-      {dto, avatarFile},
+      {data: payload},
       {
         onSuccess: () => {
           toast.success(t('auth.signUpSuccess'));
           setTimeout(() => setIsModal(true), 2000);
         },
-        onError: (error: unknown) => {
-          if (axios.isAxiosError(error) && error.response?.status === 409) {
+        onError: (error: any) => {
+          if (error?.response?.status === 409) {
             setError('email', {message: t('auth.emailExists')});
             toast.error(t('auth.emailExists'));
           } else {
