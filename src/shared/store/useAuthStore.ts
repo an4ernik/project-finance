@@ -17,17 +17,23 @@ export const useAuthStore = create<AuthState>()(
       isAuth: false,
 
       setAuth: (accessToken, refreshToken) =>
-        set({
-          accessToken,
-          refreshToken: refreshToken || null,
-          isAuth: true,
+        set(() => {
+          localStorage.removeItem('accessToken');
+          return {
+            accessToken,
+            refreshToken: refreshToken || null,
+            isAuth: true,
+          };
         }),
 
       logout: () =>
-        set({
-          accessToken: null,
-          refreshToken: null,
-          isAuth: false,
+        set(() => {
+          localStorage.removeItem('accessToken');
+          return {
+            accessToken: null,
+            refreshToken: null,
+            isAuth: false,
+          };
         }),
     }),
     {

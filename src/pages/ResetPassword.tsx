@@ -12,6 +12,7 @@ import vectors from '@/assets/base-vectors.png';
 import {useResetPassword} from '@/shared/api/generated/authentication/authentication';
 import {Input} from '@/components/ui/input';
 import {Button} from '@/components/ui/button';
+import {useAuthStore} from '@/shared/store/useAuthStore';
 
 type ResetPasswordFormData = {
   password: string;
@@ -20,6 +21,7 @@ type ResetPasswordFormData = {
 
 function ResetPassword() {
   const {t, i18n} = useTranslation();
+  const setAuth = useAuthStore(state => state.setAuth);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const {mutate: resetPassword, isPending} = useResetPassword();
@@ -99,7 +101,7 @@ function ResetPassword() {
             'accessToken' in response.data &&
             response.data.accessToken
           ) {
-            localStorage.setItem('accessToken', response.data.accessToken);
+            setAuth(response.data.accessToken);
           }
 
           toast.success(t('resetPassword.success'));

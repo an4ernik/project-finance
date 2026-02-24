@@ -62,8 +62,8 @@ api.interceptors.response.use(
         );
 
         const {accessToken} = response.data;
-
-        useAuthStore.setState({accessToken});
+        const {setAuth, refreshToken} = useAuthStore.getState();
+        setAuth(accessToken, refreshToken || undefined);
 
         processQueue(null, accessToken);
 

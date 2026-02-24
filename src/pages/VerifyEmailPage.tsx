@@ -4,9 +4,11 @@ import { useVerifyToken } from '@/shared/api/generated/authentication/authentica
 import { toast } from 'sonner'
 import axios from 'axios'
 import { useTranslation } from 'react-i18next'
+import {useAuthStore} from '@/shared/store/useAuthStore'
 
 function VerifyEmailPage() {
   const { t } = useTranslation()
+  const setAuth = useAuthStore(state => state.setAuth)
   const [searchParams] = useSearchParams()
   const navigate = useNavigate()
   const token = searchParams.get('token') || ''
@@ -34,14 +36,14 @@ function VerifyEmailPage() {
 
     const accessToken = (data as any)?.accessToken
     if (accessToken) {
-      localStorage.setItem('accessToken', accessToken)
+      setAuth(accessToken)
     }
 
     toast.success( 
       t("auth.verify.activationSuccess")
     )
     navigate('/?email_verified=true', { replace: true })
-  }, [data, navigate])
+  }, [data, navigate, setAuth])
 
   useEffect(() => {
     if (!error) return
