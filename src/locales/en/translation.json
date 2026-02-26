@@ -3,13 +3,55 @@
   "changeLang": "UA",
   "signUp": "Sign Up",
   "logIn": "Log In",
+  "sidebar": {
+    "dashboard": "Dashboard",
+    "income": "Income",
+    "expenses": "Expenses",
+    "settings": "Settings",
+    "help": "Help",
+    "logOut": "Log out"
+  },
+  "layout": {
+    "welcomeBack": "Welcome back!",
+    "welcomeSubtitle": "A great time to manage your finances.",
+    "userName": "Name"
+  },
+  "dashboard": {
+    "title": "Dashboard"
+  },
+  "settings": {
+    "title": "Settings",
+    "tabs": {
+      "account": "Account",
+      "security": "Security",
+      "notifications": "Notifications"
+    },
+    "account": {
+      "title": "Profile information",
+      "subtitle": "Update account details and profile photo",
+      "changePhoto": "Change photo",
+      "photoHint": "JPG, PNG or GIF. Max size - 2 MB.",
+      "fullName": "Full name",
+      "fullNamePlaceholder": "Enter full name",
+      "email": "Email",
+      "emailPlaceholder": "name@example.com",
+      "emailHint": "After changing your email, you'll need to confirm it via email.",
+      "currency": "Currency",
+      "currencyPlaceholder": "Select currency",
+      "dateRegistered": "Registration date",
+      "datePlaceholder": "DD.MM.YY",
+      "save": "Save changes"
+    },
+    "securityPlaceholder": "Security settings will be here.",
+    "notificationsPlaceholder": "Notification settings will be here."
+  },
   "auth": {
     "title": "Create an account.",
     "subtitle": "Fill out the form to get started.",
     "requiredFields": "*Marked fields are required.",
     "password": "Password",
     "passwordPlaceholder": "Enter your password",
-    "passwordRules": "minimum 8 characters, must contain uppercase and lowercase letters, numbers",
+    "passwordRules": "Minimum 8 characters, with upper and lower case letters and numbers",
     "confirmPassword": "Confirm password",
     "fullName": "Full name",
     "typeFullName": "Enter your full name",

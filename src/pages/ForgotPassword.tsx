@@ -1,4 +1,4 @@
-import {useState, useMemo, useEffect} from 'react';
+import {useState, useMemo, useEffect, useRef} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
@@ -20,7 +20,7 @@ type ForgotPasswordFormData = {
 };
 
 function ForgotPassword() {
-  const {t} = useTranslation();
+  const {t, i18n} = useTranslation();
 
   const {mutate: sendResetToken, isPending} = useSendResetPasswordToken();
   const [emailSent, setEmailSent] = useState(false);
@@ -52,10 +52,24 @@ function ForgotPassword() {
     formState: {errors, isValid},
     getValues,
     setError,
+    trigger,
   } = useForm<ForgotPasswordFormData>({
     resolver: zodResolver(forgotPasswordSchema),
     mode: 'onChange',
   });
+
+  const previousLanguage = useRef(i18n.language);
+
+  useEffect(() => {
+    if (previousLanguage.current === i18n.language) return;
+    previousLanguage.current = i18n.language;
+    const fieldsWithErrors = Object.keys(errors) as Array<
+      keyof ForgotPasswordFormData
+    >;
+    if (fieldsWithErrors.length > 0) {
+      void trigger(fieldsWithErrors as any);
+    }
+  }, [i18n.language, errors, trigger]);
 
   const onSubmit = (data: ForgotPasswordFormData) => {
     sendResetToken(
