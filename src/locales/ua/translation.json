@@ -40,7 +40,15 @@
       "currencyPlaceholder": "Оберіть валюту",
       "dateRegistered": "Дата реєстрації",
       "datePlaceholder": "ДД.ММ.РР",
-      "save": "Зберегти зміни"
+      "save": "Зберегти зміни",
+      "saveSuccess": "Зміни профілю збережено",
+      "nothingToUpdate": "Немає змін для збереження",
+      "errors": {
+        "fullNameRequired": "Повне імʼя є обовʼязковим",
+        "invalidEmail": "Некоректний email",
+        "fileSize": "Фото перевищує дозволений розмір (2 МБ)",
+        "fileType": "Дозволені лише JPG, PNG або GIF"
+      }
     },
     "securityPlaceholder": "Тут будуть налаштування безпеки.",
     "notificationsPlaceholder": "Тут будуть налаштування сповіщень."

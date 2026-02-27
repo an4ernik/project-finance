@@ -40,7 +40,15 @@
       "currencyPlaceholder": "Select currency",
       "dateRegistered": "Registration date",
       "datePlaceholder": "DD.MM.YY",
-      "save": "Save changes"
+      "save": "Save changes",
+      "saveSuccess": "Profile changes saved",
+      "nothingToUpdate": "No changes to save",
+      "errors": {
+        "fullNameRequired": "Full name is required",
+        "invalidEmail": "Invalid email address",
+        "fileSize": "Photo exceeds allowed size (2 MB)",
+        "fileType": "Only JPG, PNG or GIF allowed"
+      }
     },
     "securityPlaceholder": "Security settings will be here.",
     "notificationsPlaceholder": "Notification settings will be here."

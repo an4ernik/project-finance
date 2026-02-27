@@ -3,7 +3,7 @@ import {defineConfig} from 'orval';
 export default defineConfig({
   financeApi: {
     input: {
-      target: 'https://rbxepeq442.eu-central-1.awsapprunner.com/api-docs.yaml',
+      target: 'http://monity.eu-central-1.elasticbeanstalk.com/api-docs',
     },
     output: {
       client: 'react-query',

@@ -6,22 +6,27 @@
  * OpenAPI spec version: 1.0
  */
 import {
+  useMutation,
   useQuery
 } from '@tanstack/react-query';
 import type {
   DataTag,
   DefinedInitialDataOptions,
   DefinedUseQueryResult,
+  MutationFunction,
   QueryClient,
   QueryFunction,
   QueryKey,
   UndefinedInitialDataOptions,
+  UseMutationOptions,
+  UseMutationResult,
   UseQueryOptions,
   UseQueryResult
 } from '@tanstack/react-query';
 
 import type {
   CategoryResponseDTO,
+  CreateCategoryDTO,
   GetCategoriesParams,
   ProblemDetail
 } from '../../models';
@@ -159,3 +164,87 @@ export function useGetCategories<TData = Awaited<ReturnType<typeof getCategories
 
 
 
+/**
+ * Creates a custom category for the authenticated user. Returns 409 if a category with the same name and type already exists for this user.
+ * @summary Create a new category
+ */
+export type createCategoryResponse201 = {
+  data: Blob
+  status: 201
+}
+    
+export type createCategoryResponseSuccess = (createCategoryResponse201) & {
+  headers: Headers;
+};
+;
+
+export type createCategoryResponse = (createCategoryResponseSuccess)
+
+export const getCreateCategoryUrl = () => {
+
+
+  
+
+  return `/api/v1/categories`
+}
+
+export const createCategory = async (createCategoryDTO: CreateCategoryDTO, options?: RequestInit): Promise<createCategoryResponse> => {
+  
+  return customInstance<createCategoryResponse>(getCreateCategoryUrl(),
+  {      
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      createCategoryDTO,)
+  }
+);}
+
+
+
+
+export const getCreateCategoryMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCategory>>, TError,{data: CreateCategoryDTO}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof createCategory>>, TError,{data: CreateCategoryDTO}, TContext> => {
+
+const mutationKey = ['createCategory'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createCategory>>, {data: CreateCategoryDTO}> = (props) => {
+          const {data} = props ?? {};
+
+          return  createCategory(data,requestOptions)
+        }
+
+
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type CreateCategoryMutationResult = NonNullable<Awaited<ReturnType<typeof createCategory>>>
+    export type CreateCategoryMutationBody = CreateCategoryDTO
+    export type CreateCategoryMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Create a new category
+ */
+export const useCreateCategory = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCategory>>, TError,{data: CreateCategoryDTO}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof createCategory>>,
+        TError,
+        {data: CreateCategoryDTO},
+        TContext
+      > => {
+      return useMutation(getCreateCategoryMutationOptions(options), queryClient);
+    }
+    

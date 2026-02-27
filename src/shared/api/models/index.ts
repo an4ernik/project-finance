@@ -13,6 +13,8 @@ export * from './authResponseDTOCurrencyCode';
 export * from './categoryResponseDTO';
 export * from './categoryResponseDTOStatus';
 export * from './categoryResponseDTOType';
+export * from './createCategoryDTO';
+export * from './createCategoryDTOType';
 export * from './getCategoriesParams';
 export * from './getCategoriesTypeItem';
 export * from './jwtResponseDTO';

@@ -1,8 +1,13 @@
 import axios, {AxiosError, type InternalAxiosRequestConfig} from 'axios';
 import {useAuthStore} from '../store/useAuthStore';
 
+const API_BASE_URL = (
+  import.meta.env.VITE_API_BASE_URL ||
+  'http://monity.eu-central-1.elasticbeanstalk.com'
+).replace(/\/$/, '');
+
 export const api = axios.create({
-  baseURL: 'https://rbxepeq442.eu-central-1.awsapprunner.com',
+  baseURL: `${API_BASE_URL}/`,
   withCredentials: true,
 });
 
@@ -55,15 +60,18 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
+        const {setAuth, refreshToken} = useAuthStore.getState();
         const response = await axios.post(
-          'https://rbxepeq442.eu-central-1.awsapprunner.com/api/v1/auth/refresh',
-          {},
+          `${API_BASE_URL}/api/v1/auth/refresh`,
+          refreshToken ? {refreshToken} : {},
           {withCredentials: true},
         );
 
-        const {accessToken} = response.data;
-        const {setAuth, refreshToken} = useAuthStore.getState();
-        setAuth(accessToken, refreshToken || undefined);
+        const {accessToken, refreshToken: nextRefreshToken} = response.data as {
+          accessToken: string;
+          refreshToken?: string;
+        };
+        setAuth(accessToken, nextRefreshToken ?? refreshToken ?? undefined);
 
         processQueue(null, accessToken);
 

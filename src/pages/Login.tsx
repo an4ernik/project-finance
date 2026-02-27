@@ -28,7 +28,9 @@ function Login() {
   const {t, i18n} = useTranslation();
   const navigate = useNavigate();
   const {mutate: loginMutate, isPending} = useLogin();
-  const [rememberMe, setRememberMe] = useState(false);
+  const [rememberMe, setRememberMe] = useState(
+    localStorage.getItem('rememberMe') === 'true',
+  );
 
   const loginSchema = useMemo(
     () =>

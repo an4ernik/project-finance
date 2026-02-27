@@ -313,7 +313,7 @@ function SignUp() {
                       <input
                         type="file"
                         className="hidden"
-                        accept="image/*"
+                        accept="image/jpeg, image/gif, image/png, image/jpg"
                         {...register('avatar')}
                       />
                     </label>
