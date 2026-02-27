@@ -3,7 +3,7 @@ import {useAuthStore} from '../store/useAuthStore';
 
 const API_BASE_URL = (
   import.meta.env.VITE_API_BASE_URL ||
-  'http://monity.eu-central-1.elasticbeanstalk.com'
+  ''
 ).replace(/\/$/, '');
 
 export const api = axios.create({
