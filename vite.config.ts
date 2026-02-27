@@ -14,5 +14,12 @@ export default defineConfig({
   server: {
     host: 'financeapp.local',
     port: 5173,
+    proxy: {
+      '/api': {
+        target: 'http://monity.eu-central-1.elasticbeanstalk.com',
+        changeOrigin: true,
+        secure: false,
+      },
+    },
   },
 });
