@@ -53,11 +53,18 @@ function AccountSettings() {
     () =>
       z.object({
         fullName: z
-          .string()
-          .trim()
-          .min(1, t('settings.account.errors.fullNameRequired')),
-        email: z.string().email(t('settings.account.errors.invalidEmail')),
-        currencyCode: z.string(),
+          .union([
+            z.string().trim().min(1, t('settings.account.errors.fullNameRequired')),
+            z.literal(''),
+          ])
+          .optional(),
+        email: z
+          .union([
+            z.string().email(t('settings.account.errors.invalidEmail')),
+            z.literal(''),
+          ])
+          .optional(),
+        currencyCode: z.string().optional(),
         avatar: z
           .any()
           .refine(
@@ -92,16 +99,15 @@ function AccountSettings() {
     defaultValues: {
       fullName: '',
       email: '',
-      currencyCode: 'UAH',
+      currencyCode: '',
     },
   });
 
   useEffect(() => {
-    if (!userData) return;
     reset({
-      fullName: userData.fullName ?? '',
-      email: userData.email ?? '',
-      currencyCode: userData.currencyCode ?? 'UAH',
+      fullName: '',
+      email: '',
+      currencyCode: '',
       avatar: undefined,
     });
   }, [userData, reset]);
@@ -129,14 +135,17 @@ function AccountSettings() {
   const onSubmit = (values: FormFields) => {
     if (!userData) return;
 
-    const nextFullName = values.fullName.trim();
-    const nextEmail = values.email.trim();
-    const nextCurrency = values.currencyCode;
+    const nextFullName = values.fullName?.trim() || '';
+    const nextEmail = values.email?.trim() || '';
+    const nextCurrency = values.currencyCode || '';
     const nextAvatar = values.avatar?.[0];
 
-    const fullNameChanged = nextFullName !== (userData.fullName ?? '');
-    const emailChanged = nextEmail !== (userData.email ?? '');
-    const currencyChanged = nextCurrency !== (userData.currencyCode ?? 'UAH');
+    const fullNameChanged =
+      nextFullName.length > 0 && nextFullName !== (userData.fullName ?? '');
+    const emailChanged =
+      nextEmail.length > 0 && nextEmail !== (userData.email ?? '');
+    const currencyChanged =
+      nextCurrency.length > 0 && nextCurrency !== (userData.currencyCode ?? 'UAH');
     const avatarChanged = !!nextAvatar;
 
     if (
@@ -153,15 +162,12 @@ function AccountSettings() {
       fullNameChanged || currencyChanged || avatarChanged;
     const needsEmailUpdate = emailChanged;
 
-    const dto: {
-      fullName?: string;
-      currencyCode?: UpdateUserProfileDTOCurrencyCode;
-    } = {};
-
-    if (fullNameChanged) dto.fullName = nextFullName;
-    if (currencyChanged) {
-      dto.currencyCode = nextCurrency as UpdateUserProfileDTOCurrencyCode;
-    }
+    const dto = {
+      fullName: fullNameChanged ? nextFullName : userData.fullName ?? '',
+      currencyCode: (currencyChanged
+        ? nextCurrency
+        : userData.currencyCode ?? 'UAH') as UpdateUserProfileDTOCurrencyCode,
+    };
 
     const handleError = (error: any) => {
       if (error?.response?.status === 409 && emailChanged) {
@@ -177,14 +183,19 @@ function AccountSettings() {
       });
       void refetch();
       toast.success(t('settings.account.saveSuccess'));
-      reset({...values, avatar: undefined});
+      reset({
+        fullName: '',
+        email: '',
+        currencyCode: '',
+        avatar: undefined,
+      });
     };
 
     if (needsProfileUpdate && needsEmailUpdate) {
       updateMe(
         {
           data: {
-            dto: Object.keys(dto).length > 0 ? dto : undefined,
+            dto,
             avatar: nextAvatar,
           },
         },
@@ -208,7 +219,7 @@ function AccountSettings() {
       updateMe(
         {
           data: {
-            dto: Object.keys(dto).length > 0 ? dto : undefined,
+            dto,
             avatar: nextAvatar,
           },
         },
@@ -281,7 +292,9 @@ function AccountSettings() {
               <FieldContent className="relative">
                 <Input
                   icon={<User className="size-4" />}
-                  placeholder={t('settings.account.fullNamePlaceholder')}
+                  placeholder={
+                    userData?.fullName || t('settings.account.fullNamePlaceholder')
+                  }
                   className="pr-10"
                   {...register('fullName')}
                 />
@@ -297,7 +310,9 @@ function AccountSettings() {
               <FieldContent className="relative">
                 <Input
                   icon={<Mail className="size-4" />}
-                  placeholder={t('settings.account.emailPlaceholder')}
+                  placeholder={
+                    userData?.email || t('settings.account.emailPlaceholder')
+                  }
                   className="pr-10"
                   {...register('email')}
                 />
@@ -321,9 +336,10 @@ function AccountSettings() {
                     <Select onValueChange={field.onChange} value={field.value}>
                       <SelectTrigger className="h-10 w-full rounded-[10px] border-border bg-background/40 text-base">
                         <SelectValue
-                          placeholder={t(
-                            'settings.account.currencyPlaceholder',
-                          )}
+                          placeholder={
+                            userData?.currencyCode ||
+                            t('settings.account.currencyPlaceholder')
+                          }
                         />
                       </SelectTrigger>
                       <SelectContent>
