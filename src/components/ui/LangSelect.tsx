@@ -19,7 +19,7 @@ function LangSelect() {
       onValueChange={handleLanguage}
       defaultValue={i18n.language.toUpperCase()}
     >
-      <SelectTrigger className="w-[70px] border-none shadow-none focus:ring-0">
+      <SelectTrigger className="w-17.5 border-none shadow-none focus:ring-0 cursor-pointer">
         <SelectValue />
       </SelectTrigger>
       <SelectContent>

@@ -59,7 +59,7 @@ function Login() {
     previousLanguage.current = i18n.language;
     const fieldsWithErrors = Object.keys(errors) as Array<keyof LoginFormData>;
     if (fieldsWithErrors.length > 0) {
-      void trigger(fieldsWithErrors as any);
+      void trigger(fieldsWithErrors);
     }
   }, [i18n.language, errors, trigger]);
 
@@ -168,7 +168,7 @@ function Login() {
           className="flex w-full flex-col gap-9"
         >
           <div className="flex flex-col">
-            <div className="flex flex-col gap-5 mb-6">
+            <div className="flex flex-col gap-1.5 mb-2">
               <Input
                 type="email"
                 label={t('login.email')}

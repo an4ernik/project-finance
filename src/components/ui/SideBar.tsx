@@ -1,8 +1,6 @@
 import {type ReactNode} from 'react';
 import {useTranslation} from 'react-i18next';
-import logo from '@/assets/icons/logo.svg';
-import darkLogo from '@/assets/icons/logo-dark.svg';
-import {useTheme} from '@/shared/providers/ThemeProvider';
+import Logo from './Logo';
 import {
   LayoutGridIcon,
   TrendingUp,
@@ -49,7 +47,6 @@ export const NavItem = ({to, icon, label}: NavItemProps) => {
 };
 
 function SideBar() {
-  const {theme} = useTheme();
   const {t} = useTranslation();
   const logout = useAuthStore(set => set.logout);
   const queryClient = useQueryClient();
@@ -71,11 +68,7 @@ function SideBar() {
         '[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_0_rgba(0,0,0,0.2)]',
       )}
     >
-      <img
-        src={theme === 'dark' ? darkLogo : logo}
-        alt="logo"
-        className="h-[45px] w-auto my-[43px] mx-auto"
-      />
+      <Logo className="h-[45px] my-[43px] mx-auto" />
 
       <div className="flex-1 flex flex-col justify-between">
         <ul className="pl-[50px] space-y-[4px] pr-[24px]">

@@ -35,7 +35,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             {label}
           </label>
         )}
-        <div className="flex w-full flex-col gap-1.25">
+        <div className="flex w-full flex-col gap-1.25 h-15">
           <div
             className={cn(
               'flex h-10 items-center gap-2.5 rounded-[10px] border px-2.5 transition-all duration-200',
