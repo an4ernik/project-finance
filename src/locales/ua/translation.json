@@ -50,6 +50,26 @@
         "fileType": "Дозволені лише JPG, PNG або GIF"
       }
     },
+    "security": {
+      "title": "Зміна паролю",
+      "subtitle": "Переконайтеся, що ваш обліковий запис використовує надійний пароль",
+      "currentPassword": "Поточний пароль",
+      "currentPasswordPlaceholder": "Введіть поточний пароль",
+      "newPassword": "Новий пароль",
+      "newPasswordPlaceholder": "Введіть новий пароль",
+      "confirmPassword": "Підтвердіть новий пароль",
+      "confirmPasswordPlaceholder": "Підтвердіть новий пароль",
+      "updateButton": "Оновити пароль",
+      "loading": "Оновлення...",
+      "saveSuccess": "Пароль успішно змінено",
+      "errors": {
+        "currentPasswordRequired": "Введіть поточний пароль",
+        "currentPasswordWrong": "Здається, пароль введено неправильно",
+        "passwordRequirements": "Пароль не відповідає вимогам",
+        "confirmRequired": "Підтвердіть пароль",
+        "mismatch": "Паролі не співпадають"
+      }
+    },
     "securityPlaceholder": "Тут будуть налаштування безпеки.",
     "notificationsPlaceholder": "Тут будуть налаштування сповіщень."
   },
@@ -178,6 +198,9 @@
     "loading": "Завантаження..."
   },
   "landing": {
+    "header": {
+      "dashboard": "Перейти до дашборду"
+    },
     "nav": {
       "about": "Про сервіс",
       "howItWorks": "Як це працює",

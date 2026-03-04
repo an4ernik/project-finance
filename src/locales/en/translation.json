@@ -50,6 +50,26 @@
         "fileType": "Only JPG, PNG or GIF allowed"
       }
     },
+    "security": {
+      "title": "Change Password",
+      "subtitle": "Make sure your account uses a strong password",
+      "currentPassword": "Current password",
+      "currentPasswordPlaceholder": "Enter current password",
+      "newPassword": "New password",
+      "newPasswordPlaceholder": "Enter new password",
+      "confirmPassword": "Confirm new password",
+      "confirmPasswordPlaceholder": "Confirm new password",
+      "updateButton": "Update password",
+      "loading": "Updating...",
+      "saveSuccess": "Password successfully changed",
+      "errors": {
+        "currentPasswordRequired": "Enter current password",
+        "currentPasswordWrong": "The password you entered seems to be incorrect",
+        "passwordRequirements": "Password does not meet requirements",
+        "confirmRequired": "Please confirm your password",
+        "mismatch": "Passwords do not match"
+      }
+    },
     "securityPlaceholder": "Security settings will be here.",
     "notificationsPlaceholder": "Notification settings will be here."
   },
@@ -178,6 +198,9 @@
     "loading": "Loading..."
   },
   "landing": {
+    "header": {
+      "dashboard": "Go to dashboard"
+    },
     "nav": {
       "about": "About the service",
       "howItWorks": "How it works",

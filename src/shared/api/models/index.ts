@@ -29,6 +29,7 @@ export * from './responseUserProfileDTO';
 export * from './sendResetPasswordTokenParams';
 export * from './signUpBody';
 export * from './updateMeBody';
+export * from './updateUserPasswordRequestDTO';
 export * from './updateUserProfileDTO';
 export * from './updateUserProfileDTOCurrencyCode';
 export * from './userResponseDTO';
