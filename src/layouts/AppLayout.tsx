@@ -13,7 +13,7 @@ function AppLayout() {
   return (
     <div className="flex h-screen bg-background text-foreground">
       <SideBar />
-      <div className="flex flex-col flex-1 overflow-hidden h-full py-[33.5px] pl-[35px] pr-[50px]">
+      <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden py-[33.5px] pl-[35px] pr-[50px]">
         <div className="flex flex-row justify-between w-full">
           <div>
             <h2 className="text-2xl font-semibold">{t('layout.welcomeBack')}</h2>
@@ -28,7 +28,7 @@ function AppLayout() {
             <p>{userData?.fullName ?? t('layout.userName')}</p>
           </div>
         </div>
-        <main className="mt-[15px] h-full">
+        <main className="mt-[15px] min-h-0 flex-1">
           <Outlet />
         </main>
       </div>

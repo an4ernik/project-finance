@@ -1,4 +1,4 @@
-import {useEffect, useMemo} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import {Controller, useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
@@ -48,13 +48,18 @@ function AccountSettings() {
   const queryClient = useQueryClient();
   const {mutate: updateMe, isPending: isUpdatingProfile} = useUpdateMe();
   const {mutate: updateEmail, isPending: isUpdatingEmail} = useUpdateEmail();
+  const [fullNameInput, setFullNameInput] = useState<Boolean>(false);
+  const [emailInput, setEmailInput] = useState<Boolean>(false);
 
   const schema = useMemo(
     () =>
       z.object({
         fullName: z
           .union([
-            z.string().trim().min(1, t('settings.account.errors.fullNameRequired')),
+            z
+              .string()
+              .trim()
+              .min(3, t('settings.account.errors.fullNameRequired')),
             z.literal(''),
           ])
           .optional(),
@@ -145,7 +150,8 @@ function AccountSettings() {
     const emailChanged =
       nextEmail.length > 0 && nextEmail !== (userData.email ?? '');
     const currencyChanged =
-      nextCurrency.length > 0 && nextCurrency !== (userData.currencyCode ?? 'UAH');
+      nextCurrency.length > 0 &&
+      nextCurrency !== (userData.currencyCode ?? 'UAH');
     const avatarChanged = !!nextAvatar;
 
     if (
@@ -163,10 +169,10 @@ function AccountSettings() {
     const needsEmailUpdate = emailChanged;
 
     const dto = {
-      fullName: fullNameChanged ? nextFullName : userData.fullName ?? '',
+      fullName: fullNameChanged ? nextFullName : (userData.fullName ?? ''),
       currencyCode: (currencyChanged
         ? nextCurrency
-        : userData.currencyCode ?? 'UAH') as UpdateUserProfileDTOCurrencyCode,
+        : (userData.currencyCode ?? 'UAH')) as UpdateUserProfileDTOCurrencyCode,
     };
 
     const handleError = (error: any) => {
@@ -241,18 +247,18 @@ function AccountSettings() {
   };
 
   return (
-    <section className="h-full rounded-[10px] border border-border bg-card px-6 py-4 text-foreground overflow-auto">
-      <div className="mb-4">
-        <h2 className="text-[28px] font-semibold tracking-[-0.5px]">
-          {t('settings.account.title')}
-        </h2>
-        <p className="mt-1 text-sm text-muted-foreground">
-          {t('settings.account.subtitle')}
-        </p>
-      </div>
+    <section className="h-full min-h-0 overflow-y-auto px-6 py-6 text-foreground">
+      <div className="max-w-[540px]">
+        <div className="mb-6">
+          <h2 className="text-[20px] font-semibold tracking-[-0.5px]">
+            {t('settings.account.title')}
+          </h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {t('settings.account.subtitle')}
+          </p>
+        </div>
 
-      <div className="grid grid-cols-2 gap-6">
-        <form className="max-w-[760px]" onSubmit={handleSubmit(onSubmit)}>
+        <form className="flex flex-col gap-4" onSubmit={handleSubmit(onSubmit)}>
           <FieldGroup className="gap-4">
             <Field className="gap-2">
               <FieldContent>
@@ -289,19 +295,28 @@ function AccountSettings() {
 
             <Field className="gap-1.5" data-invalid={!!errors.fullName}>
               <FieldLabel>{t('settings.account.fullName')}</FieldLabel>
-              <FieldContent className="relative">
-                <Input
-                  icon={<User className="size-4" />}
-                  placeholder={
-                    userData?.fullName || t('settings.account.fullNamePlaceholder')
-                  }
-                  className="pr-10"
-                  {...register('fullName')}
-                />
-                <PenLine className="pointer-events-none absolute right-3 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
-                <FieldError className="mt-1 text-[10px]">
-                  {errors.fullName?.message}
-                </FieldError>
+              <FieldContent>
+                <div className="relative">
+                  <Input
+                    icon={<User className="size-4" />}
+                    placeholder={
+                      userData?.fullName ||
+                      t('settings.account.fullNamePlaceholder')
+                    }
+                    className="pr-10"
+                    {...register('fullName')}
+                    disabled={!fullNameInput}
+                    errorMessage={errors.fullName?.message}
+                  />
+                  <PenLine
+                    onClick={() => {
+                      fullNameInput
+                        ? setFullNameInput(false)
+                        : setFullNameInput(true);
+                    }}
+                    className="absolute right-3 top-5 z-20 size-5 cursor-pointer text-muted-foreground"
+                  />
+                </div>
               </FieldContent>
             </Field>
 
@@ -315,11 +330,15 @@ function AccountSettings() {
                   }
                   className="pr-10"
                   {...register('email')}
+                  disabled={!emailInput}
+                  errorMessage={errors.email?.message}
                 />
-                <PenLine className="pointer-events-none absolute right-3 top-1/2 size-5 -translate-y-1/2 text-muted-foreground" />
-                <FieldError className="mt-1 text-[10px]">
-                  {errors.email?.message}
-                </FieldError>
+                <PenLine
+                  onClick={() => {
+                    emailInput ? setEmailInput(false) : setEmailInput(true);
+                  }}
+                  className="absolute right-3 top-5 z-20 size-5 cursor-pointer text-muted-foreground"
+                />
               </FieldContent>
               <FieldDescription className="text-sm">
                 {t('settings.account.emailHint')}
@@ -334,7 +353,7 @@ function AccountSettings() {
                   control={control}
                   render={({field}) => (
                     <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger className="h-10 w-full rounded-[10px] border-border bg-background/40 text-base">
+                      <SelectTrigger className="h-10 w-full rounded-[10px] border border-[rgba(46,45,45,0.14)] px-2.5 text-[16px] leading-[1.167] shadow-none dark:border-white/[0.14] dark:bg-transparent dark:shadow-none bg-linear-to-b from-[rgba(11,21,20,0.03)] from-[1.442%] via-[rgba(49,95,85,0.1)] via-[50.481%] to-[rgba(144,208,182,0.05)] to-[94.712%] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.35),0px_4px_4px_0px_rgba(75,75,75,0.25)]">
                         <SelectValue
                           placeholder={
                             userData?.currencyCode ||
@@ -369,7 +388,6 @@ function AccountSettings() {
             </Button>
           </FieldGroup>
         </form>
-        <div />
       </div>
     </section>
   );

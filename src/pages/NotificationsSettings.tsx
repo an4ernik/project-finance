@@ -4,7 +4,7 @@ function NotificationsSettings() {
   const {t} = useTranslation();
 
   return (
-    <div className="rounded-[10px] border border-border bg-card px-6 py-4 text-foreground">
+    <div className="h-full min-h-0 overflow-y-auto px-6 py-6 text-foreground">
       <p className="text-muted-foreground">
         {t('settings.notificationsPlaceholder')}
       </p>

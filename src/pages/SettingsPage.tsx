@@ -12,12 +12,12 @@ function SettingsPage() {
 
   return (
     <div className="flex h-full min-h-0 flex-col gap-4 bg-background text-foreground">
-      <div className="flex flex-row rounded-[10px] border border-border bg-card">
+      <div className="flex h-[63.5px] flex-row rounded-[10px] border border-border bg-card">
         <NavLink
           to="/settings"
           end
           className={({isActive}) =>
-            `flex items-center gap-2 px-6 py-3 ${isActive ? activeStyle : normalStyle}`
+            `flex h-full items-center gap-2 px-6 py-3 ${isActive ? activeStyle : normalStyle}`
           }
         >
           <User size={18} />
@@ -27,7 +27,7 @@ function SettingsPage() {
         <NavLink
           to="/settings/security"
           className={({isActive}) =>
-            `flex items-center gap-2 px-6 py-3 ${isActive ? activeStyle : normalStyle}`
+            `flex h-full items-center gap-2 px-6 py-3 ${isActive ? activeStyle : normalStyle}`
           }
         >
           <Shield size={18} />
@@ -37,7 +37,7 @@ function SettingsPage() {
         <NavLink
           to="/settings/notifications"
           className={({isActive}) =>
-            `flex items-center gap-2 px-6 py-3 ${isActive ? activeStyle : normalStyle}`
+            `flex h-full items-center gap-2 px-6 py-3 ${isActive ? activeStyle : normalStyle}`
           }
         >
           <Bell size={18} />
@@ -45,7 +45,7 @@ function SettingsPage() {
         </NavLink>
       </div>
 
-      <div className="min-h-0 flex-1 rounded-[10px] bg-card">
+      <div className="min-h-0 flex-1 rounded-[10px] border border-border bg-card overflow-hidden">
         <Outlet />
       </div>
     </div>

@@ -90,8 +90,8 @@ function SecuritySettings() {
   };
 
   return (
-    <section className="h-full overflow-auto rounded-[10px] border border-border bg-card text-foreground">
-      <div className='w-135.25 px-6 py-17.5'>
+    <section className="h-full min-h-0 overflow-y-auto px-6 py-6 text-foreground">
+      <div className="max-w-[540px]">
         <div className="mb-6">
           <h2 className="text-[20px] font-semibold tracking-[-0.5px]"> 
             {t('settings.security.title')}

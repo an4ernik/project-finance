@@ -10,7 +10,6 @@ import {Mail, Lock, User, Camera, ChevronRight} from 'lucide-react';
 import {
   Field,
   FieldLabel,
-  FieldDescription,
   FieldError,
   FieldContent,
   FieldGroup,
@@ -197,84 +196,78 @@ function SignUp() {
         </div>
 
         <form
-          className="flex w-full flex-col gap-4"
+          className="flex w-full flex-col gap-3"
           onSubmit={handleSubmit(onSubmit)}
         >
-          <FieldGroup className="gap-3">
-            <Field className="gap-1" data-invalid={!!errors.email}>
+          <FieldGroup className="gap-1.5">
+            <Field className="gap-0.5" data-invalid={!!errors.email}>
               <FieldLabel>Email *</FieldLabel>
-              <FieldContent className="relative">
+              <FieldContent className="relative gap-1">
                 <Input
                   icon={<Mail className="size-4" />}
                   placeholder="name@example.com"
+                  errorMessage={errors.email?.message}
                   {...register('email')}
                 />
-                <FieldError className="mt-0.5 text-[10px] leading-[1.2]">
-                  {errors.email?.message}
-                </FieldError>
               </FieldContent>
             </Field>
 
-            <Field className="gap-1" data-invalid={!!errors.password}>
-              <div className="flex items-center justify-between">
+            <Field className="gap-0.5" data-invalid={!!errors.password}>
+              <div className="flex items-end justify-between gap-2">
                 <FieldLabel className="mb-0">{t('auth.password')} *</FieldLabel>
-                <FieldDescription className="mt-0 text-[10px] leading-[1.2] text-right">
+                <p className="text-[10px] leading-[1.2] text-muted-foreground text-right">
                   {t('auth.passwordRules')}
-                </FieldDescription>
+                </p>
               </div>
-              <FieldContent className="relative">
+              <FieldContent className="relative gap-1">
                 <Input
                   variant="password"
                   icon={<Lock className="size-4" />}
                   placeholder={t('auth.passwordPlaceholder')}
+                  errorMessage={errors.password?.message}
                   {...register('password')}
                 />
-                <FieldError className="mt-0.5 text-[10px] leading-[1.2]">
-                  {errors.password?.message}
-                </FieldError>
               </FieldContent>
             </Field>
 
-            <Field className="gap-1" data-invalid={!!errors.confirmPassword}>
+            <Field className="gap-0.5" data-invalid={!!errors.confirmPassword}>
               <FieldLabel>{t('auth.confirmPassword')} *</FieldLabel>
-              <FieldContent className="relative">
+              <FieldContent className="relative gap-1">
                 <Input
                   variant="password"
                   icon={<Lock className="size-4" />}
                   placeholder={t('auth.confirmPassword')}
+                  errorMessage={errors.confirmPassword?.message}
                   {...register('confirmPassword')}
                 />
-                <FieldError className="mt-0.5 text-[10px] leading-[1.2]">
-                  {errors.confirmPassword?.message}
-                </FieldError>
               </FieldContent>
             </Field>
 
-            <Field className="gap-1" data-invalid={!!errors.fullName}>
+            <Field className="gap-0.5" data-invalid={!!errors.fullName}>
               <FieldLabel>{t('auth.fullName')} *</FieldLabel>
-              <FieldContent className="relative">
+              <FieldContent className="relative gap-1">
                 <Input
                   icon={<User className="size-4" />}
                   placeholder={t('auth.typeFullName')}
+                  errorMessage={errors.fullName?.message}
                   {...register('fullName')}
                 />
-                <FieldError className="mt-0.5 text-[10px] leading-[1.2]">
-                  {errors.fullName?.message}
-                </FieldError>
               </FieldContent>
             </Field>
 
-            <Field className="gap-1">
+            <Field className="gap-0.5">
               <FieldLabel>{t('auth.currency')} *</FieldLabel>
               <Controller
                 name="currencyCode"
                 control={control}
                 render={({field}) => (
-                  <Select
-                    onValueChange={field.onChange}
-                    defaultValue={field.value}
-                  >
-                    <SelectTrigger>
+                    <Select
+                      onValueChange={field.onChange}
+                      defaultValue={field.value}
+                    >
+                    <SelectTrigger
+                      className="h-10 w-full rounded-[10px] border border-[rgba(46,45,45,0.14)] px-2.5 text-[16px] leading-[1.167] shadow-none dark:border-white/[0.14] dark:bg-transparent dark:shadow-none bg-linear-to-b from-[rgba(11,21,20,0.03)] from-[1.442%] via-[rgba(49,95,85,0.1)] via-[50.481%] to-[rgba(144,208,182,0.05)] to-[94.712%] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.35),0px_4px_4px_0px_rgba(75,75,75,0.25)]"
+                    >
                       <SelectValue
                         placeholder={t('auth.currencyPlaceholder')}
                       />
@@ -289,10 +282,10 @@ function SignUp() {
               />
             </Field>
 
-            <Field className="gap-1" data-invalid={!!errors.avatar}>
+            <Field className="gap-0.5" data-invalid={!!errors.avatar}>
               <FieldLabel className="mb-0">{t('auth.avatar.label')}</FieldLabel>
-              <FieldContent>
-                <div className="mt-2 flex items-center gap-4">
+              <FieldContent className="gap-1">
+                <div className="mt-1.5 flex items-center gap-4">
                   <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-2xl border border-dashed bg-secondary shadow-inner">
                     {previewUrl ? (
                       <img
@@ -322,7 +315,7 @@ function SignUp() {
                     </p>
                   </div>
                 </div>
-                <FieldError className="mt-0.5 text-[10px] leading-[1.2]">
+                <FieldError className="mt-0 text-[10px] leading-[1.2]">
                   {errors.avatar?.message?.toString()}
                 </FieldError>
               </FieldContent>
