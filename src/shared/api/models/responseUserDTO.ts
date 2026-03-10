@@ -5,20 +5,20 @@
  * REST API Documentation for MT Service
  * OpenAPI spec version: 1.0
  */
-import type { AuthResponseDTOCurrencyCode } from './authResponseDTOCurrencyCode';
+import type { ResponseUserDTOCurrencyCode } from './responseUserDTOCurrencyCode';
 
 /**
- * User sign up response
+ * Get user info
  */
-export interface AuthResponseDTO {
+export interface ResponseUserDTO {
   /** User's id */
   id?: number;
+  /** User's email address */
+  email?: string;
   /** User's full name */
   fullName?: string;
-  /** User's email */
-  email?: string;
-  /** User's main currency code */
-  currencyCode?: AuthResponseDTOCurrencyCode;
+  /** User's main currency (ISO 4217) */
+  currencyCode?: ResponseUserDTOCurrencyCode;
   /** User's avatar url */
   avatarUrl?: string;
   /** User's activation status */

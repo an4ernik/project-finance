@@ -108,7 +108,8 @@
       "required": "Required field is empty",
       "mismatch": "Passwords do not match",
       "fileSize": "Photo exceeds allowed size (2 MB)",
-      "fileType": "Only JPG, PNG or GIF allowed"
+      "fileType": "Only JPG, PNG or GIF allowed",
+      "fullNameLength": "The full name must contain between 3 and 35 characters. Only Latin and Cyrillic letters are allowed."
     },
     "verify": {
       "title": "Almost there — you’re all set!",

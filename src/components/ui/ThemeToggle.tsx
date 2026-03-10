@@ -12,7 +12,7 @@ export const ThemeToggle = () => {
       {theme === 'light' ? (
         <Moon className="size-5 text-slate-900" />
       ) : (
-        <Sun className="size-5 text-yellow-400" />
+        <Sun className="size-5" />
       )}
     </button>
   );

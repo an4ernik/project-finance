@@ -5,9 +5,9 @@
  * REST API Documentation for MT Service
  * OpenAPI spec version: 1.0
  */
-import type { UpdateUserProfileDTO } from './updateUserProfileDTO';
+import type { RequestUpdateUserProfileDTO } from './requestUpdateUserProfileDTO';
 
 export type UpdateMeBody = {
-  dto?: UpdateUserProfileDTO;
+  dto?: RequestUpdateUserProfileDTO;
   avatar?: Blob;
 };

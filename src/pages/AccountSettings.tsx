@@ -31,7 +31,8 @@ import {
 } from '@/shared/api/generated/user-management/user-management';
 import {useQueryClient} from '@tanstack/react-query';
 import {UpdateUserProfileDTOCurrencyCode} from '@/shared/api/models/updateUserProfileDTOCurrencyCode';
-import type {UserResponseDTO} from '@/shared/api/models';
+import type {ResponseUserDTO} from '@/shared/api/models';
+import {parseISO, format} from 'date-fns';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 const ACCEPTED_IMAGE_TYPES = [
@@ -44,12 +45,16 @@ const ACCEPTED_IMAGE_TYPES = [
 function AccountSettings() {
   const {t} = useTranslation();
   const {user, isLoading, refetch} = useMe();
-  const userData = user as UserResponseDTO | undefined;
+  const userData = user as ResponseUserDTO | undefined;
   const queryClient = useQueryClient();
   const {mutate: updateMe, isPending: isUpdatingProfile} = useUpdateMe();
   const {mutate: updateEmail, isPending: isUpdatingEmail} = useUpdateEmail();
   const [fullNameInput, setFullNameInput] = useState<Boolean>(false);
   const [emailInput, setEmailInput] = useState<Boolean>(false);
+  const regDate = userData?.createdAt ? parseISO(userData.createdAt) : null;
+  const isPending = isUpdatingProfile || isUpdatingEmail;
+
+  const date = regDate && format(regDate, 'dd.MM.yyyy');
 
   const schema = useMemo(
     () =>
@@ -59,7 +64,11 @@ function AccountSettings() {
             z
               .string()
               .trim()
-              .min(3, t('settings.account.errors.fullNameRequired')),
+              .min(3, t('auth.errors.fullNameLength'))
+              .max(35, t('auth.errors.fullNameLength'))
+              .regex(/^[A-Za-zА-Яа-яЁёІіЇїЄє\s'’ʼ]+$/, {
+                message: t('auth.errors.fullNameLength'),
+              }),
             z.literal(''),
           ])
           .optional(),
@@ -97,7 +106,7 @@ function AccountSettings() {
     handleSubmit,
     reset,
     watch,
-    formState: {errors},
+    formState: {errors, isValid},
   } = useForm<FormFields>({
     resolver: zodResolver(schema),
     mode: 'onBlur',
@@ -294,7 +303,9 @@ function AccountSettings() {
             </Field>
 
             <Field className="gap-1.5" data-invalid={!!errors.fullName}>
-              <FieldLabel>{t('settings.account.fullName')}</FieldLabel>
+              <FieldLabel className="text-foreground">
+                {t('settings.account.fullName')}
+              </FieldLabel>
               <FieldContent>
                 <div className="relative">
                   <Input
@@ -314,31 +325,35 @@ function AccountSettings() {
                         ? setFullNameInput(false)
                         : setFullNameInput(true);
                     }}
-                    className="absolute right-3 top-5 z-20 size-5 cursor-pointer text-muted-foreground"
+                    className="absolute right-3 top-3 size-5 cursor-pointer text-muted-foreground"
                   />
                 </div>
               </FieldContent>
             </Field>
 
             <Field className="gap-1.5" data-invalid={!!errors.email}>
-              <FieldLabel>{t('settings.account.email')}</FieldLabel>
-              <FieldContent className="relative">
-                <Input
-                  icon={<Mail className="size-4" />}
-                  placeholder={
-                    userData?.email || t('settings.account.emailPlaceholder')
-                  }
-                  className="pr-10"
-                  {...register('email')}
-                  disabled={!emailInput}
-                  errorMessage={errors.email?.message}
-                />
-                <PenLine
-                  onClick={() => {
-                    emailInput ? setEmailInput(false) : setEmailInput(true);
-                  }}
-                  className="absolute right-3 top-5 z-20 size-5 cursor-pointer text-muted-foreground"
-                />
+              <FieldLabel className="text-foreground">
+                {t('settings.account.email')}
+              </FieldLabel>
+              <FieldContent>
+                <div className="relative">
+                  <Input
+                    icon={<Mail className="size-4" />}
+                    placeholder={
+                      userData?.email || t('settings.account.emailPlaceholder')
+                    }
+                    className="pr-10"
+                    {...register('email')}
+                    disabled={!emailInput}
+                    errorMessage={errors.email?.message}
+                  />
+                  <PenLine
+                    onClick={() => {
+                      emailInput ? setEmailInput(false) : setEmailInput(true);
+                    }}
+                    className="absolute right-3 top-3 size-5 cursor-pointer text-muted-foreground"
+                  />
+                </div>
               </FieldContent>
               <FieldDescription className="text-sm">
                 {t('settings.account.emailHint')}
@@ -346,7 +361,9 @@ function AccountSettings() {
             </Field>
 
             <Field className="gap-1.5">
-              <FieldLabel>{t('settings.account.currency')}</FieldLabel>
+              <FieldLabel className="text-foreground">
+                {t('settings.account.currency')}
+              </FieldLabel>
               <FieldContent>
                 <Controller
                   name="currencyCode"
@@ -373,18 +390,20 @@ function AccountSettings() {
             </Field>
 
             <Field className="gap-1">
-              <FieldLabel>{t('settings.account.dateRegistered')}</FieldLabel>
-              <FieldDescription className="text-[18px] leading-none text-muted-foreground">
-                {t('settings.account.datePlaceholder')}
+              <FieldLabel className="text-foreground">
+                {t('settings.account.dateRegistered')}
+              </FieldLabel>
+              <FieldDescription className="text-[20px] leading-none text-muted-foreground">
+                {date}
               </FieldDescription>
             </Field>
 
             <Button
               type="submit"
-              className="mt-1 h-12 text-base tracking-normal"
-              disabled={isLoading || isUpdatingProfile || isUpdatingEmail}
+              className="w-full py-6 text-lg"
+              disabled={!isValid}
             >
-              {t('settings.account.save')}
+              {isPending ? t('common.loading') : t('settings.account.save')}
             </Button>
           </FieldGroup>
         </form>

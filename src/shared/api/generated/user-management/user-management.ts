@@ -27,10 +27,9 @@ import type {
 import type {
   ProblemDetail,
   RequestUpdateUserEmailDTO,
-  ResponseUserProfileDTO,
+  RequestUpdateUserPasswordDTO,
+  ResponseUserDTO,
   UpdateMeBody,
-  UpdateUserPasswordRequestDTO,
-  UserResponseDTO,
   VerifyEmailParams
 } from '../../models';
 
@@ -43,7 +42,7 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 export type getUserProfileResponse200 = {
-  data: UserResponseDTO
+  data: ResponseUserDTO
   status: 200
 }
 
@@ -158,7 +157,7 @@ export function useGetUserProfile<TData = Awaited<ReturnType<typeof getUserProfi
  * @summary Update user's profile
  */
 export type updateMeResponse200 = {
-  data: ResponseUserProfileDTO
+  data: ResponseUserDTO
   status: 200
 }
 
@@ -311,7 +310,7 @@ export const getUpdatePasswordUrl = () => {
   return `/api/v1/users/me/update-password`
 }
 
-export const updatePassword = async (updateUserPasswordRequestDTO: UpdateUserPasswordRequestDTO, options?: RequestInit): Promise<updatePasswordResponse> => {
+export const updatePassword = async (requestUpdateUserPasswordDTO: RequestUpdateUserPasswordDTO, options?: RequestInit): Promise<updatePasswordResponse> => {
   
   return customInstance<updatePasswordResponse>(getUpdatePasswordUrl(),
   {      
@@ -319,7 +318,7 @@ export const updatePassword = async (updateUserPasswordRequestDTO: UpdateUserPas
     method: 'PUT',
     headers: { 'Content-Type': 'application/json', ...options?.headers },
     body: JSON.stringify(
-      updateUserPasswordRequestDTO,)
+      requestUpdateUserPasswordDTO,)
   }
 );}
 
@@ -327,8 +326,8 @@ export const updatePassword = async (updateUserPasswordRequestDTO: UpdateUserPas
 
 
 export const getUpdatePasswordMutationOptions = <TError = ErrorType<ProblemDetail>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatePassword>>, TError,{data: UpdateUserPasswordRequestDTO}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof updatePassword>>, TError,{data: UpdateUserPasswordRequestDTO}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatePassword>>, TError,{data: RequestUpdateUserPasswordDTO}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof updatePassword>>, TError,{data: RequestUpdateUserPasswordDTO}, TContext> => {
 
 const mutationKey = ['updatePassword'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -340,7 +339,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updatePassword>>, {data: UpdateUserPasswordRequestDTO}> = (props) => {
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updatePassword>>, {data: RequestUpdateUserPasswordDTO}> = (props) => {
           const {data} = props ?? {};
 
           return  updatePassword(data,requestOptions)
@@ -354,18 +353,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type UpdatePasswordMutationResult = NonNullable<Awaited<ReturnType<typeof updatePassword>>>
-    export type UpdatePasswordMutationBody = UpdateUserPasswordRequestDTO
+    export type UpdatePasswordMutationBody = RequestUpdateUserPasswordDTO
     export type UpdatePasswordMutationError = ErrorType<ProblemDetail>
 
     /**
  * @summary Update user's password
  */
 export const useUpdatePassword = <TError = ErrorType<ProblemDetail>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatePassword>>, TError,{data: UpdateUserPasswordRequestDTO}, TContext>, request?: SecondParameter<typeof customInstance>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatePassword>>, TError,{data: RequestUpdateUserPasswordDTO}, TContext>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updatePassword>>,
         TError,
-        {data: UpdateUserPasswordRequestDTO},
+        {data: RequestUpdateUserPasswordDTO},
         TContext
       > => {
       return useMutation(getUpdatePasswordMutationOptions(options), queryClient);

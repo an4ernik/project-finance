@@ -11,6 +11,7 @@ import SettingsPage from '@/pages/SettingsPage';
 import AppLayout from './layouts/AppLayout';
 import Dashboard from '@/pages/Dashboard';
 import ProtectedRoute from './components/ProtectedRoute';
+import PublicRoute from './components/PublicRoute';
 import AccountSettings from './pages/AccountSettings';
 import SecuritySettings from './pages/SecuritySettings';
 import NotificationsSettings from './pages/NotificationsSettings';
@@ -35,13 +36,15 @@ function App() {
               </Route>
             </Route>
           </Route>
+          <Route element={<PublicRoute />}>
+            <Route path="/login" element={<Login />} />
+            <Route path="/signup" element={<SignUp />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+          </Route>
           <Route path="/" element={<Landing />} />
           <Route path="/Home" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
           <Route path="/verify" element={<VerifyEmailPage />} />
-          <Route path="/forgot-password" element={<ForgotPassword />} />
-          <Route path="/reset-password" element={<ResetPassword />} />
         </Routes>
       </ThemeProvider>
     </>

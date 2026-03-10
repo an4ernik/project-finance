@@ -59,7 +59,14 @@ function SignUp() {
             .regex(/[a-z]/, t('auth.errors.lowercase'))
             .regex(/[0-9]/, t('auth.errors.number')),
           confirmPassword: z.string().min(1, t('auth.errors.confirmRequired')),
-          fullName: z.string().min(1, t('auth.errors.required')),
+          fullName: z
+            .string()
+            .nonempty({message: t('auth.errors.required')})
+            .min(3, t('auth.errors.fullNameLength'))
+            .max(35, t('auth.errors.fullNameLength'))
+            .regex(/^[A-Za-zА-Яа-яЁёІіЇїЄє\s'’ʼ]+$/, {
+              message: t('auth.errors.fullNameLength'),
+            }),
           currencyCode: z.string(),
           avatar: z
             .any()
@@ -261,13 +268,11 @@ function SignUp() {
                 name="currencyCode"
                 control={control}
                 render={({field}) => (
-                    <Select
-                      onValueChange={field.onChange}
-                      defaultValue={field.value}
-                    >
-                    <SelectTrigger
-                      className="h-10 w-full rounded-[10px] border border-[rgba(46,45,45,0.14)] px-2.5 text-[16px] leading-[1.167] shadow-none dark:border-white/[0.14] dark:bg-transparent dark:shadow-none bg-linear-to-b from-[rgba(11,21,20,0.03)] from-[1.442%] via-[rgba(49,95,85,0.1)] via-[50.481%] to-[rgba(144,208,182,0.05)] to-[94.712%] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.35),0px_4px_4px_0px_rgba(75,75,75,0.25)]"
-                    >
+                  <Select
+                    onValueChange={field.onChange}
+                    defaultValue={field.value}
+                  >
+                    <SelectTrigger className="h-10 w-full rounded-[10px] border border-[rgba(46,45,45,0.14)] px-2.5 text-[16px] leading-[1.167] shadow-none dark:border-white/[0.14] dark:bg-transparent dark:shadow-none bg-linear-to-b from-[rgba(11,21,20,0.03)] from-[1.442%] via-[rgba(49,95,85,0.1)] via-[50.481%] to-[rgba(144,208,182,0.05)] to-[94.712%] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.35),0px_4px_4px_0px_rgba(75,75,75,0.25)]">
                       <SelectValue
                         placeholder={t('auth.currencyPlaceholder')}
                       />
