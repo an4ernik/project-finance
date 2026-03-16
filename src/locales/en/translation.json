@@ -11,15 +11,12 @@
     "help": "Help",
     "logOut": "Log out"
   },
-  "layout": {
-    "welcomeBack": "Welcome back!",
-    "welcomeSubtitle": "A great time to manage your finances.",
-    "userName": "Name"
-  },
   "dashboard": {
     "title": "Dashboard"
   },
   "settings": {
+    "welcomeBack": "Welcome back!",
+    "welcomeSubtitle": "A great time to manage your finances.",
     "title": "Settings",
     "tabs": {
       "account": "Account",

@@ -1,8 +1,15 @@
+import AppLayout from '@/layouts/AppLayout';
 import {useTranslation} from 'react-i18next';
 
 function Dashboard() {
   const {t} = useTranslation();
-  return <div>{t('dashboard.title')}</div>;
+  return (
+    <AppLayout title={t('dashboard.title')}>
+      <div>
+        <p>Welcome</p>
+      </div>
+    </AppLayout>
+  );
 }
 
 export default Dashboard;

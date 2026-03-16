@@ -11,15 +11,12 @@
     "help": "Допомога",
     "logOut": "Вийти"
   },
-  "layout": {
-    "welcomeBack": "Раді вас бачити знову!",
-    "welcomeSubtitle": "Найкращий момент керувати своїми фінансами.",
-    "userName": "Імʼя"
-  },
   "dashboard": {
     "title": "Головна"
   },
   "settings": {
+    "welcomeBack": "Раді вас бачити знову!",
+    "welcomeSubtitle": "Найкращий момент керувати своїми фінансами.",
     "title": "Налаштування",
     "tabs": {
       "account": "Акаунт",

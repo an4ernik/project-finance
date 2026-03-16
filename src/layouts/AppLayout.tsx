@@ -1,30 +1,73 @@
+import {Outlet} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
 import SideBar from '@/components/ui/SideBar';
-import {Outlet} from 'react-router-dom';
 import {useMe} from '@/shared/api/users/useMe';
 import defaultAvatar from '@/assets/default-photo.png';
 import type {UserResponseDTO} from '@/shared/api/models';
+import {Menu} from 'lucide-react';
+import {useState} from 'react';
+import SmallLogo from '@/assets/icons/small-logo.svg';
 
-function AppLayout() {
+type AppLayoutProps = {
+  title?: React.ReactNode;
+  subtitle?: React.ReactNode;
+  action?: React.ReactNode;
+  children?: React.ReactNode;
+};
+
+function AppLayout({title, subtitle, action, children}: AppLayoutProps) {
   const {t} = useTranslation();
   const {user} = useMe();
   const userData = user as UserResponseDTO;
-  console.log(userData);
+  const resolvedTitle = title ?? t('settings.welcomeBack');
+  const resolvedSubtitle = subtitle ?? t('settings.welcomeSubtitle');
+  const [menuOpen, setMenuOpen] = useState(false);
 
   return (
-    <div className="flex h-screen bg-background text-foreground">
+    <div
+      className={`relative flex h-screen bg-background text-foreground ${
+        menuOpen ? 'overflow-hidden' : ''
+      }`}
+    >
+      <header className="absolute top-0 left-0 right-0 flex md:hidden items-center justify-between z-30 px-6 h-16.25 bg-[--light-background] dark:bg-[#0b1514] [box-shadow:0px_4px_4px_0px_rgba(75,75,75,0.2),inset_0px_1px_0px_0px_rgba(255,255,255,0.25)]">
+        <button
+          onClick={() => setMenuOpen(prev => !prev)}
+          className="flex items-center justify-center size-12.5 rounded-xl border border-white/30 backdrop-blur-lg bg-linear-to-b from-[rgba(11,21,20,0.01)] via-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_4px_4px_0px_rgba(75,75,75,0.2)]"
+        >
+          <Menu className="size-5 text-[#0b1514] dark:text-[#eaf6f3]" />
+        </button>
+        <img src={SmallLogo} className="h-9.25" />
+        <div className="flex md:hidden items-center">
+          <img
+            src={userData?.avatarUrl ? userData.avatarUrl : defaultAvatar}
+            alt="avatar"
+            className="h-[29px] rounded-2xl"
+          />
+        </div>
+      </header>
+
+      {menuOpen && (
+        <div
+          className="fixed inset-0 z-40 md:hidden bg-black/40 backdrop-blur-[2px]"
+          onClick={() => setMenuOpen(false)}
+        />
+      )}
+
       <SideBar />
-      <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden py-[33.5px] pl-[35px] pr-[50px]">
-        <div className="flex flex-row justify-between w-full">
+      <SideBar
+        variant="mobile"
+        isOpen={menuOpen}
+        onClose={() => setMenuOpen(false)}
+      />
+
+      <div className="flex h-full min-h-0 flex-1 flex-col overflow-hidden py-[33.5px] px-[35px] md:pr-[50px] pt-16.25 md:pt-0">
+        <div className="flex flex-row justify-between w-full mt-[35px]">
           <div>
-            <h2 className="text-2xl font-semibold">
-              {t('layout.welcomeBack')}
-            </h2>
-            <p className="text-muted-foreground">
-              {t('layout.welcomeSubtitle')}
-            </p>
+            <h2 className="text-2xl font-semibold">{resolvedTitle}</h2>
+            <p className="text-muted-foreground">{resolvedSubtitle}</p>
           </div>
-          <div className="flex flex-row gap-[4.5px] items-center">
+          <div className={!action ? 'hidden' : 'flex flex-row'}>{action}</div>
+          <div className="hidden md:flex flex-row gap-[4.5px] items-center">
             <img
               src={userData?.avatarUrl ? userData.avatarUrl : defaultAvatar}
               alt="avatar"
@@ -34,7 +77,7 @@ function AppLayout() {
           </div>
         </div>
         <main className="mt-[15px] min-h-0 flex-1">
-          <Outlet />
+          {children ?? <Outlet />}
         </main>
       </div>
     </div>
