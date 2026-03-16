@@ -16,13 +16,13 @@ function SettingsPage() {
       title={t('settings.welcomeBack')}
       subtitle={t('settings.welcomeSubtitle')}
     >
-      <div className="flex flex-wrap h-full min-h-0 min-w-[342px] flex-col gap-4 bg-background text-foreground">
-        <div className="flex min-h-[63.5px] md:gap-[50px] flex-row rounded-[10px] border border-border bg-card">
+      <div className="flex h-full min-h-0 min-w-0 flex-col gap-4 bg-background text-foreground">
+        <div className="flex flex-wrap gap-2 rounded-[10px] border border-border bg-card sm:flex-nowrap sm:gap-[50px] sm:min-h-[63.5px]">
           <NavLink
             to="/settings"
             end
             className={({isActive}) =>
-              `flex h-full w-full sm:max-w-[150px] items-center gap-2 px-6 py-3 flex-col sm:flex-row ${isActive ? activeStyle : normalStyle}`
+              `flex min-h-[48px] flex-1 items-center justify-center gap-2 px-4 py-3 flex-col sm:flex-row sm:flex-none sm:max-w-[150px] ${isActive ? activeStyle : normalStyle}`
             }
           >
             <User size={18} className="shrink-0" />
@@ -32,7 +32,7 @@ function SettingsPage() {
           <NavLink
             to="/settings/security"
             className={({isActive}) =>
-              `flex h-full sm:max-w-[150px] items-center gap-2 px-6 py-3 flex-col sm:flex-row w-full ${isActive ? activeStyle : normalStyle}`
+              `flex min-h-[48px] flex-1 items-center justify-center gap-2 px-4 py-3 flex-col sm:flex-row sm:flex-none sm:max-w-[150px] ${isActive ? activeStyle : normalStyle}`
             }
           >
             <Shield size={18} className="shrink-0" />
@@ -42,7 +42,7 @@ function SettingsPage() {
           <NavLink
             to="/settings/notifications"
             className={({isActive}) =>
-              `flex h-full w-full items-center gap-2 px-6 py-3 flex-col sm:flex-row sm:max-w-[150px] ${isActive ? activeStyle : normalStyle}`
+              `flex min-h-[48px] flex-1 items-center justify-center gap-2 px-4 py-3 flex-col sm:flex-row sm:flex-none sm:max-w-[150px] ${isActive ? activeStyle : normalStyle}`
             }
           >
             <Bell size={18} className="shrink-0" />
