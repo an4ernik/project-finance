@@ -55,6 +55,7 @@ function SignUp() {
           password: z
             .string()
             .min(8, t('auth.errors.tooShort'))
+            .max(72, t('auth.errors.tooLong'))
             .regex(/[A-Z]/, t('auth.errors.uppercase'))
             .regex(/[a-z]/, t('auth.errors.lowercase'))
             .regex(/[0-9]/, t('auth.errors.number')),

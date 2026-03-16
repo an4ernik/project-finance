@@ -98,6 +98,7 @@
     "errors": {
       "invalidEmail": "Invalid email address",
       "tooShort": "Min 8 characters, must include uppercase and lowercase letters",
+      "tooLong": "Password must be between 8 and 72 characters long",
       "uppercase": "Uppercase letter required",
       "lowercase": "Lowercase letter required",
       "number": "Number required",
