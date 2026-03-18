@@ -48,6 +48,11 @@ export type getCategoriesResponse200 = {
   status: 200
 }
 
+export type getCategoriesResponse403 = {
+  data: ProblemDetail
+  status: 403
+}
+
 export type getCategoriesResponse409 = {
   data: ProblemDetail
   status: 409
@@ -56,7 +61,7 @@ export type getCategoriesResponse409 = {
 export type getCategoriesResponseSuccess = (getCategoriesResponse200) & {
   headers: Headers;
 };
-export type getCategoriesResponseError = (getCategoriesResponse409) & {
+export type getCategoriesResponseError = (getCategoriesResponse403 | getCategoriesResponse409) & {
   headers: Headers;
 };
 
@@ -172,13 +177,20 @@ export type createCategoryResponse201 = {
   data: Blob
   status: 201
 }
+
+export type createCategoryResponse403 = {
+  data: ProblemDetail
+  status: 403
+}
     
 export type createCategoryResponseSuccess = (createCategoryResponse201) & {
   headers: Headers;
 };
-;
+export type createCategoryResponseError = (createCategoryResponse403) & {
+  headers: Headers;
+};
 
-export type createCategoryResponse = (createCategoryResponseSuccess)
+export type createCategoryResponse = (createCategoryResponseSuccess | createCategoryResponseError)
 
 export const getCreateCategoryUrl = () => {
 
@@ -203,7 +215,7 @@ export const createCategory = async (createCategoryDTO: CreateCategoryDTO, optio
 
 
 
-export const getCreateCategoryMutationOptions = <TError = ErrorType<unknown>,
+export const getCreateCategoryMutationOptions = <TError = ErrorType<ProblemDetail>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCategory>>, TError,{data: CreateCategoryDTO}, TContext>, request?: SecondParameter<typeof customInstance>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createCategory>>, TError,{data: CreateCategoryDTO}, TContext> => {
 
@@ -232,12 +244,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type CreateCategoryMutationResult = NonNullable<Awaited<ReturnType<typeof createCategory>>>
     export type CreateCategoryMutationBody = CreateCategoryDTO
-    export type CreateCategoryMutationError = ErrorType<unknown>
+    export type CreateCategoryMutationError = ErrorType<ProblemDetail>
 
     /**
  * @summary Create a new category
  */
-export const useCreateCategory = <TError = ErrorType<unknown>,
+export const useCreateCategory = <TError = ErrorType<ProblemDetail>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createCategory>>, TError,{data: CreateCategoryDTO}, TContext>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createCategory>>,

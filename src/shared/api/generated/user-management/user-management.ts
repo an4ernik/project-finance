@@ -46,6 +46,11 @@ export type getUserProfileResponse200 = {
   status: 200
 }
 
+export type getUserProfileResponse403 = {
+  data: ProblemDetail
+  status: 403
+}
+
 export type getUserProfileResponse409 = {
   data: ProblemDetail
   status: 409
@@ -54,7 +59,7 @@ export type getUserProfileResponse409 = {
 export type getUserProfileResponseSuccess = (getUserProfileResponse200) & {
   headers: Headers;
 };
-export type getUserProfileResponseError = (getUserProfileResponse409) & {
+export type getUserProfileResponseError = (getUserProfileResponse403 | getUserProfileResponse409) & {
   headers: Headers;
 };
 
@@ -171,6 +176,11 @@ export type updateMeResponse401 = {
   status: 401
 }
 
+export type updateMeResponse403 = {
+  data: ProblemDetail
+  status: 403
+}
+
 export type updateMeResponse404 = {
   data: ProblemDetail
   status: 404
@@ -184,7 +194,7 @@ export type updateMeResponse409 = {
 export type updateMeResponseSuccess = (updateMeResponse200) & {
   headers: Headers;
 };
-export type updateMeResponseError = (updateMeResponse400 | updateMeResponse401 | updateMeResponse404 | updateMeResponse409) & {
+export type updateMeResponseError = (updateMeResponse400 | updateMeResponse401 | updateMeResponse403 | updateMeResponse404 | updateMeResponse409) & {
   headers: Headers;
 };
 
@@ -283,6 +293,11 @@ export type updatePasswordResponse401 = {
   status: 401
 }
 
+export type updatePasswordResponse403 = {
+  data: ProblemDetail
+  status: 403
+}
+
 export type updatePasswordResponse404 = {
   data: ProblemDetail
   status: 404
@@ -296,7 +311,7 @@ export type updatePasswordResponse409 = {
 export type updatePasswordResponseSuccess = (updatePasswordResponse200) & {
   headers: Headers;
 };
-export type updatePasswordResponseError = (updatePasswordResponse400 | updatePasswordResponse401 | updatePasswordResponse404 | updatePasswordResponse409) & {
+export type updatePasswordResponseError = (updatePasswordResponse400 | updatePasswordResponse401 | updatePasswordResponse403 | updatePasswordResponse404 | updatePasswordResponse409) & {
   headers: Headers;
 };
 
@@ -384,6 +399,11 @@ export type updateEmailResponse401 = {
   status: 401
 }
 
+export type updateEmailResponse403 = {
+  data: ProblemDetail
+  status: 403
+}
+
 export type updateEmailResponse409 = {
   data: ProblemDetail
   status: 409
@@ -392,7 +412,7 @@ export type updateEmailResponse409 = {
 export type updateEmailResponseSuccess = (updateEmailResponse200) & {
   headers: Headers;
 };
-export type updateEmailResponseError = (updateEmailResponse400 | updateEmailResponse401 | updateEmailResponse409) & {
+export type updateEmailResponseError = (updateEmailResponse400 | updateEmailResponse401 | updateEmailResponse403 | updateEmailResponse409) & {
   headers: Headers;
 };
 
@@ -477,6 +497,11 @@ export type verifyEmailResponse401 = {
   status: 401
 }
 
+export type verifyEmailResponse403 = {
+  data: ProblemDetail
+  status: 403
+}
+
 export type verifyEmailResponse409 = {
   data: ProblemDetail
   status: 409
@@ -485,7 +510,7 @@ export type verifyEmailResponse409 = {
 export type verifyEmailResponseSuccess = (verifyEmailResponse200) & {
   headers: Headers;
 };
-export type verifyEmailResponseError = (verifyEmailResponse400 | verifyEmailResponse401 | verifyEmailResponse409) & {
+export type verifyEmailResponseError = (verifyEmailResponse400 | verifyEmailResponse401 | verifyEmailResponse403 | verifyEmailResponse409) & {
   headers: Headers;
 };
 

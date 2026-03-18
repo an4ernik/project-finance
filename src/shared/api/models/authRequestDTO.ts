@@ -17,13 +17,15 @@ export interface AuthRequestDTO {
    */
   email: string;
   /**
-   * User's password (min 8 chars).
+   * User's password (min 8 chars max 72 char) at least one uppercase character, at least one lowercase character, at least one digit, without spaces.
    * @minLength 1
+   * @pattern ^((?=\S*?[A-Z])(?=\S*?[a-z])(?=\S*?[!@#$%^&*]).{7,})\S$
    */
   password: string;
   /**
    * User's full name
    * @minLength 1
+   * @pattern ^[a-zA-zА-Яа-я]* ?[a-zA-zА-Яа-я]*$
    */
   fullName: string;
   /** User's main currency (ISO 4217) */
