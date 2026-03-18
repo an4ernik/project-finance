@@ -99,7 +99,7 @@
       "invalidEmail": "Invalid email address",
       "tooShort": "Min 8 characters, must include uppercase and lowercase letters",
       "tooLong": "Password must be between 8 and 72 characters long",
-      "symbol": "At least one special character is required",
+      "symbol": "At least one special character is required (!@#$%^&*)",
       "space": "Password cannot contain spaces",
       "latinOnly": "Password must contain only Latin letters",
       "uppercase": "Uppercase letter required",
