@@ -29,6 +29,7 @@ export const useAuthStore = create<AuthState>()(
       logout: () =>
         set(() => {
           localStorage.removeItem('accessToken');
+          localStorage.removeItem('rememberMe');
           return {
             accessToken: null,
             refreshToken: null,
