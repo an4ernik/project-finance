@@ -199,6 +199,10 @@
     "resendNow": "Resend link",
     "loading": "Loading..."
   },
+  "income": {
+    "title": "Income",
+    "subtitle": "Manage your income records"
+  },
   "landing": {
     "header": {
       "dashboard": "Go to dashboard"
