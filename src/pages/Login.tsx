@@ -166,7 +166,6 @@ function Login() {
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="flex w-full flex-col gap-9"
-          autoComplete="off"
         >
           <div className="flex flex-col">
             <div className="flex flex-col gap-1.5 mb-2">
@@ -177,7 +176,6 @@ function Login() {
                 placeholder={t('login.emailPlaceholder')}
                 error={!!errors.email}
                 errorMessage={errors.email?.message}
-                autoComplete="off"
                 {...register('email')}
               />
 
@@ -188,7 +186,6 @@ function Login() {
                 placeholder={t('login.passwordPlaceholder')}
                 error={!!errors.password}
                 errorMessage={errors.password?.message}
-                autoComplete="new-password"
                 {...register('password')}
               />
             </div>

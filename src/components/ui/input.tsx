@@ -20,10 +20,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       label,
       variant = 'text',
       type,
-      onChange,
-      value,
-      defaultValue,
-      disabled,
       ...props
     },
     ref,
@@ -31,18 +27,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     const [showPassword, setShowPassword] = React.useState(false);
     const isPassword = variant === 'password';
     const inputType = isPassword ? (showPassword ? 'text' : 'password') : type;
-    const [internalValue, setInternalValue] = React.useState(
-      (value ?? defaultValue ?? '') as string | number,
-    );
-
-    React.useEffect(() => {
-      if (value !== undefined) {
-        setInternalValue(value as string | number);
-      }
-    }, [value]);
-
-    const hasValue = String(internalValue ?? '').length > 0;
-    const isDisabled = disabled || false;
 
     return (
       <div className="flex w-full flex-col items-start gap-1.5">
@@ -55,17 +39,14 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <div
             className={cn(
               'flex h-10 items-center gap-2.5 rounded-[10px] border px-2.5 transition-all duration-200',
-              '[box-shadow:0px_4px_4px_0px_rgba(75,75,75,0.2),inset_0px_1px_0px_0px_rgba(255,255,255,0.25)] backdrop-blur-[32px]',
-              hasValue
-                ? 'bg-linear-to-b from-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)]'
-                : 'bg-linear-to-b from-[rgba(144,208,182,0.05)] from-[49%] to-[rgba(49,95,85,0.1)]',
+              'bg-linear-to-b from-[rgba(11,21,20,0.03)] from-[1.442%] via-[rgba(49,95,85,0.1)] via-[50.481%] to-[rgba(144,208,182,0.05)] to-[94.712%]',
+              'backdrop-blur-md dark:backdrop-blur-none',
+              '[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.35),0px_4px_4px_0px_rgba(75,75,75,0.25)] dark:shadow-none',
               !error &&
-                !isDisabled &&
-                'hover:border-muted-foreground focus-within:border-[#02A078] focus-within:bg-linear-to-b focus-within:from-[rgba(255,255,255,0.1)] focus-within:to-[rgba(153,153,153,0.1)]',
-              error &&
-                'border-[#CE0000] border-[0.5px] bg-linear-to-b from-[rgba(199,0,0,0.2)] to-[rgba(199,0,0,0.3)]',
-              isDisabled &&
-                'border-[#5A736E] bg-[rgba(153,153,153,0.1)] opacity-50',
+                'hover:border-muted-foreground focus-within:border-primary',
+              error
+                ? 'border-destructive'
+                : 'border-[rgba(46,45,45,0.14)] dark:border-white/[0.14]',
             )}
           >
             {icon && (
@@ -79,13 +60,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 'border-0 p-0 outline-none ring-0 focus:outline-none focus:ring-0',
                 className,
               )}
-              value={value}
-              defaultValue={defaultValue}
-              disabled={disabled}
-              onChange={event => {
-                setInternalValue(event.target.value);
-                onChange?.(event);
-              }}
               {...props}
             />
             {isPassword && (
