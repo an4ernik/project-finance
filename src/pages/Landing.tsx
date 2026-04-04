@@ -14,6 +14,7 @@ import {
   HeroCta,
 } from '@/components/landing/LandingComponents';
 import {getFeatures, getSteps, getSecurity} from '@/lib/landing-data';
+import IncomeModal from '@/components/ui/IncomeModal';
 
 function Landing() {
   const navigate = useNavigate();
@@ -27,6 +28,7 @@ function Landing() {
 
   return (
     <div className="bg-[--light-background] dark:bg-[--dark-background] overflow-x-hidden">
+      <IncomeModal edit={false}  onClose={() => {}} />
       <section className="relative overflow-hidden">
         <Header />
 

@@ -7,7 +7,10 @@ import {
 } from 'react-day-picker';
 
 import {cn} from '@/lib/utils';
-import {buttonVariants, type ButtonVariant} from '@/components/ui/button-variants';
+import {
+  buttonVariants,
+  type ButtonVariant,
+} from '@/components/ui/button-variants';
 import {Button} from './button';
 
 function Calendar({
@@ -33,6 +36,7 @@ function Calendar({
         String.raw`rtl:**:[.rdp-button\_previous>svg]:rotate-180`,
         className,
       )}
+      
       captionLayout={captionLayout}
       formatters={{
         formatMonthDropdown: date =>
