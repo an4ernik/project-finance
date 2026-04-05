@@ -209,6 +209,7 @@ function SignUp() {
         <form
           className="flex w-full flex-col gap-3"
           onSubmit={handleSubmit(onSubmit)}
+          autoComplete="off"
         >
           <FieldGroup className="gap-1.5">
             <Field className="gap-0.5" data-invalid={!!errors.email}>
@@ -218,6 +219,7 @@ function SignUp() {
                   icon={<Mail className="size-4" />}
                   placeholder="name@example.com"
                   errorMessage={errors.email?.message}
+                  autoComplete="off"
                   {...register('email')}
                 />
               </FieldContent>
@@ -236,6 +238,7 @@ function SignUp() {
                   icon={<Lock className="size-4" />}
                   placeholder={t('auth.passwordPlaceholder')}
                   errorMessage={errors.password?.message}
+                  autoComplete="new-password"
                   {...register('password')}
                 />
               </FieldContent>
@@ -249,6 +252,7 @@ function SignUp() {
                   icon={<Lock className="size-4" />}
                   placeholder={t('auth.confirmPassword')}
                   errorMessage={errors.confirmPassword?.message}
+                  autoComplete="new-password"
                   {...register('confirmPassword')}
                 />
               </FieldContent>

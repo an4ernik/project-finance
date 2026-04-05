@@ -16,6 +16,7 @@ import SecuritySettings from './pages/SecuritySettings';
 import NotificationsSettings from './pages/NotificationsSettings';
 import Landing from './pages/Landing';
 import NotFound from './pages/NotFound';
+import Income from './pages/Income';
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
         <Routes>
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/income" element={<Income />} />
             <Route path="/settings" element={<SettingsPage />}>
               <Route index element={<AccountSettings />} />
               <Route path="security" element={<SecuritySettings />} />
