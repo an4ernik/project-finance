@@ -17,7 +17,6 @@ import NotificationsSettings from './pages/NotificationsSettings';
 import Landing from './pages/Landing';
 import NotFound from './pages/NotFound';
 
-
 function App() {
   return (
     <>
@@ -33,8 +32,7 @@ function App() {
             </Route>
 
           </Route>
-          <Route element={<PublicRoute />}>
-            {/* <Route path="/income" element={<Income />} /> */}
+          <Route element={<PublicRoute />}> 
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />

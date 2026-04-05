@@ -35,9 +35,7 @@ export default function NotFound() {
           </p>
 
           <div className="mt-4 flex flex-col gap-3 sm:flex-row">
-            <Button
-              asChild
-              variant="default"
+            <Button 
               className="bg-emerald-600 hover:bg-emerald-500 text-white"
             >
               <Link to="/" className="flex items-center gap-2">
@@ -47,8 +45,6 @@ export default function NotFound() {
             </Button>
 
             <Button
-              asChild
-              variant="outline"
               className="border-emerald-800 text-emerald-400 hover:bg-emerald-950"
             >
               <button

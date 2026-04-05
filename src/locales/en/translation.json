@@ -299,6 +299,8 @@
     },
     "errors": {
       "amountRequired": "Income amount is required",
+      "amountLessThanZero": "Income amount must be greater than 0",
+      "amountMax": "Income amount cannot exceed more than 1,000,000",
       "categoryRequired": "Income category is required",
       "dateRequired": "Income date is required",
       "noPastDates": "The date cannot be in the past",

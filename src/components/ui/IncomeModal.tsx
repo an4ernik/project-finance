@@ -13,6 +13,7 @@ import {
   X,
   MonitorCheck,
   ArrowDownToLine,
+  type LucideIcon,
 } from 'lucide-react';
 
 import {cn} from '@/lib/utils';
@@ -66,21 +67,41 @@ const sendBtnBase = cn(
   'flex items-center justify-center gap-3.5 rounded-[10px] border transition-all duration-200 text-[16px] font-medium leading-[1.167] tracking-[-1.5px] disabled:opacity-50 disabled:cursor-not-allowed [background:var(--light-btn-bg-full)] text-[#eaf6f3] backdrop-blur-[5px] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.3),0px_10px_26px_0px_rgba(0,0,0,0.2)] dark:[background:linear-gradient(to_bottom,rgba(49,95,85,0.55),rgba(49,95,85,0.18))] dark:backdrop-blur-[7px] dark:[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_14px_26px_0px_rgba(0,0,0,0.35)] dark:text-foreground hover:opacity-90 active:opacity-80 h-[36px] w-[120px] cursor-pointer',
 );
 
+type ActivityValue = 'salary' | 'freelance' | 'investments' | 'cashback';
+
+interface Activity {
+  val: ActivityValue;
+  icon: LucideIcon;
+}
+
+const INCOME_TYPES: Activity[] = [
+  {val: 'salary', icon: DollarSign},
+  {val: 'freelance', icon: MonitorCheck},
+  {val: 'investments', icon: Percent},
+  {val: 'cashback', icon: TrendingUp},
+];
+
 // --- Component ---
 interface IncomeModalProps {
   edit?: boolean;
   onClose: () => void;
 }
 
-const IncomeModal = ({edit = false, onClose}: IncomeModalProps) => {
+const IncomeModal = ({edit, onClose}: IncomeModalProps) => {
   const {t} = useTranslation();
 
   const modalSchema = useMemo(
     () =>
       z.object({
-        amount: z.coerce
-          .number()
-          .min(1, t('incomeModal.errors.amountRequired')),
+        amount: z.preprocess(
+          val => (val === '' ? undefined : Number(val)),
+          z
+            .number({
+              message: t('incomeModal.errors.amountRequired'),
+            })
+            .min(0.01, t('incomeModal.errors.amountLessThanZero'))
+            .max(1_000_000, t('incomeModal.errors.amountMax')),
+        ),
         category: z.string().min(1, t('incomeModal.errors.categoryRequired')),
         date: z.date().refine(d => {
           const today = new Date().setHours(0, 0, 0, 0);
@@ -114,11 +135,17 @@ const IncomeModal = ({edit = false, onClose}: IncomeModalProps) => {
     reset,
     formState: {errors, isDirty, isValid},
   } = useForm({
+    mode: 'onBlur',
+    reValidateMode: 'onBlur',
     resolver: zodResolver(modalSchema),
     defaultValues: {amount: '', category: '', date: new Date(), repeat: 'once'},
   });
 
-  const [watchedDate, watchedRepeat] = watch(['date', 'repeat']);
+  const [watchedDate, watchedRepeat, watchedFile] = watch([
+    'date',
+    'repeat',
+    'file',
+  ]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -143,7 +170,7 @@ const IncomeModal = ({edit = false, onClose}: IncomeModalProps) => {
   };
 
   return (
-    <div className="  flex justify-center items-center w-full min-h-screen p-6">
+    <div className="flex justify-center items-center w-full min-h-screen p-6">
       <form
         onSubmit={handleSubmit(onSubmit)}
         className="flex flex-col gap-2 max-w-150 w-full p-6 border rounded-3xl bg-secondary"
@@ -162,6 +189,12 @@ const IncomeModal = ({edit = false, onClose}: IncomeModalProps) => {
         {/* Amount */}
         <div className="flex flex-col gap-2">
           <Input
+            onKeyDown={e => {
+              if (['e', 'E', '+', '-'].includes(e.key)) {
+                e.preventDefault();
+              }
+            }}
+            min={0}
             type="number"
             label={t('incomeModal.amount') + '*'}
             placeholder="6000"
@@ -201,15 +234,10 @@ const IncomeModal = ({edit = false, onClose}: IncomeModalProps) => {
                   />
                 </SelectTrigger>
                 <SelectContent>
-                  {[
-                    {val: 'salary', icon: DollarSign},
-                    {val: 'freelance', icon: MonitorCheck},
-                    {val: 'investments', icon: Percent},
-                    {val: 'cashback', icon: TrendingUp},
-                  ].map(({val, icon: Icon}) => (
+                  {INCOME_TYPES.map(({val, icon: Icon}) => (
                     <SelectItem key={val} value={val}>
                       <div className="flex items-center gap-2 text-[16px]">
-                        <Icon className="size-4" />{' '}
+                        <Icon className="size-4 shrink-0" />{' '}
                         {t(`incomeModal.categories.${val}`)}
                       </div>
                     </SelectItem>
@@ -294,7 +322,7 @@ const IncomeModal = ({edit = false, onClose}: IncomeModalProps) => {
           <label
             className={cn(
               inputBase,
-              'flex-row justify-center items-center py-6 border-2 border-dashed border-white/10 cursor-pointer hover:bg-white/5 h-12.5',
+              'flex-row justify-center items-center py-6 border-2 border-white/10 cursor-pointer hover:bg-white/5 h-12.5',
             )}
           >
             <input
@@ -304,7 +332,9 @@ const IncomeModal = ({edit = false, onClose}: IncomeModalProps) => {
               onChange={handleFileChange}
             />
             <ArrowDownToLine className="size-6 mb-1 opacity-70" />
-            <span className="text-sm">{t('incomeModal.upload.action')}</span>
+            <span className="text-sm truncate">
+              {watchedFile ? watchedFile.name : t('incomeModal.upload.action')}
+            </span>
           </label>
           <p
             className={cn(
