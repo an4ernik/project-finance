@@ -29,7 +29,6 @@ function Landing() {
     <div className="bg-[--light-background] dark:bg-[--dark-background] overflow-x-hidden">
       <section className="relative overflow-hidden">
         <Header />
-
         {/* Mobile hero */}
         <div className="flex flex-col items-center min-h-screen pt-16.25 pb-10 px-6 gap-6.75 md:hidden">
           <div className="flex flex-col items-center text-center pt-6">
@@ -209,9 +208,9 @@ function Landing() {
             </div>
 
             <div className="flex gap-7 items-end">
-                <StepCard {...steps[3]} />
+              <StepCard {...steps[3]} />
               <div className="flex flex-col gap-20.25">
-              <StepCard {...steps[2]} />
+                <StepCard {...steps[2]} />
                 <StepCard {...steps[4]} />
               </div>
             </div>

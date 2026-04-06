@@ -94,7 +94,7 @@ function Login() {
           } else if (error.status === 403) {
             toast.error(t('login.errors.emailNotVerified'));
           } else {
-            toast.error(error.detail || t('login.errors.loginError'));
+            toast.error(error.detail || t('login.errors.loginError'), {id: 'login-error'});
           }
         },
       },

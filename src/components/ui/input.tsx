@@ -8,6 +8,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   errorMessage?: string;
   label?: string;
   variant?: 'text' | 'password';
+  className?: string;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
@@ -47,11 +48,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="flex w-full flex-col items-start gap-1.5">
         {label && (
-          <label className="text-[16px] leading-[1.167] text-muted-foreground">
+          <label className="text-[16px] leading-[1.167] text-dark-background">
             {label}
           </label>
         )}
-        <div className="flex w-full flex-col gap-1.25 h-15">
+        <div className="flex w-full flex-col gap-1.25 h-fit">
           <div
             className={cn(
               'flex h-10 items-center gap-2.5 rounded-[10px] border px-2.5 transition-all duration-200',
@@ -77,7 +78,6 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               className={cn(
                 'h-full w-full flex-1 bg-transparent text-[16px] leading-[1.167] text-foreground placeholder:text-muted-foreground',
                 'border-0 p-0 outline-none ring-0 focus:outline-none focus:ring-0',
-                className,
               )}
               value={value}
               defaultValue={defaultValue}
@@ -103,11 +103,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               </button>
             )}
           </div>
-          {errorMessage && (
-            <p className="text-[10px] leading-[1.167] text-destructive min-h-2.75">
-              {errorMessage}
-            </p>
-          )}
+          {/* {errorMessage && ( */}
+          <p className="text-[10px] leading-[1.167] text-destructive min-h-3">
+            {errorMessage || ''}
+          </p>
+          {/* )} */}
         </div>
       </div>
     );

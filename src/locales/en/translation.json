@@ -270,5 +270,47 @@
       "question": "Have questions?",
       "contact": "Write to us"
     }
+  },
+  "incomeModal": {
+    "titleCreate": "Add income",
+    "titleEdit": "Edit income",
+    "amount": "Amount",
+    "category": "Income category",
+    "categories": {
+      "categoryPlaceholder": "Select a category",
+      "salary": "Salary",
+      "freelance": "Freelance",
+      "investments": "Investments",
+      "cashback": "Cashback"
+    },
+    "date": "Date",
+    "description": "Description (optional)",
+    "descriptionPlaceholder": "Add a note...",
+    "repeat": {
+      "label": "Repeat Type",
+      "once": "One-time",
+      "monthly": "Monthly",
+      "yearly": "Yearly"
+    },
+    "upload": {
+      "label": "Upload File (Photo or PDF)",
+      "action": "Click to upload",
+      "hint": "Supported formats: JPG, PNG, PDF. Max file size — 5 MB."
+    },
+    "actions": {
+      "cancel": "Cancel",
+      "save": "Save"
+    },
+    "errors": {
+      "amountRequired": "Income amount is required",
+      "amountLessThanZero": "Income amount must be greater than 0",
+      "amountMax": "Income amount cannot exceed more than 1,000,000",
+      "categoryRequired": "Income category is required",
+      "dateRequired": "Income date is required",
+      "noPastDates": "The date cannot be in the past",
+      "fileFormat": "Unsupported file format. Allowed formats: JPG, PNG, or PDF.",
+      "fileSize": "File size exceeds 5 MB. Please upload a smaller file.",
+      "uploadError": "Failed to upload the file. Please try again."
+    }
   }
 }
