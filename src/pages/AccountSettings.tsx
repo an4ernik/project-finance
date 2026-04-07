@@ -26,9 +26,9 @@ import {
 import {useMe} from '@/shared/api/users/useMe';
 import {
   getGetUserProfileQueryKey,
-  useUpdateEmail,
   useUpdateMe,
 } from '@/shared/api/generated/user-management/user-management';
+import {useUpdateEmail} from '@/shared/api/generated/user-identity/user-identity';
 import {useQueryClient} from '@tanstack/react-query';
 import {UpdateUserProfileDTOCurrencyCode} from '@/shared/api/models/updateUserProfileDTOCurrencyCode';
 import type {ResponseUserDTO} from '@/shared/api/models';
@@ -370,7 +370,7 @@ function AccountSettings() {
                   control={control}
                   render={({field}) => (
                     <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger className="h-10 w-full rounded-[10px] border border-[rgba(46,45,45,0.14)] px-2.5 text-[16px] leading-[1.167] shadow-none dark:border-white/[0.14] dark:bg-transparent dark:shadow-none bg-linear-to-b from-[rgba(11,21,20,0.03)] from-[1.442%] via-[rgba(49,95,85,0.1)] via-[50.481%] to-[rgba(144,208,182,0.05)] to-[94.712%] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.35),0px_4px_4px_0px_rgba(75,75,75,0.25)]">
+                      <SelectTrigger className="w-full">
                         <SelectValue
                           placeholder={
                             userData?.currencyCode ||
