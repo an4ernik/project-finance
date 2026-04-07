@@ -1,3 +1,7 @@
-# Ignore artifacts:
-build
-coverage
+# Build artifacts
+dist/
+coverage/
+
+# Auto-generated files
+src/shared/api/generated/
+src/shared/api/models/

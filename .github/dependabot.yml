@@ -1,0 +1,29 @@
+version: 2
+
+updates:
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    groups:
+      # Batch minor/patch updates for non-breaking upgrades into one PR per group
+      react-ecosystem:
+        patterns:
+          - "react"
+          - "react-dom"
+          - "react-*"
+          - "@types/react*"
+      tanstack:
+        patterns:
+          - "@tanstack/*"
+      tooling:
+        patterns:
+          - "eslint*"
+          - "typescript*"
+          - "prettier"
+          - "vite"
+          - "vitest"
+          - "husky"
+          - "lint-staged"
