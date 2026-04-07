@@ -16,7 +16,7 @@ import SecuritySettings from './pages/SecuritySettings';
 import NotificationsSettings from './pages/NotificationsSettings';
 import Landing from './pages/Landing';
 import NotFound from './pages/NotFound';
-import Income from './pages/Income';
+import Income from './pages/income/Income';
 
 function App() {
   return (
