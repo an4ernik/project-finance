@@ -102,7 +102,7 @@ function Login() {
   };
 
   return (
-    <div className="relative flex h-screen w-full overflow-hidden ">
+    <div className="relative flex h-screen w-full items-center justify-center overflow-hidden">
       {theme === 'dark' && (
         <div className="absolute -left-20.25 -top-98.75 flex h-371.75 w-341.25 items-center justify-center">
           <img
@@ -132,7 +132,7 @@ function Login() {
         </>
       )}
 
-      <div className="absolute bottom-10 left-10 z-10 flex flex-col items-start justify-center rounded-[10px] px-5 py-4 backdrop-blur-lg shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_rgba(0,0,0,0.2)]">
+      <div className="hidden lg:absolute lg:bottom-10 lg:left-10 z-10 lg:flex flex-col items-start justify-center rounded-[10px] px-5 py-4 backdrop-blur-lg shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_rgba(0,0,0,0.2)]">
         <p className="text-[16px] leading-[1.167] text-foreground">
           {t('login.noAccount')}
         </p>
@@ -147,7 +147,7 @@ function Login() {
 
       <div
         className={cn(
-          'absolute right-67 top-0 flex h-full w-133.5 flex-col items-start justify-center gap-7 rounded-[10px] px-12.5',
+          'relative z-10 flex w-full max-w-[540px] h-full flex-col items-start justify-start gap-7 rounded-[10px] px-6 py-10 overflow-y-auto sm:overflow-visible sm:justify-center sm:absolute sm:right-67 sm:top-0 sm:w-133.5 sm:px-12.5 sm:py-8',
           'border border-white/[0.14] backdrop-blur-lg',
           'bg-linear-to-b from-[rgba(11,21,20,0.03)] via-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)]',
           'shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)]',

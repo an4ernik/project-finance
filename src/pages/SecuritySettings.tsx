@@ -7,7 +7,7 @@ import {Lock} from 'lucide-react';
 import {Input} from '@/components/ui/input';
 import {Button} from '@/components/ui/button';
 import {createSecuritySchema} from './schemas/securitySettingsSchema.ts';
-import {useUpdatePassword} from '@/shared/api/generated/user-management/user-management';
+import {useUpdatePassword} from '@/shared/api/generated/user-identity/user-identity.ts';
 
 type SecurityFormData = {
   currentPassword: string;
@@ -49,7 +49,9 @@ function SecuritySettings() {
   useEffect(() => {
     if (previousLanguage.current === i18n.language) return;
     previousLanguage.current = i18n.language;
-    const fieldsWithErrors = Object.keys(errors) as Array<keyof SecurityFormData>;
+    const fieldsWithErrors = Object.keys(errors) as Array<
+      keyof SecurityFormData
+    >;
     if (fieldsWithErrors.length > 0) {
       void trigger(fieldsWithErrors);
     }
@@ -93,18 +95,15 @@ function SecuritySettings() {
     <section className="h-full min-h-0 overflow-y-auto px-6 py-6 text-foreground">
       <div className="max-w-[540px]">
         <div className="mb-6">
-          <h2 className="text-[20px] font-semibold tracking-[-0.5px]"> 
+          <h2 className="text-[20px] font-semibold tracking-[-0.5px]">
             {t('settings.security.title')}
           </h2>
           <p className="mt-1 text-sm text-muted-foreground">
             {t('settings.security.subtitle')}
           </p>
         </div>
-        <form
-          onSubmit={handleSubmit(onSubmit)}
-          className="flex flex-col gap-4"
-        >
-          <div className='flex flex-col gap-1.5'>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1.5">
             <Input
               label={t('settings.security.currentPassword')}
               variant="password"

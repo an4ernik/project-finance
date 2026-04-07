@@ -14,6 +14,67 @@
   "dashboard": {
     "title": "Dashboard"
   },
+  "income": {
+    "title": "Income",
+    "subtitle": "Manage your income data",
+    "actions": {
+      "manageCategories": "Manage categories",
+      "addIncome": "Add income"
+    },
+    "categories": {
+      "managerTitle": "Category management",
+      "active": "Active",
+      "archived": "Archived",
+      "searchPlaceholder": "Search category..",
+      "createNew": "Create new category",
+      "loading": "Loading...",
+      "incomeTitle": "Income categories",
+      "archivedTitle": "Archived categories",
+      "typeIncome": "Income",
+      "typeExpense": "Expenses",
+      "emptyTitle": "You don't have any categories yet.",
+      "emptySubtitle": "Create your first category to get started.",
+      "emptyArchivedTitle": "There are no archived categories yet.",
+      "emptyArchivedSubtitle": "No archived categories so far.",
+      "save": "Save",
+      "saving": "Saving...",
+      "saveSuccess": "Categories updated",
+      "saveFailed": "Failed to update categories",
+      "cancel": "Cancel"
+    },
+    "addCategory": {
+      "title": "Add category",
+      "nameLabel": "Category name*",
+      "namePlaceholder": "Enter category name",
+      "iconLabel": "Category icon*",
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "success": "Category created",
+      "errors": {
+        "nameRequired": "Enter a category name",
+        "iconRequired": "Choose an icon",
+        "duplicate": "A category with this name already exists",
+        "createFailed": "Failed to create category"
+      }
+    },
+    "editCategory": {
+      "title": "Edit category",
+      "nameLabel": "Category name*",
+      "namePlaceholder": "Enter category name",
+      "iconLabel": "Category icon*",
+      "save": "Save",
+      "saving": "Saving...",
+      "cancel": "Cancel",
+      "success": "Category updated",
+      "errors": {
+        "nameRequired": "Enter a category name",
+        "iconRequired": "Choose an icon",
+        "duplicate": "A category with this name already exists",
+        "updateFailed": "Failed to update category"
+      }
+    }
+  },
   "settings": {
     "welcomeBack": "Welcome back!",
     "welcomeSubtitle": "A great time to manage your finances.",
@@ -124,7 +185,7 @@
     },
     "confirmed": {
       "title": "Email verified.",
-      "message": "Your account has been activated.  Thank you for confirming your email address.",
+      "message": "Your account has been activated. Thank you for confirming your email address.",
       "button": "Log in"
     }
   },
@@ -198,10 +259,6 @@
     "retry": "Resend available in",
     "resendNow": "Resend link",
     "loading": "Loading..."
-  },
-  "income": {
-    "title": "Income",
-    "subtitle": "Manage your income records"
   },
   "landing": {
     "header": {

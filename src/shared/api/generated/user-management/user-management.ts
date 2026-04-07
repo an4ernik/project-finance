@@ -26,11 +26,8 @@ import type {
 
 import type {
   ProblemDetail,
-  RequestUpdateUserEmailDTO,
-  RequestUpdateUserPasswordDTO,
   ResponseUserDTO,
-  UpdateMeBody,
-  VerifyEmailParams
+  UpdateMeBody
 } from '../../models';
 
 import { customInstance } from '../../axios';
@@ -41,29 +38,21 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 
+/**
+ * Returns the authenticated user's profile.
+ * @summary Get current user profile
+ */
 export type getUserProfileResponse200 = {
   data: ResponseUserDTO
   status: 200
-}
-
-export type getUserProfileResponse403 = {
-  data: ProblemDetail
-  status: 403
-}
-
-export type getUserProfileResponse409 = {
-  data: ProblemDetail
-  status: 409
 }
     
 export type getUserProfileResponseSuccess = (getUserProfileResponse200) & {
   headers: Headers;
 };
-export type getUserProfileResponseError = (getUserProfileResponse403 | getUserProfileResponse409) & {
-  headers: Headers;
-};
+;
 
-export type getUserProfileResponse = (getUserProfileResponseSuccess | getUserProfileResponseError)
+export type getUserProfileResponse = (getUserProfileResponseSuccess)
 
 export const getGetUserProfileUrl = () => {
 
@@ -95,7 +84,7 @@ export const getGetUserProfileQueryKey = () => {
     }
 
     
-export const getGetUserProfileQueryOptions = <TData = Awaited<ReturnType<typeof getUserProfile>>, TError = ErrorType<ProblemDetail>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserProfile>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+export const getGetUserProfileQueryOptions = <TData = Awaited<ReturnType<typeof getUserProfile>>, TError = ErrorType<unknown>>( options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserProfile>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -114,10 +103,10 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetUserProfileQueryResult = NonNullable<Awaited<ReturnType<typeof getUserProfile>>>
-export type GetUserProfileQueryError = ErrorType<ProblemDetail>
+export type GetUserProfileQueryError = ErrorType<unknown>
 
 
-export function useGetUserProfile<TData = Awaited<ReturnType<typeof getUserProfile>>, TError = ErrorType<ProblemDetail>>(
+export function useGetUserProfile<TData = Awaited<ReturnType<typeof getUserProfile>>, TError = ErrorType<unknown>>(
   options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserProfile>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getUserProfile>>,
@@ -127,7 +116,7 @@ export function useGetUserProfile<TData = Awaited<ReturnType<typeof getUserProfi
       >, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetUserProfile<TData = Awaited<ReturnType<typeof getUserProfile>>, TError = ErrorType<ProblemDetail>>(
+export function useGetUserProfile<TData = Awaited<ReturnType<typeof getUserProfile>>, TError = ErrorType<unknown>>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserProfile>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getUserProfile>>,
@@ -137,12 +126,15 @@ export function useGetUserProfile<TData = Awaited<ReturnType<typeof getUserProfi
       >, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetUserProfile<TData = Awaited<ReturnType<typeof getUserProfile>>, TError = ErrorType<ProblemDetail>>(
+export function useGetUserProfile<TData = Awaited<ReturnType<typeof getUserProfile>>, TError = ErrorType<unknown>>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserProfile>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get current user profile
+ */
 
-export function useGetUserProfile<TData = Awaited<ReturnType<typeof getUserProfile>>, TError = ErrorType<ProblemDetail>>(
+export function useGetUserProfile<TData = Awaited<ReturnType<typeof getUserProfile>>, TError = ErrorType<unknown>>(
   options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getUserProfile>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
@@ -158,7 +150,7 @@ export function useGetUserProfile<TData = Awaited<ReturnType<typeof getUserProfi
 
 
 /**
- * Updates the user's data by new one.
+ * Updates the current user's profile data and optional avatar.
  * @summary Update user's profile
  */
 export type updateMeResponse200 = {
@@ -171,30 +163,15 @@ export type updateMeResponse400 = {
   status: 400
 }
 
-export type updateMeResponse401 = {
-  data: ProblemDetail
-  status: 401
-}
-
-export type updateMeResponse403 = {
-  data: ProblemDetail
-  status: 403
-}
-
 export type updateMeResponse404 = {
   data: ProblemDetail
   status: 404
-}
-
-export type updateMeResponse409 = {
-  data: ProblemDetail
-  status: 409
 }
     
 export type updateMeResponseSuccess = (updateMeResponse200) & {
   headers: Headers;
 };
-export type updateMeResponseError = (updateMeResponse400 | updateMeResponse401 | updateMeResponse403 | updateMeResponse404 | updateMeResponse409) & {
+export type updateMeResponseError = (updateMeResponse400 | updateMeResponse404) & {
   headers: Headers;
 };
 
@@ -274,344 +251,4 @@ export const useUpdateMe = <TError = ErrorType<ProblemDetail>,
       > => {
       return useMutation(getUpdateMeMutationOptions(options), queryClient);
     }
-    /**
- * Updates the user's password by new one.
- * @summary Update user's password
- */
-export type updatePasswordResponse200 = {
-  data: void
-  status: 200
-}
-
-export type updatePasswordResponse400 = {
-  data: ProblemDetail
-  status: 400
-}
-
-export type updatePasswordResponse401 = {
-  data: ProblemDetail
-  status: 401
-}
-
-export type updatePasswordResponse403 = {
-  data: ProblemDetail
-  status: 403
-}
-
-export type updatePasswordResponse404 = {
-  data: ProblemDetail
-  status: 404
-}
-
-export type updatePasswordResponse409 = {
-  data: ProblemDetail
-  status: 409
-}
     
-export type updatePasswordResponseSuccess = (updatePasswordResponse200) & {
-  headers: Headers;
-};
-export type updatePasswordResponseError = (updatePasswordResponse400 | updatePasswordResponse401 | updatePasswordResponse403 | updatePasswordResponse404 | updatePasswordResponse409) & {
-  headers: Headers;
-};
-
-export type updatePasswordResponse = (updatePasswordResponseSuccess | updatePasswordResponseError)
-
-export const getUpdatePasswordUrl = () => {
-
-
-  
-
-  return `/api/v1/users/me/update-password`
-}
-
-export const updatePassword = async (requestUpdateUserPasswordDTO: RequestUpdateUserPasswordDTO, options?: RequestInit): Promise<updatePasswordResponse> => {
-  
-  return customInstance<updatePasswordResponse>(getUpdatePasswordUrl(),
-  {      
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      requestUpdateUserPasswordDTO,)
-  }
-);}
-
-
-
-
-export const getUpdatePasswordMutationOptions = <TError = ErrorType<ProblemDetail>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatePassword>>, TError,{data: RequestUpdateUserPasswordDTO}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof updatePassword>>, TError,{data: RequestUpdateUserPasswordDTO}, TContext> => {
-
-const mutationKey = ['updatePassword'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updatePassword>>, {data: RequestUpdateUserPasswordDTO}> = (props) => {
-          const {data} = props ?? {};
-
-          return  updatePassword(data,requestOptions)
-        }
-
-
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type UpdatePasswordMutationResult = NonNullable<Awaited<ReturnType<typeof updatePassword>>>
-    export type UpdatePasswordMutationBody = RequestUpdateUserPasswordDTO
-    export type UpdatePasswordMutationError = ErrorType<ProblemDetail>
-
-    /**
- * @summary Update user's password
- */
-export const useUpdatePassword = <TError = ErrorType<ProblemDetail>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updatePassword>>, TError,{data: RequestUpdateUserPasswordDTO}, TContext>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof updatePassword>>,
-        TError,
-        {data: RequestUpdateUserPasswordDTO},
-        TContext
-      > => {
-      return useMutation(getUpdatePasswordMutationOptions(options), queryClient);
-    }
-    export type updateEmailResponse200 = {
-  data: Blob
-  status: 200
-}
-
-export type updateEmailResponse400 = {
-  data: ProblemDetail
-  status: 400
-}
-
-export type updateEmailResponse401 = {
-  data: ProblemDetail
-  status: 401
-}
-
-export type updateEmailResponse403 = {
-  data: ProblemDetail
-  status: 403
-}
-
-export type updateEmailResponse409 = {
-  data: ProblemDetail
-  status: 409
-}
-    
-export type updateEmailResponseSuccess = (updateEmailResponse200) & {
-  headers: Headers;
-};
-export type updateEmailResponseError = (updateEmailResponse400 | updateEmailResponse401 | updateEmailResponse403 | updateEmailResponse409) & {
-  headers: Headers;
-};
-
-export type updateEmailResponse = (updateEmailResponseSuccess | updateEmailResponseError)
-
-export const getUpdateEmailUrl = () => {
-
-
-  
-
-  return `/api/v1/users/me/update-email`
-}
-
-export const updateEmail = async (requestUpdateUserEmailDTO: RequestUpdateUserEmailDTO, options?: RequestInit): Promise<updateEmailResponse> => {
-  
-  return customInstance<updateEmailResponse>(getUpdateEmailUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      requestUpdateUserEmailDTO,)
-  }
-);}
-
-
-
-
-export const getUpdateEmailMutationOptions = <TError = ErrorType<ProblemDetail>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateEmail>>, TError,{data: RequestUpdateUserEmailDTO}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof updateEmail>>, TError,{data: RequestUpdateUserEmailDTO}, TContext> => {
-
-const mutationKey = ['updateEmail'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateEmail>>, {data: RequestUpdateUserEmailDTO}> = (props) => {
-          const {data} = props ?? {};
-
-          return  updateEmail(data,requestOptions)
-        }
-
-
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type UpdateEmailMutationResult = NonNullable<Awaited<ReturnType<typeof updateEmail>>>
-    export type UpdateEmailMutationBody = RequestUpdateUserEmailDTO
-    export type UpdateEmailMutationError = ErrorType<ProblemDetail>
-
-    export const useUpdateEmail = <TError = ErrorType<ProblemDetail>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateEmail>>, TError,{data: RequestUpdateUserEmailDTO}, TContext>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof updateEmail>>,
-        TError,
-        {data: RequestUpdateUserEmailDTO},
-        TContext
-      > => {
-      return useMutation(getUpdateEmailMutationOptions(options), queryClient);
-    }
-    export type verifyEmailResponse200 = {
-  data: void
-  status: 200
-}
-
-export type verifyEmailResponse400 = {
-  data: ProblemDetail
-  status: 400
-}
-
-export type verifyEmailResponse401 = {
-  data: ProblemDetail
-  status: 401
-}
-
-export type verifyEmailResponse403 = {
-  data: ProblemDetail
-  status: 403
-}
-
-export type verifyEmailResponse409 = {
-  data: ProblemDetail
-  status: 409
-}
-    
-export type verifyEmailResponseSuccess = (verifyEmailResponse200) & {
-  headers: Headers;
-};
-export type verifyEmailResponseError = (verifyEmailResponse400 | verifyEmailResponse401 | verifyEmailResponse403 | verifyEmailResponse409) & {
-  headers: Headers;
-};
-
-export type verifyEmailResponse = (verifyEmailResponseSuccess | verifyEmailResponseError)
-
-export const getVerifyEmailUrl = (params: VerifyEmailParams,) => {
-  const normalizedParams = new URLSearchParams();
-
-  Object.entries(params || {}).forEach(([key, value]) => {
-    
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
-
-  const stringifiedParams = normalizedParams.toString();
-
-  return stringifiedParams.length > 0 ? `/api/v1/users/verify-email?${stringifiedParams}` : `/api/v1/users/verify-email`
-}
-
-export const verifyEmail = async (params: VerifyEmailParams, options?: RequestInit): Promise<verifyEmailResponse> => {
-  
-  return customInstance<verifyEmailResponse>(getVerifyEmailUrl(params),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
-  }
-);}
-
-
-
-
-
-export const getVerifyEmailQueryKey = (params?: VerifyEmailParams,) => {
-    return [
-    `/api/v1/users/verify-email`, ...(params ? [params] : [])
-    ] as const;
-    }
-
-    
-export const getVerifyEmailQueryOptions = <TData = Awaited<ReturnType<typeof verifyEmail>>, TError = ErrorType<ProblemDetail>>(params: VerifyEmailParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof verifyEmail>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getVerifyEmailQueryKey(params);
-
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof verifyEmail>>> = ({ signal }) => verifyEmail(params, { signal, ...requestOptions });
-
-      
-
-      
-
-   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof verifyEmail>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type VerifyEmailQueryResult = NonNullable<Awaited<ReturnType<typeof verifyEmail>>>
-export type VerifyEmailQueryError = ErrorType<ProblemDetail>
-
-
-export function useVerifyEmail<TData = Awaited<ReturnType<typeof verifyEmail>>, TError = ErrorType<ProblemDetail>>(
- params: VerifyEmailParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof verifyEmail>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof verifyEmail>>,
-          TError,
-          Awaited<ReturnType<typeof verifyEmail>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useVerifyEmail<TData = Awaited<ReturnType<typeof verifyEmail>>, TError = ErrorType<ProblemDetail>>(
- params: VerifyEmailParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof verifyEmail>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof verifyEmail>>,
-          TError,
-          Awaited<ReturnType<typeof verifyEmail>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useVerifyEmail<TData = Awaited<ReturnType<typeof verifyEmail>>, TError = ErrorType<ProblemDetail>>(
- params: VerifyEmailParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof verifyEmail>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-
-export function useVerifyEmail<TData = Awaited<ReturnType<typeof verifyEmail>>, TError = ErrorType<ProblemDetail>>(
- params: VerifyEmailParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof verifyEmail>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getVerifyEmailQueryOptions(params,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return { ...query, queryKey: queryOptions.queryKey };
-}
-
-
-
-

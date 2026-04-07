@@ -8,8 +8,12 @@
 import type { RequestUpdateUserProfileDTOCurrencyCode } from './requestUpdateUserProfileDTOCurrencyCode';
 
 export interface RequestUpdateUserProfileDTO {
-  /** User's full name */
-  fullName?: string;
+  /**
+   * User's full name
+   * @minLength 1
+   * @pattern ^[A-Za-zА-ЯІЄЇҐа-яієїґ'’ʼ]([A-Za-zА-ЯІЄЇҐа-яієїґ'’ʼ\s-]*[A-Za-zА-ЯІЄЇҐа-яієїґ'’ʼ])?$
+   */
+  fullName: string;
   /** User's main currency (ISO 4217) */
   currencyCode?: RequestUpdateUserProfileDTOCurrencyCode;
 }

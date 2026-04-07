@@ -5,7 +5,7 @@ import axios from 'axios';
 import {useTranslation} from 'react-i18next';
 import {useAuthStore} from '@/shared/store/useAuthStore';
 import {verifyToken} from '@/shared/api/generated/authentication/authentication';
-import {verifyEmail} from '@/shared/api/generated/user-management/user-management';
+import {verifyEmail} from '@/shared/api/generated/user-identity/user-identity';
 
 function VerifyEmailPage() {
   const {t} = useTranslation();
