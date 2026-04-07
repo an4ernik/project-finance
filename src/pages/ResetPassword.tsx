@@ -120,7 +120,11 @@ function ResetPassword() {
             });
             toast.error(t('resetPassword.errors.invalidPassword'));
           } else {
-            toast.error(detail || t('resetPassword.errors.resetError'));
+            toast.error(
+              typeof detail === 'string'
+                ? detail
+                : t('resetPassword.errors.resetError'),
+            );
           }
         },
       },

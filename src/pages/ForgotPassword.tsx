@@ -94,7 +94,11 @@ function ForgotPassword() {
             });
             toast.error(t('forgotPassword.errors.userNotFound'));
           } else {
-            toast.error(detail || t('forgotPassword.errors.sendError'));
+            toast.error(
+              typeof detail === 'string'
+                ? detail
+                : t('forgotPassword.errors.sendError'),
+            );
           }
         },
       },
@@ -115,7 +119,11 @@ function ForgotPassword() {
         },
         onError: error => {
           const detail = 'detail' in error ? error.detail : null;
-          toast.error(detail || t('forgotPassword.errors.sendError'));
+          toast.error(
+            typeof detail === 'string'
+              ? detail
+              : t('forgotPassword.errors.sendError'),
+          );
         },
       },
     );
