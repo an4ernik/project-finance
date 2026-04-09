@@ -12,6 +12,8 @@ import type { CategoryResponseDTOType } from './categoryResponseDTOType';
  * Get Category
  */
 export interface CategoryResponseDTO {
+  /** Category ID */
+  id?: number;
   /** Name */
   name?: string;
   /** Type */

@@ -199,6 +199,10 @@
     "resendNow": "Resend link",
     "loading": "Loading..."
   },
+  "income": {
+    "title": "Income",
+    "subtitle": "Manage your income records"
+  },
   "landing": {
     "header": {
       "dashboard": "Go to dashboard"
@@ -270,6 +274,7 @@
   "incomeModal": {
     "titleCreate": "Add income",
     "titleEdit": "Edit income",
+    "titleExpence": "Add expense",
     "amount": "Amount",
     "category": "Income category",
     "categories": {
@@ -297,6 +302,41 @@
       "cancel": "Cancel",
       "save": "Save"
     },
+     "incomeFilters": {
+    "totalIncome": "Total Income",
+    "period": {
+      "label": "Period",
+      "all": "All time",
+      "today": "Today",
+      "week": "This week",
+      "month": "This month",
+      "year": "This year",
+      "custom": "Select period",
+      "from": "From",
+      "to": "To"
+    },
+    "search": {
+      "label": "Search",
+      "placeholder": "Search income..."
+    },
+    "category": {
+      "label": "Categories",
+      "allCategories": "All categories",
+      "salary": "Salary",
+      "freelance": "Freelance",
+      "investments": "Investments",
+      "cashback": "Cashback"
+    },
+    "periods": {
+      "all": "All time",
+      "today": "Today",
+      "month": "This month",
+      "year": "This year",
+      "custom": "Select period",
+      "from": "From",
+      "to": "To"
+    }
+  },
     "errors": {
       "amountRequired": "Income amount is required",
       "amountLessThanZero": "Income amount must be greater than 0",
@@ -309,4 +349,6 @@
       "uploadError": "Failed to upload the file. Please try again."
     }
   }
+
+ 
 }

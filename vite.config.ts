@@ -12,7 +12,6 @@ export default defineConfig({
     },
   },
   server: {
-    host: 'financeapp.local',
     port: 5173,
     proxy: {
       '/api': {
@@ -23,3 +22,5 @@ export default defineConfig({
     },
   },
 });
+
+

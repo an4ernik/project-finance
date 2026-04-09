@@ -5,9 +5,10 @@
  * REST API Documentation for MT Service
  * OpenAPI spec version: 1.0
  */
-import type { AuthRequestDTO } from './authRequestDTO';
+import type { RegistrationRequestDto } from './registrationRequestDto';
 
 export type SignUpBody = {
-  dto: AuthRequestDTO;
+  dto: RegistrationRequestDto;
+  /** Allowed formats: jpg, jpeg, png, gif, webp. */
   avatar?: Blob;
 };

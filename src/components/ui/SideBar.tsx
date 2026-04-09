@@ -68,7 +68,7 @@ function SideBar({variant = 'desktop', isOpen = false, onClose}: SideBarProps) {
   return (
     <aside
       className={cn(
-        'w-[305px] h-full flex-col shrink-0 rounded-[10px]',
+        'w-[305px] min-h-full flex-col shrink-0 rounded-[10px]',
         variant === 'desktop' && 'hidden md:flex',
         variant === 'mobile' &&
           'w-full fixed left-0 top-0 z-50 flex h-full -translate-x-full transition-transform duration-300 md:hidden',

@@ -7,7 +7,7 @@ import {Lock} from 'lucide-react';
 import {Input} from '@/components/ui/input';
 import {Button} from '@/components/ui/button';
 import {createSecuritySchema} from './schemas/securitySettingsSchema.ts';
-import {useUpdatePassword} from '@/shared/api/generated/user-management/user-management';
+// import {useUpdatePassword} from '@/shared/api/generated/user-management/user-management';
 
 type SecurityFormData = {
   currentPassword: string;

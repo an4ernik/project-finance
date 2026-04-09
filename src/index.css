@@ -3,6 +3,24 @@
 
 @custom-variant dark (&:is(.dark *));
 
+html, body, #root {
+  height: 100%; 
+  overflow: hidden; /* Це прибере скрол всієї сторінки */
+}
+
+@layer utilities {
+  /* Приховуємо смугу прокрутки для Chrome, Safari та Opera */
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Приховуємо для IE, Edge та Firefox */
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* IE та Edge */
+    scrollbar-width: none;  /* Firefox */
+  }
+}
+
 :root {
   /* === DARK THEME === */
   --dark-background: #0b1514;

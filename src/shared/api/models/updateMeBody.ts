@@ -9,5 +9,6 @@ import type { RequestUpdateUserProfileDTO } from './requestUpdateUserProfileDTO'
 
 export type UpdateMeBody = {
   dto?: RequestUpdateUserProfileDTO;
+  /** Allowed formats: jpg, jpeg, png, gif, webp. */
   avatar?: Blob;
 };

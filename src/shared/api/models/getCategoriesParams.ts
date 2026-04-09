@@ -8,6 +8,7 @@
 import type { GetCategoriesTypeItem } from './getCategoriesTypeItem';
 
 export type GetCategoriesParams = {
-name: string;
-type: GetCategoriesTypeItem[];
+name?: string;
+type?: GetCategoriesTypeItem[];
+archived?: boolean;
 };
