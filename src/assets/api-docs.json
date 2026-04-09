@@ -1,1 +1,958 @@
-{"openapi":"3.1.0","info":{"title":"MT Service API","description":"REST API Documentation for MT Service","version":"1.0"},"servers":[{"url":"http://monity.eu-central-1.elasticbeanstalk.com","description":"Generated server url"}],"security":[{"bearerAuth":[]}],"tags":[{"name":"Category Management","description":"Category management endpoints"},{"name":"User Management","description":"User management endpoints"},{"name":"Authentication","description":"Authentication and email verification endpoints"}],"paths":{"/api/v1/users/me":{"get":{"tags":["User Management"],"operationId":"getUserProfile","responses":{"409":{"description":"Conflict","content":{"application/problem+json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"401":{"description":"Unauthorized","content":{"application/json":{"example":"Full authentication is required to access this resource"}}},"400":{"description":"User not found","content":{"application/json":{"example":"User with username 'Alex Noob' not found"}}},"200":{"description":"User profile returned","content":{"application/json":{"schema":{"$ref":"#/components/schemas/UserResponseDTO"}}}},"405":{"description":"Method not allowed","content":{"application/json":{"example":"The method is not supported: POST"}}},"500":{"description":"Internal server error","content":{"application/json":{"example":"Internal error: NullPointerException"}}}}},"put":{"tags":["User Management"],"summary":"Update user's profile","description":"Updates the user's data by new one.","operationId":"updateMe","requestBody":{"content":{"multipart/form-data":{"schema":{"type":"object","properties":{"dto":{"$ref":"#/components/schemas/UpdateUserProfileDTO"},"avatar":{"type":"string","format":"binary"}}},"encoding":{"dto":{"contentType":"application/json"}}}}},"responses":{"409":{"description":"Conflict","content":{"application/problem+json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"401":{"description":"Unauthorized","content":{"application/problem+json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"400":{"description":"Bad request","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"200":{"description":"User's data updated successfully","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ResponseUserProfileDTO"}}}},"404":{"description":"User not found","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}}}}},"/api/v1/users/me/update-email":{"post":{"tags":["User Management"],"operationId":"updateEmail","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/RequestUpdateUserEmailDTO"}}},"required":true},"responses":{"409":{"description":"Conflict","content":{"application/problem+json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"401":{"description":"Unauthorized","content":{"application/problem+json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"400":{"description":"Bad Request","content":{"application/problem+json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"200":{"description":"OK","content":{"*/*":{"schema":{"$ref":"#/components/schemas/ResponseUserProfileDTO"}}}}}}},"/api/v1/categories":{"get":{"tags":["Category Management"],"summary":"Get a list of available categories","description":"Returns the whole list of user's categories","operationId":"getCategories","parameters":[{"name":"name","in":"query","required":true,"schema":{"type":"string"}},{"name":"type","in":"query","required":true,"schema":{"type":"array","items":{"type":"string","enum":["INCOME","EXPENSE"]}}}],"responses":{"409":{"description":"Conflict","content":{"application/problem+json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"401":{"description":"Unauthorized - User is not authenticated","content":{}},"400":{"description":"Invalid request parameters (e.g., invalid CategoryType)","content":{}},"200":{"description":"Successfully retrieved categories","content":{"application/json":{"schema":{"type":"array","items":{"$ref":"#/components/schemas/CategoryResponseDTO"}}}}}}},"post":{"tags":["Category Management"],"summary":"Create a new category","description":"Creates a custom category for the authenticated user. Returns 409 if a category with the same name and type already exists for this user.","operationId":"createCategory","requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/CreateCategoryDTO"}}},"required":true},"responses":{"409":{"description":"Conflict - Category with this name and type already exists","content":{}},"401":{"description":"Unauthorized - Valid JWT token required","content":{}},"400":{"description":"Invalid input data or validation failed","content":{}},"201":{"description":"Category created successfully","content":{"*/*":{"schema":{"$ref":"#/components/schemas/CategoryResponseDTO"}}}}}}},"/api/v1/auth/sign-up":{"post":{"tags":["Authentication"],"summary":"Sign up a new user","description":"Creates a new user and sends email verification link. Account not activated until verified","operationId":"signUp","requestBody":{"content":{"multipart/form-data":{"schema":{"type":"object","properties":{"dto":{"$ref":"#/components/schemas/AuthRequestDTO"},"avatar":{"type":"string","format":"binary"}},"required":["dto"]},"encoding":{"dto":{"contentType":"application/json"}}}}},"responses":{"409":{"description":"User with this email already exists","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"401":{"description":"Unauthorized","content":{"application/problem+json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"400":{"description":"Bad request","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"201":{"description":"User created successfully","content":{"application/json":{"schema":{"$ref":"#/components/schemas/AuthResponseDTO"}}}}}}},"/api/v1/auth/reset-password/confirm":{"post":{"tags":["Authentication"],"summary":"Reset password using token","description":"Updates the user password if the token is valid.","operationId":"resetPassword","parameters":[{"name":"token","in":"query","required":true,"schema":{"type":"string"}}],"requestBody":{"content":{"application/json":{"schema":{"$ref":"#/components/schemas/ResetPasswordDTO"}}},"required":true},"responses":{"409":{"description":"Conflict","content":{"application/problem+json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"401":{"description":"Token expired or invalid purpose","content":{"*/*":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"400":{"description":"Invalid request (Passwords do not match or validation failed)","content":{"*/*":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"200":{"description":"Password updated successfully","content":{"application/json":{"schema":{"$ref":"#/components/schemas/JwtResponseDTO"}}}}}}},"/api/v1/auth/refresh":{"post":{"tags":["Authentication"],"summary":"Refresh token","description":"Generates a new access token using a valid refresh token","operationId":"refreshToken","requestBody":{"description":"Refresh token payload","content":{"application/json":{"schema":{"$ref":"#/components/schemas/RefreshTokenRequest"},"examples":{"Sample refresh request":{"description":"Sample refresh request","value":{"refreshToken":"jwt-refresh-token"}}}}},"required":true},"responses":{"409":{"description":"Conflict","content":{"application/problem+json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"401":{"description":"Invalid or expired refresh token","content":{"application/problem+json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"400":{"description":"Bad Request","content":{"application/problem+json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"200":{"description":"Token successfully refreshed","content":{"application/json":{"examples":{"Token refreshed":{"description":"Token refreshed","value":{"accessToken":"new-jwt-access-token","refreshToken":"new-jwt-refresh-token"}}}}}}}}},"/api/v1/auth/login":{"post":{"tags":["Authentication"],"summary":"Login user","description":"Logins user and returns an access token.","operationId":"login","requestBody":{"description":"User login details","content":{"application/json":{"schema":{"$ref":"#/components/schemas/LoginRequestDto"}}},"required":true},"responses":{"409":{"description":"Conflict","content":{"application/problem+json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"401":{"description":"Authentication failed","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"400":{"description":"Fields were filled incorrectly","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"200":{"description":"User logged successfully","content":{"application/json":{"schema":{"$ref":"#/components/schemas/JwtResponseDTO"}}}},"403":{"description":"Access Denied","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"500":{"description":"Internal Server Error","content":{"application/json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}}}}},"/api/v1/auth/getTokenToResetPassword":{"post":{"tags":["Authentication"],"summary":"Send reset password email","description":"Generates a reset link and sends it to the user's email.","operationId":"sendResetPasswordToken","parameters":[{"name":"email","in":"query","required":true,"schema":{"type":"string","format":"email"}}],"responses":{"409":{"description":"Conflict","content":{"application/problem+json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"401":{"description":"User with requested email does not exist","content":{"*/*":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"400":{"description":"Bad Request","content":{"application/problem+json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"200":{"description":"Reset link sent successfully","content":{"text/plain":{"schema":{"type":"string","example":"Your link to reset password was sent!"}}}}}}},"/api/v1/users/verify-email":{"get":{"tags":["User Management"],"operationId":"verifyEmail","parameters":[{"name":"token","in":"query","required":true,"schema":{"type":"string"}}],"responses":{"409":{"description":"Conflict","content":{"application/problem+json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"401":{"description":"Unauthorized","content":{"application/problem+json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"400":{"description":"Bad Request","content":{"application/problem+json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"200":{"description":"OK"}}}},"/api/v1/auth/verify":{"get":{"tags":["Authentication"],"summary":"Verify email by verification token","description":"Activates user account using email verification token and returns access JWT.","operationId":"verifyToken","parameters":[{"name":"token","in":"query","description":"Email verification token JWT with purpose=email_verification","required":true,"schema":{"type":"string"}}],"responses":{"409":{"description":"User already activated","content":{"application/problem+json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"401":{"description":"JWT parsing/validation error","content":{"application/problem+json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"400":{"description":"Invalid token (wrong purpose/format)","content":{"application/problem+json":{"schema":{"$ref":"#/components/schemas/ProblemDetail"}}}},"200":{"description":"User activated, access token issued","content":{"application/json":{"schema":{"$ref":"#/components/schemas/JwtResponseDTO"}}}}}}}},"components":{"schemas":{"ProblemDetail":{"type":"object","properties":{"type":{"type":"string","format":"uri"},"title":{"type":"string"},"status":{"type":"integer","format":"int32"},"detail":{"type":"string"},"instance":{"type":"string","format":"uri"},"properties":{"type":"object","additionalProperties":{}}}},"UpdateUserProfileDTO":{"type":"object","properties":{"fullName":{"type":"string","description":"User's full name","example":"Abraham Lincoln"},"currencyCode":{"type":"string","description":"User's main currency (ISO 4217)","enum":["USD","UAH","EUR"],"example":"USD"}}},"ResponseUserProfileDTO":{"type":"object","properties":{"fullName":{"type":"string","description":"User's full name","example":"Abraham Lincoln"},"avatarUrl":{"type":"string","description":"User's avatar url","example":"https://example.com/avatar.jpg"}}},"RequestUpdateUserEmailDTO":{"type":"object","description":"Update user email request","properties":{"email":{"type":"string","description":"New email address"}}},"CreateCategoryDTO":{"type":"object","description":"Create a new category","properties":{"name":{"type":"string","description":"Name","example":"Salary","minLength":1},"type":{"type":"string","description":"Type","enum":["INCOME","EXPENSE"],"example":"Income"},"icon":{"type":"string","description":"Icon","example":"coin"}},"required":["name","type"]},"CategoryResponseDTO":{"type":"object","description":"Get Category","properties":{"name":{"type":"string","description":"Name","example":"Salary"},"type":{"type":"string","description":"Type","enum":["INCOME","EXPENSE"],"example":"Income"},"status":{"type":"string","description":"Status","enum":["ARCHIVED","ACTIVE"],"example":"Active"},"icon":{"type":"string","description":"Icon","example":"coin"}}},"AuthRequestDTO":{"type":"object","description":"User sign up request","properties":{"email":{"type":"string","format":"email","description":"User's email address","example":"example@mail.com","minLength":1},"password":{"type":"string","format":"password","description":"User's password (min 8 chars).","example":"Example8","minLength":1},"fullName":{"type":"string","description":"User's full name","example":"Abraham Lincoln","minLength":1},"currencyCode":{"type":"string","description":"User's main currency (ISO 4217)","enum":["USD","UAH","EUR"],"example":"USD"}},"required":["currencyCode","email","fullName","password"]},"AuthResponseDTO":{"type":"object","description":"User sign up response","properties":{"id":{"type":"integer","format":"int64","description":"User's id","example":123123},"fullName":{"type":"string","description":"User's full name","example":"Abraham Lincoln"},"email":{"type":"string","description":"User's email","examples":["example@mail.com"]},"currencyCode":{"type":"string","description":"User's main currency code","enum":["USD","UAH","EUR"],"example":"USD"},"avatarUrl":{"type":"string","description":"User's avatar url","example":"https://example.com/avatar.jpg"},"isActivated":{"type":"boolean","description":"User's activation status","example":false}}},"ResetPasswordDTO":{"type":"object","description":"New user's password","properties":{"password":{"type":"string","format":"password","description":"User's password (min 8 chars).","example":"Example8","minLength":1},"confirmPassword":{"type":"string","format":"password","description":"User's confirmPassword (min 8 chars).","example":"Example8","minLength":1}},"required":["confirmPassword","password"]},"JwtResponseDTO":{"type":"object","description":"JWT response","properties":{"accessToken":{"type":"string","format":"JWT","description":"JWT token","example":"eyJhbGciOiJIUzI1NiJ9.ey..."},"refreshToken":{"type":"string","format":"JWT","description":"JWT refresh token","example":"eyJhbGciOiJIUzI1NiJ9.ey..."}}},"RefreshTokenRequest":{"type":"object","description":"Payload for refreshing authentication token","properties":{"refreshToken":{"type":"string","description":"Valid refresh token","example":"eyJhbGciOiJIUzI1NiJ9.ey...","minLength":1}},"required":["refreshToken"]},"LoginRequestDto":{"type":"object","description":"Login user request","properties":{"email":{"type":"string","format":"email","description":"User's email address","example":"example@mail.com","minLength":1},"password":{"type":"string","format":"password","description":"User's password (min 8 chars).","example":"Example8","minLength":1}},"required":["email","password"]},"UserResponseDTO":{"type":"object","description":"Get user info","properties":{"id":{"type":"integer","format":"int64","description":"User's id","example":123},"email":{"type":"string","description":"User's email address","example":"example@mail.com"},"fullName":{"type":"string","description":"User's full name","example":"Abraham Lincoln"},"currencyCode":{"type":"string","description":"User's main currency (ISO 4217)","enum":["USD","UAH","EUR"],"example":"USD"},"avatarUrl":{"type":"string","description":"User's avatar url","example":"https://example.com/avatar.jpg"},"isActivated":{"type":"boolean","description":"User's activation status","example":false}}}},"securitySchemes":{"bearerAuth":{"type":"http","scheme":"bearer","bearerFormat":"JWT"}}}}
+{
+  "openapi": "3.1.0",
+  "info": {
+    "title": "MT Service API",
+    "description": "REST API Documentation for MT Service",
+    "version": "1.0"
+  },
+  "servers": [
+    {
+      "url": "https://37tsyfkuv9.eu-central-1.awsapprunner.com",
+      "description": "Generated server url"
+    }
+  ],
+  "security": [{"bearerAuth": []}],
+  "tags": [
+    {
+      "name": "Category Management",
+      "description": "Category management endpoints"
+    },
+    {"name": "User Management", "description": "User management endpoints"},
+    {
+      "name": "Authentication",
+      "description": "Authentication and email verification endpoints"
+    }
+  ],
+  "paths": {
+    "/api/v1/users/me": {
+      "get": {
+        "tags": ["User Management"],
+        "operationId": "getUserProfile",
+        "responses": {
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "example": "Full authentication is required to access this resource"
+              }
+            }
+          },
+          "400": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "example": "User with username 'Alex Noob' not found"
+              }
+            }
+          },
+          "200": {
+            "description": "User profile returned",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/UserResponseDTO"}
+              }
+            }
+          },
+          "405": {
+            "description": "Method not allowed",
+            "content": {
+              "application/json": {
+                "example": "The method is not supported: POST"
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "example": "Internal error: NullPointerException"
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["User Management"],
+        "summary": "Update user's profile",
+        "description": "Updates the user's data by new one.",
+        "operationId": "updateMe",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "dto": {"$ref": "#/components/schemas/UpdateUserProfileDTO"},
+                  "avatar": {"type": "string", "format": "binary"}
+                }
+              },
+              "encoding": {"dto": {"contentType": "application/json"}}
+            }
+          }
+        },
+        "responses": {
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "200": {
+            "description": "User's data updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseUserProfileDTO"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/me/update-email": {
+      "post": {
+        "tags": ["User Management"],
+        "operationId": "updateEmail",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RequestUpdateUserEmailDTO"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "*/*": {
+                "schema": {
+                  "$ref": "#/components/schemas/ResponseUserProfileDTO"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/categories": {
+      "get": {
+        "tags": ["Category Management"],
+        "summary": "Get a list of available categories",
+        "description": "Returns the whole list of user's categories",
+        "operationId": "getCategories",
+        "parameters": [
+          {
+            "name": "name",
+            "in": "query",
+            "required": true,
+            "schema": {"type": "string"}
+          },
+          {
+            "name": "type",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "array",
+              "items": {"type": "string", "enum": ["INCOME", "EXPENSE"]}
+            }
+          }
+        ],
+        "responses": {
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized - User is not authenticated",
+            "content": {}
+          },
+          "400": {
+            "description": "Invalid request parameters (e.g., invalid CategoryType)",
+            "content": {}
+          },
+          "200": {
+            "description": "Successfully retrieved categories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {"$ref": "#/components/schemas/CategoryResponseDTO"}
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "tags": ["Category Management"],
+        "summary": "Create a new category",
+        "description": "Creates a custom category for the authenticated user. Returns 409 if a category with the same name and type already exists for this user.",
+        "operationId": "createCategory",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/CreateCategoryDTO"}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "409": {
+            "description": "Conflict - Category with this name and type already exists",
+            "content": {}
+          },
+          "401": {
+            "description": "Unauthorized - Valid JWT token required",
+            "content": {}
+          },
+          "400": {
+            "description": "Invalid input data or validation failed",
+            "content": {}
+          },
+          "201": {
+            "description": "Category created successfully",
+            "content": {
+              "*/*": {
+                "schema": {"$ref": "#/components/schemas/CategoryResponseDTO"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/sign-up": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Sign up a new user",
+        "description": "Creates a new user and sends email verification link. Account not activated until verified",
+        "operationId": "signUp",
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "dto": {"$ref": "#/components/schemas/AuthRequestDTO"},
+                  "avatar": {"type": "string", "format": "binary"}
+                },
+                "required": ["dto"]
+              },
+              "encoding": {"dto": {"contentType": "application/json"}}
+            }
+          }
+        },
+        "responses": {
+          "409": {
+            "description": "User with this email already exists",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "201": {
+            "description": "User created successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/AuthResponseDTO"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/reset-password/confirm": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Reset password using token",
+        "description": "Updates the user password if the token is valid.",
+        "operationId": "resetPassword",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": true,
+            "schema": {"type": "string"}
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/ResetPasswordDTO"}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "401": {
+            "description": "Token expired or invalid purpose",
+            "content": {
+              "*/*": {"schema": {"$ref": "#/components/schemas/ProblemDetail"}}
+            }
+          },
+          "400": {
+            "description": "Invalid request (Passwords do not match or validation failed)",
+            "content": {
+              "*/*": {"schema": {"$ref": "#/components/schemas/ProblemDetail"}}
+            }
+          },
+          "200": {
+            "description": "Password updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/JwtResponseDTO"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/refresh": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Refresh token",
+        "description": "Generates a new access token using a valid refresh token",
+        "operationId": "refreshToken",
+        "requestBody": {
+          "description": "Refresh token payload",
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/RefreshTokenRequest"},
+              "examples": {
+                "Sample refresh request": {
+                  "description": "Sample refresh request",
+                  "value": {"refreshToken": "jwt-refresh-token"}
+                }
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid or expired refresh token",
+            "content": {
+              "application/problem+json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "200": {
+            "description": "Token successfully refreshed",
+            "content": {
+              "application/json": {
+                "examples": {
+                  "Token refreshed": {
+                    "description": "Token refreshed",
+                    "value": {
+                      "accessToken": "new-jwt-access-token",
+                      "refreshToken": "new-jwt-refresh-token"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/login": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Login user",
+        "description": "Logins user and returns an access token.",
+        "operationId": "login",
+        "requestBody": {
+          "description": "User login details",
+          "content": {
+            "application/json": {
+              "schema": {"$ref": "#/components/schemas/LoginRequestDto"}
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "401": {
+            "description": "Authentication failed",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "400": {
+            "description": "Fields were filled incorrectly",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "200": {
+            "description": "User logged successfully",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/JwtResponseDTO"}
+              }
+            }
+          },
+          "403": {
+            "description": "Access Denied",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/auth/getTokenToResetPassword": {
+      "post": {
+        "tags": ["Authentication"],
+        "summary": "Send reset password email",
+        "description": "Generates a reset link and sends it to the user's email.",
+        "operationId": "sendResetPasswordToken",
+        "parameters": [
+          {
+            "name": "email",
+            "in": "query",
+            "required": true,
+            "schema": {"type": "string", "format": "email"}
+          }
+        ],
+        "responses": {
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "401": {
+            "description": "User with requested email does not exist",
+            "content": {
+              "*/*": {"schema": {"$ref": "#/components/schemas/ProblemDetail"}}
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "200": {
+            "description": "Reset link sent successfully",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string",
+                  "example": "Your link to reset password was sent!"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/users/verify-email": {
+      "get": {
+        "tags": ["User Management"],
+        "operationId": "verifyEmail",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "required": true,
+            "schema": {"type": "string"}
+          }
+        ],
+        "responses": {
+          "409": {
+            "description": "Conflict",
+            "content": {
+              "application/problem+json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/problem+json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "200": {"description": "OK"}
+        }
+      }
+    },
+    "/api/v1/auth/verify": {
+      "get": {
+        "tags": ["Authentication"],
+        "summary": "Verify email by verification token",
+        "description": "Activates user account using email verification token and returns access JWT.",
+        "operationId": "verifyToken",
+        "parameters": [
+          {
+            "name": "token",
+            "in": "query",
+            "description": "Email verification token JWT with purpose=email_verification",
+            "required": true,
+            "schema": {"type": "string"}
+          }
+        ],
+        "responses": {
+          "409": {
+            "description": "User already activated",
+            "content": {
+              "application/problem+json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "401": {
+            "description": "JWT parsing/validation error",
+            "content": {
+              "application/problem+json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid token (wrong purpose/format)",
+            "content": {
+              "application/problem+json": {
+                "schema": {"$ref": "#/components/schemas/ProblemDetail"}
+              }
+            }
+          },
+          "200": {
+            "description": "User activated, access token issued",
+            "content": {
+              "application/json": {
+                "schema": {"$ref": "#/components/schemas/JwtResponseDTO"}
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "ProblemDetail": {
+        "type": "object",
+        "properties": {
+          "type": {"type": "string", "format": "uri"},
+          "title": {"type": "string"},
+          "status": {"type": "integer", "format": "int32"},
+          "detail": {"type": "string"},
+          "instance": {"type": "string", "format": "uri"},
+          "properties": {"type": "object", "additionalProperties": {}}
+        }
+      },
+      "UpdateUserProfileDTO": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "description": "User's full name",
+            "example": "Abraham Lincoln"
+          },
+          "currencyCode": {
+            "type": "string",
+            "description": "User's main currency (ISO 4217)",
+            "enum": ["USD", "UAH", "EUR"],
+            "example": "USD"
+          }
+        }
+      },
+      "ResponseUserProfileDTO": {
+        "type": "object",
+        "properties": {
+          "fullName": {
+            "type": "string",
+            "description": "User's full name",
+            "example": "Abraham Lincoln"
+          },
+          "avatarUrl": {
+            "type": "string",
+            "description": "User's avatar url",
+            "example": "https://example.com/avatar.jpg"
+          }
+        }
+      },
+      "RequestUpdateUserEmailDTO": {
+        "type": "object",
+        "description": "Update user email request",
+        "properties": {
+          "email": {"type": "string", "description": "New email address"}
+        }
+      },
+      "CreateCategoryDTO": {
+        "type": "object",
+        "description": "Create a new category",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name",
+            "example": "Salary",
+            "minLength": 1
+          },
+          "type": {
+            "type": "string",
+            "description": "Type",
+            "enum": ["INCOME", "EXPENSE"],
+            "example": "Income"
+          },
+          "icon": {"type": "string", "description": "Icon", "example": "coin"}
+        },
+        "required": ["name", "type"]
+      },
+      "CategoryResponseDTO": {
+        "type": "object",
+        "description": "Get Category",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name",
+            "example": "Salary"
+          },
+          "type": {
+            "type": "string",
+            "description": "Type",
+            "enum": ["INCOME", "EXPENSE"],
+            "example": "Income"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status",
+            "enum": ["ARCHIVED", "ACTIVE"],
+            "example": "Active"
+          },
+          "icon": {"type": "string", "description": "Icon", "example": "coin"}
+        }
+      },
+      "AuthRequestDTO": {
+        "type": "object",
+        "description": "User sign up request",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User's email address",
+            "example": "example@mail.com",
+            "minLength": 1
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "description": "User's password (min 8 chars).",
+            "example": "Example8",
+            "minLength": 1
+          },
+          "fullName": {
+            "type": "string",
+            "description": "User's full name",
+            "example": "Abraham Lincoln",
+            "minLength": 1
+          },
+          "currencyCode": {
+            "type": "string",
+            "description": "User's main currency (ISO 4217)",
+            "enum": ["USD", "UAH", "EUR"],
+            "example": "USD"
+          }
+        },
+        "required": ["currencyCode", "email", "fullName", "password"]
+      },
+      "AuthResponseDTO": {
+        "type": "object",
+        "description": "User sign up response",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "User's id",
+            "example": 123123
+          },
+          "fullName": {
+            "type": "string",
+            "description": "User's full name",
+            "example": "Abraham Lincoln"
+          },
+          "email": {
+            "type": "string",
+            "description": "User's email",
+            "examples": ["example@mail.com"]
+          },
+          "currencyCode": {
+            "type": "string",
+            "description": "User's main currency code",
+            "enum": ["USD", "UAH", "EUR"],
+            "example": "USD"
+          },
+          "avatarUrl": {
+            "type": "string",
+            "description": "User's avatar url",
+            "example": "https://example.com/avatar.jpg"
+          },
+          "isActivated": {
+            "type": "boolean",
+            "description": "User's activation status",
+            "example": false
+          }
+        }
+      },
+      "ResetPasswordDTO": {
+        "type": "object",
+        "description": "New user's password",
+        "properties": {
+          "password": {
+            "type": "string",
+            "format": "password",
+            "description": "User's password (min 8 chars).",
+            "example": "Example8",
+            "minLength": 1
+          },
+          "confirmPassword": {
+            "type": "string",
+            "format": "password",
+            "description": "User's confirmPassword (min 8 chars).",
+            "example": "Example8",
+            "minLength": 1
+          }
+        },
+        "required": ["confirmPassword", "password"]
+      },
+      "JwtResponseDTO": {
+        "type": "object",
+        "description": "JWT response",
+        "properties": {
+          "accessToken": {
+            "type": "string",
+            "format": "JWT",
+            "description": "JWT token",
+            "example": "eyJhbGciOiJIUzI1NiJ9.ey..."
+          },
+          "refreshToken": {
+            "type": "string",
+            "format": "JWT",
+            "description": "JWT refresh token",
+            "example": "eyJhbGciOiJIUzI1NiJ9.ey..."
+          }
+        }
+      },
+      "RefreshTokenRequest": {
+        "type": "object",
+        "description": "Payload for refreshing authentication token",
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "description": "Valid refresh token",
+            "example": "eyJhbGciOiJIUzI1NiJ9.ey...",
+            "minLength": 1
+          }
+        },
+        "required": ["refreshToken"]
+      },
+      "LoginRequestDto": {
+        "type": "object",
+        "description": "Login user request",
+        "properties": {
+          "email": {
+            "type": "string",
+            "format": "email",
+            "description": "User's email address",
+            "example": "example@mail.com",
+            "minLength": 1
+          },
+          "password": {
+            "type": "string",
+            "format": "password",
+            "description": "User's password (min 8 chars).",
+            "example": "Example8",
+            "minLength": 1
+          }
+        },
+        "required": ["email", "password"]
+      },
+      "UserResponseDTO": {
+        "type": "object",
+        "description": "Get user info",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64",
+            "description": "User's id",
+            "example": 123
+          },
+          "email": {
+            "type": "string",
+            "description": "User's email address",
+            "example": "example@mail.com"
+          },
+          "fullName": {
+            "type": "string",
+            "description": "User's full name",
+            "example": "Abraham Lincoln"
+          },
+          "currencyCode": {
+            "type": "string",
+            "description": "User's main currency (ISO 4217)",
+            "enum": ["USD", "UAH", "EUR"],
+            "example": "USD"
+          },
+          "avatarUrl": {
+            "type": "string",
+            "description": "User's avatar url",
+            "example": "https://example.com/avatar.jpg"
+          },
+          "isActivated": {
+            "type": "boolean",
+            "description": "User's activation status",
+            "example": false
+          }
+        }
+      }
+    },
+    "securitySchemes": {
+      "bearerAuth": {"type": "http", "scheme": "bearer", "bearerFormat": "JWT"}
+    }
+  }
+}
