@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "http://monity.eu-central-1.elasticbeanstalk.com/api/:path*"
+      "destination": "https://37tsyfkuv9.eu-central-1.awsapprunner.com/api/:path*"
     },
     {
       "source": "/(.*)",

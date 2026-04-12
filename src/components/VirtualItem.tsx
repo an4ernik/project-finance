@@ -1,14 +1,14 @@
-import {Pencil, Trash} from 'lucide-react';
+import {Pencil, Trash, type LucideIcon} from 'lucide-react';
 import {format} from 'date-fns';
 import {uk} from 'date-fns/locale';
 import {useTranslation} from 'react-i18next';
-import {cn} from '@/lib/utils'; 
+import {cn} from '@/lib/utils';
+import {getIncomeCategoryById} from '@/pages/income/modal/incomeCategoryOptions';
 
 const THEMES = {
   income: {
     container:
       'hover:bg-[#015E4680] dark:hover:bg-none dark:hover:bg-linear-to-b dark:hover:from-[#059979] dark:hover:to-[#02624D99]',
-
     bgIcon:
       'bg-[#005E4633] group-hover:bg-[#E6E6E6] dark:bg-[#00AA854D] dark:group-hover:bg-[#02A078]',
     textIcon: 'text-[#005E46] dark:text-[#EAF6F3]',
@@ -52,18 +52,39 @@ const THEMES = {
   },
 };
 
-interface VirtualItemProps {
-  item: any;
-  type?: 'income' | 'expense';
+interface Item {
+  id: number;
+  name: string;
+  amount: string;
+  categoryId: number;
+  Icon: LucideIcon;
+  isRepeat: string | undefined;
+  date: Date;
 }
 
-export const VirtualItem = ({item, type = 'income'}: VirtualItemProps) => {
+interface VirtualItemProps {
+  item: Item;
+  type?: 'income' | 'expense';
+  onEdit: (item: Item) => void;
+}
+
+export const VirtualItem = ({
+  item,
+  type = 'income',
+  onEdit,
+}: VirtualItemProps) => {
   const {t} = useTranslation();
-  const theme = THEMES[type]; 
+  const theme = THEMES[type];
+  const category = getIncomeCategoryById(item.categoryId);
+
+  const handleRemove = (id:number) => {
+    console.log('deletedItemId', id);
+  }
+
   return (
     <div
       className={cn(
-        'group relative min-h-[112px] flex items-center rounded-xl p-5 gap-4 transition-all duration-300 tracking-wider',
+        'group relative min-h-[112px] flex items-center rounded-xl p-5 gap-4 tracking-wider',
         'bg-white dark:bg-[#193432] border border-slate-100 dark:border-none text-slate-900 dark:text-white',
         'bg-linear-to-b from-transparent to-transparent',
         theme.container,
@@ -71,14 +92,14 @@ export const VirtualItem = ({item, type = 'income'}: VirtualItemProps) => {
     >
       <div
         className={cn(
-          'size-10 flex justify-center items-center p-3 rounded-lg shrink-0 transition-colors duration-300',
+          'size-10 hidden sm:flex justify-center items-center p-3 rounded-lg shrink-0',
           theme.bgIcon,
         )}
       >
         <item.Icon className={cn('size-5 transition-colors', theme.textIcon)} />
       </div>
 
-      <div className="flex items-center justify-between w-full flex-wrap gap-4">
+      <div className="relative flex items-center justify-between w-full flex-wrap gap-4">
         <div className="flex flex-col">
           <div
             className={cn(
@@ -86,12 +107,14 @@ export const VirtualItem = ({item, type = 'income'}: VirtualItemProps) => {
               theme.textTitle,
             )}
           >
-            {t(`incomeModal.categories.${item.category}`)}
+            {category
+              ? t(`incomeModal.categories.${category.val}`)
+              : t('incomeModal.categories.categoryPlaceholder')}
 
             {item.isRepeat && (
               <div
                 className={cn(
-                  'flex items-center justify-center text-[14px] lowercase rounded-xl px-2 pb-1 pt-0.5 leading-none transition-colors duration-300',
+                  'flex items-center text-[10px] justify-center sm:text-[14px] lowercase rounded-xl px-2 pb-1 pt-0.5 leading-none transition-colors duration-300',
                   theme.repeatType,
                 )}
               >
@@ -122,10 +145,10 @@ export const VirtualItem = ({item, type = 'income'}: VirtualItemProps) => {
           </span>
         </div>
 
-        <div className="flex items-center gap-5 ml-auto">
+        <div className="grid grid-cols-[auto_1fr] w-full sm:w-auto gap-2.5 sm:flex items-center sm:gap-5 ml-4 sm:ml-auto">
           <span
             className={cn(
-              'text-2xl font-semibold transition-colors duration-300',
+              'text-2xl font-semibold transition-colors duration-300 w-fit',
               theme.amountColor,
             )}
           >
@@ -141,10 +164,17 @@ export const VirtualItem = ({item, type = 'income'}: VirtualItemProps) => {
             ₴
           </span>
 
-          <div className="hidden group-hover:flex gap-5 animate-in fade-in slide-in-from-right-2 duration-200">
+          <div
+            className="absolute top-1/2 right-2 -translate-y-1/2 
+                sm:relative sm:top-0 sm:right-0 sm:translate-y-0 
+                flex align-top gap-4 sm:gap-5 
+                animate-in fade-in slide-in-from-right-2 duration-200 
+                [@media(hover:hover)]:hidden [@media(hover:hover)]:group-hover:flex"
+          >
             <button
+              onClick={() => onEdit(item)}
               className={cn(
-                'flex justify-center items-center size-10 rounded-lg border border-slate-200 dark:border-white/20 shadow-inner transition-all cursor-pointer',
+                'flex justify-center items-center size-12 sm:size-10 rounded-lg border border-slate-200 dark:border-white/20 shadow-inner transition-all cursor-pointer',
                 theme.editIconBg,
               )}
             >
@@ -158,8 +188,9 @@ export const VirtualItem = ({item, type = 'income'}: VirtualItemProps) => {
             </button>
 
             <button
+              onClick={() => handleRemove(item.id)}
               className={cn(
-                'flex justify-center items-center size-10 rounded-lg shadow-md cursor-pointer transition-all',
+                'flex justify-center items-center size-12 sm:size-10 rounded-lg shadow-md cursor-pointer transition-all',
                 theme.deleteIconBg,
               )}
             >

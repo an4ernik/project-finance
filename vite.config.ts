@@ -15,7 +15,7 @@ export default defineConfig({
     port: 5173,
     proxy: {
       '/api': {
-        target: 'http://monity.eu-central-1.elasticbeanstalk.com',
+        target: 'https://37tsyfkuv9.eu-central-1.awsapprunner.com',
         changeOrigin: true,
         secure: false,
       },

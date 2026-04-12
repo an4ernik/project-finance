@@ -1,5 +1,5 @@
-import IncomeModal from '@/components/ui/IncomeModal';
-import {VirtualList} from '@/components/VirtualList';
+import IncomeModal from '@/pages/income/modal/IncomeModal';
+import VirtualList from '@/components/VirtualList';
 import AppLayout from '@/layouts/AppLayout';
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
@@ -18,7 +18,7 @@ function Income() {
   };
 
   return (
-    <AppLayout
+    <AppLayout 
       title={t('income.title')}
       subtitle={t('income.subtitle')}
       action={
@@ -30,12 +30,7 @@ function Income() {
         </div>
       }
     >
-      {showModal && (
-        <IncomeModal
-          title={t('incomeModal.titleCreate')}
-          onClose={handleCloseModal}
-        />
-      )}
+      {showModal && <IncomeModal mode="update" onClose={handleCloseModal} />}
       <VirtualList />
     </AppLayout>
   );

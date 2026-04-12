@@ -60,7 +60,7 @@ function AppLayout({title, subtitle, action, children}: AppLayoutProps) {
         onClose={() => setMenuOpen(false)}
       />
 
-      <div className="flex h-full min-h-0 flex-1 flex-col overflow-auto  py-[33.5px] px-[35px] md:pr-[50px] pt-16.25 md:pt-0">
+      <div className="flex h-full min-h-0 flex-1 flex-col overflow-auto  py-[33.5px] px-5 sm:px-[35px] md:pr-[50px] pt-16.25 md:pt-0">
         <div className="flex flex-row justify-between w-full mt-[35px]">
           <div>
             <h2 className="text-2xl font-semibold">{resolvedTitle}</h2>
