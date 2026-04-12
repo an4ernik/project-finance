@@ -39,7 +39,9 @@ function Income() {
         <CategoriesManager onClose={() => setIsManageOpen(false)} />
       )}
 
-      {isAddOpen && <IncomeModal mode="create" onClose={() => setIsAddOpen(false)} />}
+      {isAddOpen && (
+        <IncomeModal mode="create" onClose={() => setIsAddOpen(false)} />
+      )}
 
       <VirtualList />
     </AppLayout>

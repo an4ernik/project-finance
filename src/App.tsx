@@ -33,7 +33,7 @@ function App() {
               <Route path="security" element={<SecuritySettings />} />
               <Route path="notifications" element={<NotificationsSettings />} />
             </Route>
-          </Route>
+          </Route> 
           <Route element={<PublicRoute />}>
             <Route path="/login" element={<Login />} />
             <Route path="/signup" element={<SignUp />} />
@@ -43,6 +43,7 @@ function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/Home" element={<Home />} />
           <Route path="/verify" element={<VerifyEmailPage />} />
+          <Route path="*" element={<NotFound />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </ThemeProvider>
