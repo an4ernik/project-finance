@@ -195,12 +195,14 @@ const IncomeModal = ({
             receipts: data.file ?? undefined,
           },
         });
-        toast.success(t('incomeModal.successIncome.createIncome'),{id: 'success-create'});
+        toast.success(t('incomeModal.successIncome.createIncome'), {
+          id: 'success-create',
+        });
       } else {
         if (!initialData?.id) return;
 
         await updateIncome({
-          transactionId: initialData.id, 
+          transactionId: initialData.id,
           // params: { scope: updateScope },
           data: {
             amount: data.amount,
@@ -210,41 +212,43 @@ const IncomeModal = ({
             type: 'INCOME',
           },
         });
-        toast.success(t('incomeModal.successIncome.updateIncome'),{id: 'success'});
+        toast.success(t('incomeModal.successIncome.updateIncome'), {
+          id: 'success',
+        });
       }
 
       reset(getDefaultValues());
       onClose();
     } catch (error) {
       console.error(error);
-      toast.error(t(`incomeModal.errors.${mode}IncomeError`),{id: 'error'});
+      toast.error(t(`incomeModal.errors.${mode}IncomeError`), {id: 'error'});
     } finally {
       setShowInfoDialog(false);
       setPendingData(null);
     }
   };
 
-  const handleInfoDialogClose = async (
+  const handleInfoDialogClose = async () =>
     // selectedScope: 'this_only' | 'all_future' | null,
-  ) => {
-    if (  pendingData) {
-      // Користувач підтвердив зміни
-      await executeMutation(pendingData);
-    } else {
-      // Користувач скасував діалог
-      setShowInfoDialog(false);
-      setPendingData(null);
-    }
-  };
+    {
+      if (pendingData) {
+        // Користувач підтвердив зміни
+        await executeMutation(pendingData);
+      } else {
+        // Користувач скасував діалог
+        setShowInfoDialog(false);
+        setPendingData(null);
+      }
+    };
 
   const onSubmit = async (data: FormOutput) => {
     if (mode === 'update' && data.repeat !== 'once') {
       setPendingData(data);
       setShowInfoDialog(true);
-      return;  
+      return;
     }
- 
-    await executeMutation(data); 
+
+    await executeMutation(data);
   };
 
   return (
