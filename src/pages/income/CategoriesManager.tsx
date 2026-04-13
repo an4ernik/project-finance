@@ -53,6 +53,7 @@ function CategoriesManager({onClose}: Props) {
   const categoriesParams = {
     name: trimmedSearch,
     type: [GetCategoriesTypeItem.INCOME],
+    archived: isArchive,
   };
 
   const {data, isLoading} = useGetCategories(categoriesParams as any);

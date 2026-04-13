@@ -45,6 +45,39 @@ html, body, #root {
   --light-accent: #00aa85;
   --light-btn-bg: #005e46;
   --light-btn-bg-full: radial-gradient(53.34% 54.31% at 46.66% 32.95%, rgba(255, 255, 255, 0.20) 0%, rgba(153, 153, 153, 0.00) 100%), #005e46;
+  /* UI kit shared tokens */
+  --glass-bg: linear-gradient(
+    180deg,
+    rgba(11, 21, 20, 0.03) 0%,
+    rgba(49, 95, 85, 0.1) 50%,
+    rgba(144, 208, 182, 0.05) 100%
+  );
+  --glass-bg-strong: linear-gradient(
+    180deg,
+    rgba(49, 95, 85, 0.18) 0%,
+    rgba(11, 21, 20, 0.12) 100%
+  );
+  --glass-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 4px 4px rgba(75, 75, 75, 0.2);
+  --btn-primary-bg: radial-gradient(
+      circle at 51% 31%,
+      rgba(255, 255, 255, 0.2) 0%,
+      rgba(153, 153, 153, 0.01) 100%
+    ),
+    linear-gradient(0deg, rgba(2, 98, 77, 0.6) 0%, rgba(4, 200, 158, 1) 50%);
+  --btn-primary-hover: linear-gradient(
+    0deg,
+    rgba(2, 160, 120, 0.3) 0%,
+    rgba(2, 160, 120, 0.5) 50%,
+    rgba(2, 160, 120, 0.8) 100%
+  );
+  --btn-primary-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25),
+    0 4px 4px rgba(75, 75, 75, 0.35);
+  --input-glass-bg: linear-gradient(
+    180deg,
+    rgba(144, 208, 182, 0.05) 49%,
+    rgba(49, 95, 85, 0.1) 100%
+  );
 }
 
 @theme inline {
@@ -125,12 +158,6 @@ html, body, #root {
   /* semantic aliases */
   --text-tertiary: var(--dark-text-tertiary);
   --accent-interactive: var(--dark-accent-secondary);
-  --glass-bg: linear-gradient(
-    180deg,
-    rgba(11, 21, 20, 0.03) 0%,
-    rgba(49, 95, 85, 0.1) 50%,
-    rgba(144, 208, 182, 0.05) 100%
-  );
 }
 
 @layer base {
