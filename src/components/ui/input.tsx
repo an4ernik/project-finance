@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {Eye, EyeOff} from 'lucide-react';
 import {cn} from '@/lib/utils';
+import DisplayError from './DisplayError';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   icon?: React.ReactNode;
@@ -67,6 +68,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 'border-[#CE0000] border-[0.5px] bg-linear-to-b from-[rgba(199,0,0,0.2)] to-[rgba(199,0,0,0.3)]',
               isDisabled &&
                 'border-[#5A736E] bg-[rgba(153,153,153,0.1)] opacity-50',
+              className,
             )}
           >
             {icon && (
@@ -78,6 +80,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               className={cn(
                 'h-full w-full flex-1 bg-transparent text-[16px] leading-[1.167] text-foreground placeholder:text-muted-foreground',
                 'border-0 p-0 outline-none ring-0 focus:outline-none focus:ring-0',
+                className,
               )}
               value={value}
               defaultValue={defaultValue}
@@ -104,9 +107,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
             )}
           </div>
           {/* {errorMessage && ( */}
-          <p className="text-[10px] leading-[1.167] text-destructive min-h-3">
-            {errorMessage || ''}
-          </p>
+          <DisplayError errorText={errorMessage} />
           {/* )} */}
         </div>
       </div>

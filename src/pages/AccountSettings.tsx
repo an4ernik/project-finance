@@ -25,10 +25,10 @@ import {
 } from '@/components/ui/select';
 import {useMe} from '@/shared/api/users/useMe';
 import {
-  getGetUserProfileQueryKey,
+  getGetUserProfileQueryKey, 
   useUpdateMe,
 } from '@/shared/api/generated/user-management/user-management';
-import {useUpdateEmail} from '@/shared/api/generated/user-identity/user-identity';
+import { useUpdateEmail } from '@/shared/api/generated/user-identity/user-identity';
 import {useQueryClient} from '@tanstack/react-query';
 import {UpdateUserProfileDTOCurrencyCode} from '@/shared/api/models/updateUserProfileDTOCurrencyCode';
 import type {ResponseUserDTO} from '@/shared/api/models';

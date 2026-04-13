@@ -4,9 +4,12 @@ import {Button} from '@/components/ui/button';
 import {useState} from 'react';
 import CategoriesManager from './CategoriesManager';
 import {Cog, Plus} from 'lucide-react';
+import VirtualList from '@/components/VirtualList';
+import IncomeModal from '@/pages/income/modal/IncomeModal';
 
 function Income() {
   const [isManageOpen, setIsManageOpen] = useState(false);
+  const [isAddOpen, setIsAddOpen] = useState(false);
   const {t} = useTranslation();
 
   return (
@@ -22,7 +25,10 @@ function Income() {
             {t('income.actions.manageCategories')}
             <Cog />
           </Button>
-          <Button className="cursor-pointer  w-[224px]">
+          <Button
+            onClick={() => setIsAddOpen(true)}
+            className="cursor-pointer  w-[224px]"
+          >
             {t('income.actions.addIncome')}
             <Plus />
           </Button>
@@ -32,6 +38,12 @@ function Income() {
       {isManageOpen && (
         <CategoriesManager onClose={() => setIsManageOpen(false)} />
       )}
+
+      {isAddOpen && (
+        <IncomeModal mode="create" onClose={() => setIsAddOpen(false)} />
+      )}
+
+      <VirtualList />
     </AppLayout>
   );
 }

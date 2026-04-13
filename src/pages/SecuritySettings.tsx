@@ -8,6 +8,7 @@ import {Input} from '@/components/ui/input';
 import {Button} from '@/components/ui/button';
 import {createSecuritySchema} from './schemas/securitySettingsSchema.ts';
 import {useUpdatePassword} from '@/shared/api/generated/user-identity/user-identity.ts';
+ 
 
 type SecurityFormData = {
   currentPassword: string;

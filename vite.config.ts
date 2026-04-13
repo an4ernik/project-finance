@@ -16,6 +16,14 @@ export default defineConfig(({mode}) => {
         '@': path.resolve(__dirname, './src'),
       },
     },
+  },
+  server: {
+    port: 5173,
+    proxy: {
+      '/api': {
+        target: 'https://37tsyfkuv9.eu-central-1.awsapprunner.com',
+        changeOrigin: true,
+        secure: false,
     server: {
       port: 5173,
       proxy: {
@@ -28,3 +36,5 @@ export default defineConfig(({mode}) => {
     },
   };
 });
+
+
