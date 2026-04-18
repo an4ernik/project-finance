@@ -1,9 +1,10 @@
-import {Pencil, Trash, type LucideIcon} from 'lucide-react';
+import {Pencil, Trash} from 'lucide-react';
 import {format} from 'date-fns';
 import {uk} from 'date-fns/locale';
 import {useTranslation} from 'react-i18next';
 import {cn} from '@/lib/utils';
-import {getIncomeCategoryById} from '@/pages/income/modal/incomeCategoryOptions';
+import {formattedAmount, getIncomeCategoryById} from '@/helpers/helpers';
+import type {VirtualItemProps} from '@/types/types';
 
 const THEMES = {
   income: {
@@ -20,8 +21,8 @@ const THEMES = {
     amountColor:
       'text-[#00AA85] group-hover:text-[#EAF6F3] dark:text-[#00AA85] dark:group-hover:text-[#EAF6F3]',
     editIconBg:
-      'bg-linear-to-b from-[#0B151403] via-[#315F551A] to-[#90D0B60D] dark:bg-[rgba(234,246,243,0.14)]',
-    editIconText: 'text-[#E6E6E6] dark:text-[#EAF6F3]',
+      'border border-[#E6E6E6] dark:border-[#e4e4e4]/20  bg-linear-to-b  from-[#0B151403] via-[#315F551A] to-[#90D0B60D]',
+    editIconText: 'text-[#EAF6F3] dark:text-[#EAF6F3]',
     deleteIconBg:
       'bg-linear-to-t from-[#CE0000] to-[#C700004D] dark:from-[#CE0000] dark:to-[#C700004D]',
     deleteIconText: 'text-[#E6E6E6] dark:text-[#FFFFFF]',
@@ -43,7 +44,7 @@ const THEMES = {
     amountColor:
       'text-[#FF7C02CC] group-hover:text-[#EAF6F3] dark:text-[#AA7D00] dark:group-hover:text-[#EAF6F3]',
     editIconBg:
-      'bg-linear-to-b from-[#0B151403] via-[#315F551A] to-[#90D0B60D] dark:bg-[rgba(234,246,243,0.14)]',
+      'border blur-sm blur-[#E6E6E6] border-[#E6E6E6] dark:border-[#b0b0b0] dark:border-[#e4e4e4]/20 bg-linear-to-b from-[#0B151403] via-[#315F551A] to-[#90D0B60D] dark:bg-[rgba(234,246,243,0.14)]',
     editIconText: 'text-[#E6E6E6] dark:text-[#EAF6F3]',
     deleteIconBg:
       'bg-linear-to-t from-[#CE0000] to-[#C700004D] dark:from-[#CE0000] dark:to-[#C700004D]',
@@ -52,34 +53,16 @@ const THEMES = {
   },
 };
 
-interface Item {
-  id: number;
-  name: string;
-  amount: string;
-  categoryId: number;
-  Icon: LucideIcon;
-  isRepeat: string | undefined;
-  date: Date;
-}
-
-interface VirtualItemProps {
-  item: Item;
-  type?: 'income' | 'expense';
-  onEdit: (item: Item) => void;
-}
-
 export const VirtualItem = ({
   item,
   type = 'income',
   onEdit,
+  onDelete,
 }: VirtualItemProps) => {
   const {t} = useTranslation();
   const theme = THEMES[type];
-  const category = getIncomeCategoryById(item.categoryId);
-
-  const handleRemove = (id:number) => {
-    console.log('deletedItemId', id);
-  }
+  const category = getIncomeCategoryById(type, item.categoryId);
+  const itemAmount = formattedAmount(item.amount);
 
   return (
     <div
@@ -108,13 +91,13 @@ export const VirtualItem = ({
             )}
           >
             {category
-              ? t(`incomeModal.categories.${category.val}`)
+              ? t(`incomeModal.filters.category.${category.val}`)
               : t('incomeModal.categories.categoryPlaceholder')}
 
-            {item.isRepeat && (
+            {item.isRepeat && item.isRepeat !== 'once' && (
               <div
                 className={cn(
-                  'flex items-center text-[10px] justify-center sm:text-[14px] lowercase rounded-xl px-2 pb-1 pt-0.5 leading-none transition-colors duration-300',
+                  'flex items-center text-[10px] justify-center sm:text-[14px] lowercase rounded-xl px-2 py-0.5 leading-none transition-colors duration-300',
                   theme.repeatType,
                 )}
               >
@@ -129,7 +112,7 @@ export const VirtualItem = ({
               theme.subTitle,
             )}
           >
-            Devide vipylat
+            {item.description}
           </span>
 
           <span
@@ -152,7 +135,7 @@ export const VirtualItem = ({
               theme.amountColor,
             )}
           >
-            {theme.amountPrefix} {item.amount}
+            {theme.amountPrefix} {itemAmount}
           </span>
 
           <span
@@ -174,7 +157,7 @@ export const VirtualItem = ({
             <button
               onClick={() => onEdit(item)}
               className={cn(
-                'flex justify-center items-center size-12 sm:size-10 rounded-lg border border-slate-200 dark:border-white/20 shadow-inner transition-all cursor-pointer',
+                'flex justify-center items-center size-12 sm:size-10 rounded-lg shadow-inner cursor-pointer outline-none',
                 theme.editIconBg,
               )}
             >
@@ -188,7 +171,7 @@ export const VirtualItem = ({
             </button>
 
             <button
-              onClick={() => handleRemove(item.id)}
+              onClick={() => onDelete(item)}
               className={cn(
                 'flex justify-center items-center size-12 sm:size-10 rounded-lg shadow-md cursor-pointer transition-all',
                 theme.deleteIconBg,

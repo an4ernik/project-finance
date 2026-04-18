@@ -5,19 +5,23 @@
 
 html, body, #root {
   height: 100%; 
-  overflow: hidden; /* Це прибере скрол всієї сторінки */
+  overflow: hidden;  
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 }
-
+ 
 @layer utilities {
-  /* Приховуємо смугу прокрутки для Chrome, Safari та Opera */
+ 
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
-
-  /* Приховуємо для IE, Edge та Firefox */
+ 
   .scrollbar-hide {
-    -ms-overflow-style: none;  /* IE та Edge */
-    scrollbar-width: none;  /* Firefox */
+    -ms-overflow-style: none;   
+    scrollbar-width: none;  
   }
 }
 

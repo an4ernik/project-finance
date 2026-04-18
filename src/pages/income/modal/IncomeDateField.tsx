@@ -8,6 +8,7 @@ import {Label} from '@/components/ui/label';
 import DisplayError from '@/components/ui/DisplayError';
 import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover';
 import {Calendar as ComponentCalendar} from '@/components/ui/calendar';
+import type {TransactionType} from '@/types/types';
 
 const dateInput = cn(
   'flex items-center gap-2.5 rounded-[10px] border px-2.5 transition-all duration-200',
@@ -19,14 +20,24 @@ type Props = {
   value: Date;
   error?: string;
   onChange: (date: Date) => void;
+  disabledDate?: (date: Date) => boolean;
+  type?: TransactionType;
 };
 
-export const IncomeDateField = ({value, error, onChange}: Props) => {
+export const IncomeDateField = ({
+  value,
+  error,
+  onChange,
+  disabledDate,
+  type = 'income',
+}: Props) => {
   const {t} = useTranslation();
 
   return (
     <div className="flex flex-col gap-2">
-      <Label className="text-dark-background">{t('incomeModal.date')}*</Label>
+      <Label className="text-dark-background">
+        {t(`incomeModal.fields.date.${type}`)}*
+      </Label>
 
       <Popover>
         <PopoverTrigger asChild>
@@ -45,6 +56,7 @@ export const IncomeDateField = ({value, error, onChange}: Props) => {
         <PopoverContent className="w-auto p-0" align="start">
           <ComponentCalendar
             required
+            disabled={disabledDate}
             mode="single"
             selected={value}
             onSelect={(date: Date) => date && onChange(date)}

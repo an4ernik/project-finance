@@ -1,14 +1,24 @@
-import type {UseFormRegister} from 'react-hook-form';
+import type { UseFormRegister, FieldValues, Path } from "react-hook-form";
 import {useTranslation} from 'react-i18next';
 import {Input} from '@/components/ui/input';
 import {cn} from '@/lib/utils';
+import type {TransactionType} from '@/types/types';
 
-type Props = {
-  register: UseFormRegister<any>;
+type Props<T extends FieldValues> = {
+  // Path<T> гарантує, що ми передаємо ім'я поля, яке існує у формі
+  register: UseFormRegister<T>;
+  name: Path<T>; 
   error?: string;
+  type?: TransactionType;
 };
 
-export const IncomeAmountField = ({register, error}: Props) => {
+ 
+export const IncomeAmountField = <T extends FieldValues>({
+  register, 
+  name,
+  error,
+  type = 'income'
+}: Props<T>) => {
   const {t} = useTranslation();
 
   return (
@@ -20,14 +30,15 @@ export const IncomeAmountField = ({register, error}: Props) => {
           }
         }}
         min={0}
+        step={0.01}
         type="text"
         inputMode="decimal"
-        label={`${t('incomeModal.amount')}*`}
+        label={`${t(`incomeModal.fields.amount.${type}`)}*`}
         placeholder="6000"
         error={!!error}
         errorMessage={error}
         className={cn('h-10 sm:h-12 px-3 py-[7.5px]')}
-        {...register('amount', {
+        {...register(name, {
           onChange: e => {
             const value = e.target.value;
             const cleanedValue = value

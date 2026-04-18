@@ -25,7 +25,7 @@ function AppLayout({title, subtitle, action, children}: AppLayoutProps) {
 
   return (
     <div
-      className={`relative flex h-screen bg-background text-foreground ${
+      className={`relative flex h-screen bg-background text-foreground scrollbar-hide ${
         menuOpen ? 'overflow-hidden' : ''
       }`}
     >
