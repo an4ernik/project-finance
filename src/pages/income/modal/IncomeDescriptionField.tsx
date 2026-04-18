@@ -15,7 +15,7 @@ export const IncomeDescriptionField = ({register}: Props) => {
   return (
     <div className="flex flex-col gap-2 mb-8 sm:mb-10">
       <Label className={cn('text-[14px] sm:text-[16px] text-dark-background')}>
-        {t('incomeModal.description')}
+        {t('incomeModal.fields.description')}
       </Label>
 
       <Textarea
@@ -23,7 +23,7 @@ export const IncomeDescriptionField = ({register}: Props) => {
         className={cn(
           'h-19 py-3 resize-none data-[placeholder]:text-tertiary] text-[14px]',
         )}
-        placeholder={t('incomeModal.descriptionPlaceholder')}
+        placeholder={t('incomeModal.fields.descriptionPlaceholder')}
       />
     </div>
   );

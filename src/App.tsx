@@ -9,7 +9,6 @@ import ForgotPassword from '@/pages/ForgotPassword';
 import ResetPassword from '@/pages/ResetPassword';
 import SettingsPage from '@/pages/SettingsPage';
 import Dashboard from '@/pages/Dashboard';
-import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
 import AccountSettings from './pages/AccountSettings';
 import SecuritySettings from './pages/SecuritySettings';
@@ -18,6 +17,8 @@ import NotificationsSettings from './pages/NotificationsSettings';
 import Landing from './pages/Landing';
 import NotFound from './pages/NotFound';
 import Income from './pages/income/Income';
+import Expense from './pages/Expense';
+import ProtectedRoute from './components/ProtectedRoute';
 
 function App() {
   return (
@@ -28,6 +29,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/income" element={<Income />} />
+            <Route path="/expenses" element={<Expense />} />
             <Route path="/settings" element={<SettingsPage />}>
               <Route index element={<AccountSettings />} />
               <Route path="security" element={<SecuritySettings />} />
@@ -43,7 +45,6 @@ function App() {
           <Route path="/" element={<Landing />} />
           <Route path="/Home" element={<Home />} />
           <Route path="/verify" element={<VerifyEmailPage />} />
-          <Route path="*" element={<NotFound />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       </ThemeProvider>

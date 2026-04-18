@@ -11,20 +11,23 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import {cn} from '@/lib/utils';
-import {INCOME_CATEGORY_OPTIONS} from './incomeCategoryOptions';
+import { TRANSACTION_CATEGORIES } from './incomeCategoryOptions';
+import type {TransactionType} from '@/types/types';
+ 
 
 type Props = {
   control: Control<any>;
   error?: string;
+  type?: TransactionType;
 };
 
-export const IncomeCategoryField = ({control, error}: Props) => {
+export const IncomeCategoryField = ({control, error, type='income'}: Props) => {
   const {t} = useTranslation();
 
   return (
     <div className="flex flex-col gap-2">
       <Label className={cn('text-dark-background')}>
-        {t('incomeModal.category')}*
+        {t(`incomeModal.fields.category.${type}`)}*
       </Label>
 
       <Controller
@@ -50,7 +53,7 @@ export const IncomeCategoryField = ({control, error}: Props) => {
             </SelectTrigger>
 
             <SelectContent className="w-full">
-              {INCOME_CATEGORY_OPTIONS.map(({val, icon: Icon, id}) => {
+              {TRANSACTION_CATEGORIES[type].map(({val, icon: Icon, id}) => {
                 return (
                   <SelectItem key={val} value={String(id)}>
                     <div className="flex items-center gap-2 text-[16px]">

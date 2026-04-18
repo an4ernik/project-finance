@@ -5,8 +5,7 @@ import {useTranslation} from 'react-i18next';
 import z from 'zod';
 import {X} from 'lucide-react';
 import {toast} from 'sonner';
-
-import {Label} from '../../../components/ui/label';
+ 
 import {Button} from '../../../components/ui/button';
 import {cn} from '@/lib/utils';
 
@@ -21,7 +20,9 @@ import {IncomeRepeatField} from './IncomeRepeatField';
 import {IncomeFileField} from './IncomeFileField';
 import {useUpdateTransaction} from '@/shared/api/generated/transaction-management/transaction-management';
 import Spinner from '@/components/Spinner';
-import InfoDialog from './InfoDialog';
+import InfoDialog, {type RecurringUpdateScope} from './InfoDialog';
+import type {IncomeModalProps} from '@/types/types';
+import {toTransactionDtoType} from '@/helpers/helpers';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ACCEPTED_FILE_TYPES = [
@@ -30,34 +31,16 @@ const ACCEPTED_FILE_TYPES = [
   'application/pdf',
 ] as const;
 
-export type IncomeModalMode = 'create' | 'update';
-
-export interface IncomeFormData {
-  id?: number;
-  amount: number;
-  categoryId: number;
-  date: string | Date;
-  description?: string;
-  repeat?: string;
-  files?: File[];
-}
-
-interface IncomeModalProps {
-  title?: string;
-  mode?: IncomeModalMode;
-  onClose: () => void;
-  initialData?: IncomeFormData;
-}
-
 const modalWrapper = cn(
   'relative flex flex-col gap-2 max-w-[605px] w-full border rounded-3xl',
   'text-dark-background shadow-xl my-auto bg-[#EEF3F2] dark:bg-secondary font-sans',
 );
 
-const IncomeModal = ({
+const TransactionModal = ({
   mode = 'create',
   onClose,
   initialData,
+  type = 'income',
 }: IncomeModalProps) => {
   const {t} = useTranslation();
 
@@ -80,16 +63,21 @@ const IncomeModal = ({
             return Math.round(num * 100) / 100;
           },
           z
-            .number({message: t('incomeModal.errors.amountRequired')})
-            .min(0.01, t('incomeModal.errors.amountLessThanZero'))
-            .max(1_000_000, t('incomeModal.errors.amountMax')),
+            .number({message: t(`incomeModal.errors.amountRequired.${type}`)})
+            .min(0.01, t(`incomeModal.errors.amountLessThanZero.${type}`))
+            .max(1_000_000, t(`incomeModal.errors.amountMax.${type}`)),
         ),
         categoryId: z.coerce
           .number()
-          .min(1, t('incomeModal.errors.categoryRequired')),
-        date: z.date(),
+          .min(1, t(`incomeModal.errors.categoryRequired.${type}`)),
+        date: z
+          .date()
+          .refine(
+            date => date <= new Date(),
+            t('incomeModal.errors.futureDate'),
+          ),
         description: z.string().optional(),
-        repeat: z.string().optional(),
+        isRepeat: z.string().optional(),
         file: z
           .array(z.instanceof(File))
           .refine(
@@ -103,19 +91,18 @@ const IncomeModal = ({
                   f.type as (typeof ACCEPTED_FILE_TYPES)[number],
                 ),
               ),
-            t('incomeModal.errors.fileType'),
+            t('incomeModal.errors.fileFormat'),
           )
           .max(5, t('incomeModal.errors.maxFileCount'))
           .optional()
           .default([]),
       }),
-    [t],
+    [t, type],
   );
 
   type FormValues = z.input<typeof modalSchema>;
   type FormOutput = z.infer<typeof modalSchema>;
 
-  // Всередині компонента IncomeModal
   const [showInfoDialog, setShowInfoDialog] = useState(false);
   const [pendingData, setPendingData] = useState<FormOutput | null>(null);
   const [scope, setScope] = useState<'this_only' | 'all_future'>('this_only');
@@ -124,7 +111,7 @@ const IncomeModal = ({
     amount: initialData?.amount !== undefined ? String(initialData.amount) : '',
     categoryId: initialData?.categoryId,
     date: initialData?.date ? new Date(initialData.date) : new Date(),
-    repeat: initialData?.repeat ?? 'once',
+    isRepeat: initialData?.isRepeat ?? 'once',
     description: initialData?.description ?? '',
     file: initialData?.files ?? [],
   });
@@ -138,9 +125,9 @@ const IncomeModal = ({
     trigger,
     reset,
     formState: {errors, isDirty, isValid},
-  } = useForm<FormValues, any, FormOutput>({
+  } = useForm<FormValues, FormValues, FormOutput>({
     mode: 'onBlur',
-    resolver: zodResolver(modalSchema) as any,
+    resolver: zodResolver(modalSchema),
     shouldFocusError: false,
     defaultValues: getDefaultValues(),
   });
@@ -150,7 +137,7 @@ const IncomeModal = ({
   }, [initialData, mode, reset]);
 
   const watchedDate = watch('date');
-  const watchedRepeat = watch('repeat');
+  const watchedRepeat = watch('isRepeat');
   const watchedFile = watch('file') as File[] | undefined;
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -172,10 +159,7 @@ const IncomeModal = ({
     trigger('file');
   };
 
-  const displayTitle =
-    mode === 'update'
-      ? t('incomeModal.titleEdit')
-      : t('incomeModal.titleCreate');
+  const displayTitle = t(`incomeModal.title.${mode}.${type}`);
 
   const executeMutation = async (
     data: FormOutput,
@@ -190,12 +174,13 @@ const IncomeModal = ({
               categoryId: data.categoryId,
               date: data.date.toISOString(),
               description: data.description || '',
-              type: 'INCOME',
+              // isRepeat: data.repeat ,
+              type: toTransactionDtoType(type),
             },
             receipts: data.file ?? undefined,
           },
         });
-        toast.success(t('incomeModal.successIncome.createIncome'), {
+        toast.success(t(`incomeModal.transaction.success.create.${type}`), {
           id: 'success-create',
         });
       } else {
@@ -209,10 +194,12 @@ const IncomeModal = ({
             categoryId: data.categoryId,
             date: data.date.toISOString(),
             description: data.description || '',
-            type: 'INCOME',
+            // isRepeat: data.repeat ,
+            // receipts: data.file ?? undefined,
+            type: toTransactionDtoType(type),
           },
         });
-        toast.success(t('incomeModal.successIncome.updateIncome'), {
+        toast.success(t(`incomeModal.transaction.success.update.${type}`), {
           id: 'success',
         });
       }
@@ -221,28 +208,26 @@ const IncomeModal = ({
       onClose();
     } catch (error) {
       console.error(error);
-      toast.error(t(`incomeModal.errors.${mode}IncomeError`), {id: 'error'});
+      toast.error(t(`incomeModal.transaction.error.${mode}.${type}`), {
+        id: 'error',
+      });
     } finally {
       setShowInfoDialog(false);
       setPendingData(null);
     }
   };
 
-  const handleInfoDialogClose = async () =>
-    // selectedScope: 'this_only' | 'all_future' | null,
-    {
-      if (pendingData) {
-        // Користувач підтвердив зміни
-        await executeMutation(pendingData);
-      } else {
-        // Користувач скасував діалог
-        setShowInfoDialog(false);
-        setPendingData(null);
-      }
-    };
+  const handleInfoDialogClose = async (scope: RecurringUpdateScope | null) => {
+    if (scope && pendingData) {
+      await executeMutation(pendingData);
+    } else {
+      setShowInfoDialog(false);
+      setPendingData(null);
+    }
+  };
 
   const onSubmit = async (data: FormOutput) => {
-    if (mode === 'update' && data.repeat !== 'once') {
+    if (mode === 'update' && data.isRepeat !== 'once') {
       setPendingData(data);
       setShowInfoDialog(true);
       return;
@@ -259,13 +244,15 @@ const IncomeModal = ({
           onClose={handleInfoDialogClose}
           selectedScope={scope}
           setSelectedScope={setScope}
+          type={type}
         />
+
         <form onSubmit={handleSubmit(onSubmit)} className={modalWrapper}>
           <div className="w-full p-6">
             <div className="flex justify-between items-center mb-8">
-              <Label className="font-medium text-xl font-iter">
+              <h2 className="font-medium text-xl font-iter">
                 {displayTitle}
-              </Label>
+              </h2>
 
               <X
                 className="size-5 cursor-pointer opacity-70 hover:opacity-100"
@@ -274,18 +261,23 @@ const IncomeModal = ({
             </div>
             {/* AMOUNT */}
             <IncomeAmountField
+              name="amount"
+              type={type}
               register={register}
               error={errors.amount?.message}
             />
             {/* CATEGORY */}
             <IncomeCategoryField
+              type={type}
               control={control}
               error={errors.categoryId?.message}
             />
             {/* DATE */}
             <IncomeDateField
+              type={type}
               value={watchedDate}
               error={errors.date?.message}
+              disabledDate={(date: Date) => date > new Date()}
               onChange={(date: Date) =>
                 setValue('date', date, {
                   shouldValidate: true,
@@ -299,7 +291,7 @@ const IncomeModal = ({
             <IncomeRepeatField
               value={watchedRepeat}
               onChange={(repeat: string) =>
-                setValue('repeat', repeat, {
+                setValue('isRepeat', repeat, {
                   shouldValidate: true,
                   shouldDirty: true,
                 })
@@ -328,9 +320,9 @@ const IncomeModal = ({
             </Button>
 
             <Button
-              variant="default"
+              variant="primary"
               type="submit"
-              disabled={!isValid || (mode === 'create' ? !isDirty : false)}
+              disabled={!isValid || !isDirty || isCreating || isUpdating}
               className="w-[120px] h-[50px] sm:h-[36px] px-6 py-2 text-[14px] tracking-tight"
             >
               {isCreating || isUpdating ? (
@@ -346,4 +338,4 @@ const IncomeModal = ({
   );
 };
 
-export default IncomeModal;
+export default TransactionModal;

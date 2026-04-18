@@ -329,26 +329,56 @@
     }
   },
   "incomeModal": {
-    "titleCreate": "Add income",
-    "titleEdit": "Edit income",
-    "titleExpense": "Add expense",
-    "editExpense": "Edit expense",
-    "amount": "Amount",
-    "category": "Income category",
-     "today": "Today",
+    "title": {
+      "create": {
+        "income": "Add income",
+        "expense": "Add expense"
+      },
+      "update": {
+        "income": "Edit income",
+        "expense": "Edit expense"
+      }
+    },
+    "fields": {
+      "amount": {
+        "income": "Amount",
+        "expense": "Amount"
+      },
+      "category": {
+        "income": "Income category",
+        "expense": "Expense category"
+      },
+      "date": {
+        "income": "Income date",
+        "expense": "Expense date"
+      },
+      "description": "Description (optional)",
+      "descriptionPlaceholder": "Add a note..."
+    },
+    "today": "Today",
     "earlier": "Earlier",
-    "noIncome": "You don't have any incomes yet.",
-    "noIncomeSubText": "Create your first income to start tracking your finances.",
+    "empty": {
+      "income": {
+        "title": "You don't have any incomes yet.",
+        "description": "Create your first income to start tracking your finances."
+      },
+      "expense": {
+        "title": "You don't have any expenses yet.",
+        "description": "Create your first expense to start tracking your finances."
+      }
+    },
+
     "categories": {
       "categoryPlaceholder": "Select a category",
       "salary": "Salary",
       "freelance": "Freelance",
       "investments": "Investments",
-      "cashback": "Cashback"
+      "cashback": "Cashback",
+      "coffee": "Coffee",
+      "products": "Products",
+      "petFood": "Pet Food",
+      "subscriptions": "Subscriptions"
     },
-    "date": "Date",
-    "description": "Description (optional)",
-    "descriptionPlaceholder": "Add a note...",
     "repeat": {
       "label": "Repeat Type",
       "once": "One-time",
@@ -364,8 +394,118 @@
       "cancel": "Cancel",
       "save": "Save"
     },
-    "incomeFilters": {
-      "totalIncome": "Total Income",
+    "errors": {
+      "amountRequired": {
+        "income": "Income amount is required",
+        "expense": "Expense amount is required"
+      },
+      "amountLessThanZero": {
+        "income": "Income amount must be greater than 0",
+        "expense": "Expense amount must be greater than 0"
+      },
+      "amountMax": {
+        "income": "Income amount cannot exceed more than 1,000,000",
+        "expense": "Expense amount cannot exceed more than 1,000,000"
+      },
+      "categoryRequired": {
+        "income": "Income category is required",
+        "expense": "Expense category is required"
+      },
+      "dateRequired": {
+        "income": "Income date is required",
+        "expense": "Expense date is required"
+      },
+      "futureDate": "The date cannot be in the future",
+      "noPastDates": "The date cannot be in the past",
+      "fileFormat": "Unsupported file format. Allowed formats: JPG, PNG, or PDF.",
+      "fileSize": "File size exceeds 5 MB. Please upload a smaller file.",
+      "uploadError": "Failed to upload the file. Please try again.",
+      "maxFileCount": "Maximum file count: 5"
+    },
+    "transaction": {
+      "success": {
+        "create": {
+          "income": "Income successfully created",
+          "expense": "Expense successfully created"
+        },
+        "update": {
+          "income": "Income successfully updated",
+          "expense": "Expense successfully updated"
+        },
+        "delete": {
+          "income": "Income successfully deleted",
+          "expense": "Expense successfully deleted"
+        }
+      },
+      "error": {
+        "create": {
+          "income": "An error occurred while creating an income. Please try again later.",
+          "expense": "An error occurred while creating an expense. Please try again later."
+        },
+        "update": {
+          "income": "An error occurred while updating an income. Please try again later.",
+          "expense": "An error occurred while updating an expense. Please try again later."
+        },
+        "delete": {
+          "income": "An error occurred while deleting an income. Please try again later.",
+          "expense": "An error occurred while deleting an expense. Please try again later."
+        }
+      }
+    },
+    "infoDialog": {
+      "title": "Apply changes to:",
+      "description": {
+        "income": "This is a recurring income. Choose how to apply the changes.",
+        "expense": "This is a recurring expense. Choose how to apply the changes."
+      },
+      "options": {
+        "thisOnly": {
+          "label": {
+            "income": "Only this income",
+            "expense": "Only this expense"
+          },
+          "subtext": "Update only this record"
+        },
+        "allFuture": {
+          "label": {
+            "income": "This and all future incomes",
+            "expense": "This and all future expenses"
+          },
+          "subtext": "Update all future recurring records"
+        }
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "apply": "Apply"
+      }
+    },
+    "deleteDialog": {
+      "income": {
+        "title": "Delete income?",
+        "description": "Are you sure you want to delete this income?",
+        "warning": {
+          "monthly": "This is a recurring monthly income. Only the current entry will be deleted.",
+          "yearly": "This is a recurring yearly income. Only the current entry will be deleted."
+        }
+      },
+      "expense": {
+        "title": "Delete expense?",
+        "description": "Are you sure you want to delete this expense?",
+        "warning": {
+          "monthly": "This is a recurring monthly expense. Only the current entry will be deleted.",
+          "yearly": "This is a recurring yearly expense. Only the current entry will be deleted."
+        }
+      },
+      "actions": {
+        "cancel": "Cancel",
+        "delete": "Delete"
+      }
+    },
+    "filters": {
+      "total": {
+        "income": "Total Income",
+        "expense": "Total Expense"
+      },
       "period": {
         "label": "Period",
         "all": "All time",
@@ -375,11 +515,15 @@
         "year": "This year",
         "custom": "Select period",
         "from": "From",
-        "to": "To"
+        "to": "To",
+        "date": "DD.MM.YYYY"
       },
       "search": {
         "label": "Search",
-        "placeholder": "Search income..."
+        "placeholder": {
+          "income": "Search income...",
+          "expense": "Search expense..."
+        }
       },
       "category": {
         "label": "Categories",
@@ -387,7 +531,11 @@
         "salary": "Salary",
         "freelance": "Freelance",
         "investments": "Investments",
-        "cashback": "Cashback"
+        "cashback": "Cashback",
+        "coffee": "Coffee",
+        "products": "Products",
+        "petFood": "Pet Food",
+        "subscriptions": "Subscriptions"
       },
       "periods": {
         "all": "All time",
@@ -398,32 +546,6 @@
         "from": "From",
         "to": "To"
       }
-    },
-    "errors": {
-      "amountRequired": "Income amount is required",
-      "amountLessThanZero": "Income amount must be greater than 0",
-      "amountMax": "Income amount cannot exceed more than 1,000,000",
-      "categoryRequired": "Income category is required",
-
-      "amountExpenseRequired": "Expense amount is required",
-      "amountExpenseLessThanZero": "Expense amount must be greater than 0",
-      "amountExpenseMax": "Expense amount cannot exceed more than 1,000,000",
-      "categoryExpenseRequired": "Expense category is required",
-
-      "dateRequired": "Income date is required",
-      "noPastDates": "The date cannot be in the past",
-      "fileFormat": "Unsupported file format. Allowed formats: JPG, PNG, or PDF.",
-      "fileSize": "File size exceeds 5 MB. Please upload a smaller file.",
-      "uploadError": "Failed to upload the file. Please try again.",
-      "maxFileCount": "Maximum file count: 5",
-      "createIncomeError": "An error occurred while creating an income. Please try again later.",
-      "updateIncomeError": "An error occurred while updating an income. Please try again later.",
-      "deleteIncomeError": "An error occurred while deleting an income. Please try again later."
-    },
-    "successIncome": {
-      "createIncome": "Income successfully created",
-      "updateIncome": "Income successfully updated",
-      "deleteIncome": "Income successfully deleted"
     }
   }
 }
