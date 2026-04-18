@@ -9,6 +9,7 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   errorMessage?: string;
   label?: string;
   variant?: 'text' | 'password';
+  showErrorSlot?: boolean;
   className?: string;
 }
 
@@ -21,6 +22,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       errorMessage,
       label,
       variant = 'text',
+      showErrorSlot = true,
       type,
       onChange,
       value,
@@ -111,6 +113,11 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {/* {errorMessage && ( */}
           <DisplayError errorText={errorMessage} />
           {/* )} */}
+          {showErrorSlot && (
+            <p className="text-[10px] leading-[1.167] text-destructive min-h-3">
+              {errorMessage || ''}
+            </p>
+          )}
         </div>
       </div>
     );

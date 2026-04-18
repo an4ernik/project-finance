@@ -40,7 +40,16 @@
       "saving": "Saving...",
       "saveSuccess": "Categories updated",
       "saveFailed": "Failed to update categories",
-      "cancel": "Cancel"
+      "cancel": "Cancel",
+      "modals": {
+        "cancel": "Cancel",
+        "archiveTitle": "Archive category?",
+        "archiveConfirm": "Archive",
+        "restoreTitle": "Restore category?",
+        "restoreConfirm": "Restore",
+        "deleteTitle": "Delete category?",
+        "deleteConfirm": "Delete"
+      }
     },
     "addCategory": {
       "title": "Add category",

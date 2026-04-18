@@ -40,7 +40,16 @@
       "saving": "Збереження...",
       "saveSuccess": "Категорії оновлено",
       "saveFailed": "Не вдалося оновити категорії",
-      "cancel": "Скасувати"
+      "cancel": "Скасувати",
+      "modals": {
+        "cancel": "Скасувати",
+        "archiveTitle": "Заархівувати категорію?",
+        "archiveConfirm": "В архів",
+        "restoreTitle": "Відновити категорію?",
+        "restoreConfirm": "Відновити",
+        "deleteTitle": "Видалити категорію?",
+        "deleteConfirm": "Видалити"
+      }
     },
     "addCategory": {
       "title": "Додати категорію",
