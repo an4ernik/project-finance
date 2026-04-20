@@ -174,22 +174,24 @@ function Income() {
       title={t('income.title')}
       subtitle={t('income.subtitle')}
       action={
-        <div className="flex flex-col sm:flex-row gap-[36px]">
-          {' '}
+        <div
+          className={`${isManageOpen && 'hidden md:flex'} flex flex-col md:flex-row gap-[36px] items-center w-full`}
+        >
           <Button
-            className="cursor-pointer flex flex-row w-[224px]"
+            className="cursor-pointer flex flex-row w-full md:w-[224px]"
             onClick={() => setIsManageOpen(true)}
+            variant="secondary"
           >
-            {' '}
-            {t('income.actions.manageCategories')} <Cog />{' '}
-          </Button>{' '}
+            {t('income.actions.manageCategories')}
+            <Cog />
+          </Button>
           <Button
+            className="cursor-pointer w-full md:w-[224px]"
             onClick={() => setIsAddOpen(true)}
-            className="cursor-pointer w-[224px]"
           >
-            {' '}
-            {t('income.actions.addIncome')} <Plus />{' '}
-          </Button>{' '}
+            {t('income.actions.addIncome')}
+            <Plus />
+          </Button>
         </div>
       }
     >

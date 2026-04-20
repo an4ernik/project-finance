@@ -3,25 +3,26 @@
 
 @custom-variant dark (&:is(.dark *));
 
-html, body, #root {
-  height: 100%; 
-  overflow: hidden;  
+html,
+body,
+#root {
+  height: 100%;
+  overflow: hidden;
   &::-webkit-scrollbar {
     display: none;
   }
   scrollbar-width: none;
   -ms-overflow-style: none;
 }
- 
+
 @layer utilities {
- 
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
- 
+
   .scrollbar-hide {
-    -ms-overflow-style: none;   
-    scrollbar-width: none;  
+    -ms-overflow-style: none;
+    scrollbar-width: none;
   }
 }
 
@@ -32,7 +33,7 @@ html, body, #root {
   --dark-text-primary: #eaf6f3;
   --dark-text-secondary: #bfd9d2;
   --dark-text-tertiary: #7f9e97;
-  --dark-text-disabled: #5a736e;
+  --dark-text-disabled: #eaf6f3;
   --dark-accent: #00aa85;
   --dark-accent-secondary: #315e55;
 
@@ -42,9 +43,53 @@ html, body, #root {
   --light-text-primary: #0b1514;
   --light-text-secondary: #3a4a48;
   --light-text-tertiary: #6f7e7c;
+  --light-text-disabled: #5a736e;
   --light-accent: #00aa85;
   --light-btn-bg: #005e46;
-  --light-btn-bg-full: radial-gradient(53.34% 54.31% at 46.66% 32.95%, rgba(255, 255, 255, 0.20) 0%, rgba(153, 153, 153, 0.00) 100%), #005e46;
+  --light-btn-bg-full:
+    radial-gradient(
+      53.34% 54.31% at 46.66% 32.95%,
+      rgba(255, 255, 255, 0.2) 0%,
+      rgba(153, 153, 153, 0) 100%
+    ),
+    #005e46;
+  /* UI kit shared tokens */
+  /* Light glass */
+  --glass-bg: linear-gradient(
+    180deg,
+    rgba(1, 94, 70, 0.02) 49%,
+    rgba(11, 21, 20, 0.01) 100%
+  );
+  --glass-bg-strong: linear-gradient(
+    180deg,
+    rgba(1, 94, 70, 0.02) 0%,
+    rgba(11, 21, 20, 0.01) 100%
+  );
+  --glass-shadow:
+    0 4px 4px rgba(75, 75, 75, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+
+  /* Primary button (light) */
+  --btn-primary-bg: var(--light-btn-bg-full);
+  --btn-primary-hover: linear-gradient(0deg, #005e46 0%, #005e46 100%);
+  --btn-primary-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 10px 26px rgba(0, 0, 0, 0.2);
+
+  /* Inputs (light) */
+  --input-bg-placeholder: linear-gradient(
+    180deg,
+    rgba(1, 94, 70, 0.02) 49%,
+    rgba(11, 21, 20, 0.01) 100%
+  );
+  --input-bg-value: linear-gradient(
+    180deg,
+    rgba(11, 21, 20, 0.01) 0%,
+    rgba(1, 94, 70, 0.02) 100%
+  );
+  --input-bg-focus: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(153, 153, 153, 0.1) 100%
+  );
 }
 
 @theme inline {
@@ -73,6 +118,7 @@ html, body, #root {
   --color-accent: var(--accent);
   --color-accent-foreground: var(--accent-foreground);
   --color-destructive: var(--destructive);
+  --color-disabled-text: var(--text-disabled);
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
@@ -82,12 +128,13 @@ html, body, #root {
   --radius: 0.625rem;
   --background: var(--light-background);
   --foreground: var(--light-text-primary);
+  --text-disabled: var(--light-text-disabled);
   --card: var(--light-background-secondary);
   --card-foreground: var(--light-text-primary);
   --popover: var(--light-background-secondary);
   --popover-foreground: var(--light-text-primary);
   --primary: var(--light-accent);
-  --primary-foreground: #ffffff;
+  --primary-foreground: var(--light-text-primary);
   --secondary: var(--light-background-secondary);
   --secondary-foreground: var(--light-text-primary);
   --muted: var(--light-background-secondary);
@@ -124,12 +171,52 @@ html, body, #root {
   --ring: var(--dark-accent);
   /* semantic aliases */
   --text-tertiary: var(--dark-text-tertiary);
+  --text-disabled: var(--dark-text-disabled);
   --accent-interactive: var(--dark-accent-secondary);
+
+  /* UI kit shared tokens (dark) */
   --glass-bg: linear-gradient(
     180deg,
     rgba(11, 21, 20, 0.03) 0%,
     rgba(49, 95, 85, 0.1) 50%,
     rgba(144, 208, 182, 0.05) 100%
+  );
+  --glass-bg-strong: linear-gradient(
+    180deg,
+    rgba(49, 95, 85, 0.18) 0%,
+    rgba(11, 21, 20, 0.12) 100%
+  );
+  --glass-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 4px 4px rgba(75, 75, 75, 0.2);
+  --btn-primary-bg:
+    radial-gradient(
+      circle at 51% 31%,
+      rgba(255, 255, 255, 0.2) 0%,
+      rgba(153, 153, 153, 0.01) 100%
+    ),
+    linear-gradient(0deg, rgba(2, 98, 77, 0.6) 0%, rgba(4, 200, 158, 1) 50%);
+  --btn-primary-hover: linear-gradient(
+    0deg,
+    rgba(2, 160, 120, 0.3) 0%,
+    rgba(2, 160, 120, 0.5) 50%,
+    rgba(2, 160, 120, 0.8) 100%
+  );
+  --btn-primary-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 4px 4px rgba(75, 75, 75, 0.35);
+  --input-bg-placeholder: linear-gradient(
+    180deg,
+    rgba(144, 208, 182, 0.05) 49%,
+    rgba(49, 95, 85, 0.1) 100%
+  );
+  --input-bg-value: linear-gradient(
+    180deg,
+    rgba(49, 95, 85, 0.1) 0%,
+    rgba(144, 208, 182, 0.05) 100%
+  );
+  --input-bg-focus: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    rgba(153, 153, 153, 0.1) 100%
   );
 }
 

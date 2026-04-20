@@ -21,15 +21,18 @@ export const buttonVariants = ({
 }: ButtonVariantsProps = {}) => {
   const variantClasses = {
     primary:
-      '[background:radial-gradient(circle_at_51%_31%,rgba(255,255,255,0.2)_0%,rgba(153,153,153,0.01)_100%),linear-gradient(0deg,rgba(2,98,77,0.6)_0%,rgba(4,200,158,1)_50%)] text-[#e6e6e6] border-transparent backdrop-blur-[7px] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_4px_4px_0px_rgba(75,75,75,0.35)] hover:[background:linear-gradient(0deg,rgba(2,160,120,0.3)_0%,rgba(2,160,120,0.5)_50%,rgba(2,160,120,0.8)_100%)] hover:border-transparent focus-visible:ring-[3px] focus-visible:ring-[#02A078]/30',
+      'text-[#eaf6f3] border-transparent backdrop-blur-[7px] [background:var(--btn-primary-bg)] [box-shadow:var(--btn-primary-shadow)] hover:[background:var(--btn-primary-hover)] focus-visible:ring-[3px] focus-visible:ring-[#02A078]/30 disabled:opacity-50 disabled:bg-transparent disabled:text-disabled-text',
+
     secondary:
-      'text-[#eaf6f3] border-transparent bg-linear-to-b from-[rgba(11,21,20,0.01)] via-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)] backdrop-blur-[7px] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_4px_4px_0px_rgba(75,75,75,0.35)] hover:[background:linear-gradient(0deg,rgba(2,160,120,0.3)_0%,rgba(2,160,120,0.5)_50%,rgba(2,160,120,0.8)_100%)] hover:border-transparent focus-visible:[background:linear-gradient(0deg,rgba(2,98,77,0.6)_0%,rgba(4,200,158,1)_100%)]',
+      'text-foreground border-transparent bg-[var(--glass-bg)] backdrop-blur-[7px] [box-shadow:var(--glass-shadow)] hover:[background:var(--btn-primary-hover)] hover:text-[#eaf6f3] focus-visible:ring-[3px] focus-visible:ring-[#02A078]/30 disabled:opacity-50',
+
+    tab: 'text-[#eaf6f3] border-transparent bg-transparent hover:[background:radial-gradient(69.44%_69.44%_at_50.72%_30.56%,rgba(255,255,255,0.04)_0%,rgba(153,153,153,0.002)_100%),linear-gradient(0deg,rgba(2,98,77,0.18)_0%,rgba(4,200,158,0.3)_50%)] hover:[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_4px_4px_0px_rgba(75,75,75,0.35)] hover:backdrop-blur-[7px] focus-visible:[background:radial-gradient(69.44%_69.44%_at_50.72%_30.56%,rgba(255,255,255,0.04)_0%,rgba(153,153,153,0.002)_100%)] disabled:opacity-80 disabled:[background:radial-gradient(69.44%_69.44%_at_50.72%_30.56%,rgba(255,255,255,0.04)_0%,rgba(153,153,153,0.002)_100%),linear-gradient(0deg,rgba(11,21,20,0.003)_0%,rgba(49,95,85,0.03)_25%,rgba(144,208,182,0.015)_50%)]',
+
     ghost:
-      'border-transparent bg-transparent text-[#7f9e97] hover:text-[#eaf6f3] hover:bg-linear-to-b hover:from-[rgba(11,21,20,0.01)] hover:via-[rgba(49,95,85,0.1)] hover:to-[rgba(144,208,182,0.05)] hover:[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_4px_4px_0px_rgba(75,75,75,0.2)] focus-visible:border focus-visible:border-[#02A078]',
+      'text-[#7f9e97] border-transparent [background:rgba(255,255,255,0.0001)] hover:text-[#eaf6f3] hover:[background:linear-gradient(180deg,rgba(11,21,20,0.0005)_0%,rgba(49,95,85,0.005)_50%,rgba(144,208,182,0.0025)_100%)] hover:[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_4px_4px_0px_rgba(75,75,75,0.35)] hover:backdrop-blur-[7px] focus-visible:border-[#02A078] focus-visible:backdrop-blur-[16px] disabled:opacity-50',
+
     destructive:
-      'border-transparent text-white bg-linear-to-b from-[rgba(199,0,0,0.2)] to-[rgba(199,0,0,0.3)] backdrop-blur-[7px] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_4px_4px_0px_rgba(75,75,75,0.35)] hover:bg-[#CE0000] focus-visible:bg-[#DC2626] focus-visible:[box-shadow:0px_0px_0px_3px_rgba(252,165,165,1)]',
-    tab:
-      'text-[#eaf6f3] border border-white/30 bg-linear-to-b from-[rgba(11,21,20,0.01)] via-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)] backdrop-blur-[7px] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_4px_4px_0px_rgba(75,75,75,0.2)] hover:[background:radial-gradient(circle_at_51%_31%,rgba(255,255,255,0.2)_0%,rgba(153,153,153,0.01)_100%),linear-gradient(0deg,rgba(2,98,77,0.6)_0%,rgba(4,200,158,1)_50%)] hover:border-transparent focus-visible:[background:radial-gradient(circle_at_51%_31%,rgba(255,255,255,0.2)_0%,rgba(153,153,153,0.01)_100%),linear-gradient(0deg,rgba(2,98,77,0.6)_0%,rgba(4,200,158,1)_50%)]',
+      'text-white border-transparent [background:linear-gradient(180deg,rgba(199,0,0,0.2)_0%,rgba(199,0,0,0.3)_100%)] backdrop-blur-[7px] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_4px_4px_0px_rgba(75,75,75,0.35)] hover:bg-[#CE0000] focus-visible:bg-[#DC2626] focus-visible:[box-shadow:0px_0px_0px_3px_#FCA5A5] disabled:opacity-50',
     outline:
       'border-white/30 bg-transparent text-[#eaf6f3] hover:bg-white/5 focus-visible:border-[#02A078]',
     default:
