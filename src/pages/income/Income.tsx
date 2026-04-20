@@ -185,7 +185,10 @@ function Income() {
             {t('income.actions.manageCategories')}
             <Cog />
           </Button>
-          <Button className="cursor-pointer w-full md:w-[224px]">
+          <Button
+            className="cursor-pointer w-full md:w-[224px]"
+            onClick={() => setIsAddOpen(true)}
+          >
             {t('income.actions.addIncome')}
             <Plus />
           </Button>
