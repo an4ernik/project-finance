@@ -51,9 +51,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="flex w-full flex-col items-start gap-1.5">
         {label && (
-          <label
-            className={cn('text-[16px] leading-[1.167] text-dark-background')}
-          >
+          <label className="text-[16px] leading-[1.167] text-foreground">
             {label}
           </label>
         )}
@@ -61,13 +59,13 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
           <div
             className={cn(
               'flex h-10 items-center gap-2.5 rounded-[10px] border px-2.5 transition-all duration-200',
-              '[box-shadow:0px_4px_4px_0px_rgba(75,75,75,0.2),inset_0px_1px_0px_0px_rgba(255,255,255,0.25)] backdrop-blur-[32px]',
+              '[box-shadow:var(--glass-shadow)] backdrop-blur-[32px]',
               hasValue
-                ? 'bg-linear-to-b from-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)]'
-                : 'bg-linear-to-b from-[rgba(144,208,182,0.05)] from-[49%] to-[rgba(49,95,85,0.1)]',
+                ? 'bg-[var(--input-bg-value)]'
+                : 'bg-[var(--input-bg-placeholder)]',
               !error &&
                 !isDisabled &&
-                'hover:border-muted-foreground focus-within:border-[#02A078] focus-within:bg-linear-to-b focus-within:from-[rgba(255,255,255,0.1)] focus-within:to-[rgba(153,153,153,0.1)]',
+                'hover:border-muted-foreground focus-within:border-[#02A078] focus-within:bg-[var(--input-bg-focus)]',
               error &&
                 'border-[#CE0000] border-[0.5px] bg-linear-to-b from-[rgba(199,0,0,0.2)] to-[rgba(199,0,0,0.3)]',
               isDisabled &&
