@@ -37,7 +37,7 @@ export function HeroCta({onClick}: {onClick: () => void}) {
       onClick={onClick}
       className="relative h-12.5 md:h-14.5 flex items-center cursor-pointer justify-between px-2.5 rounded-[10px] backdrop-blur-[7px] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_4px_4px_0px_rgba(75,75,75,0.35)] w-full md:w-126.5 shrink-0 bg-linear-to-t from-[rgba(2,160,120,0.3)] via-[rgba(2,160,120,0.5)] to-[rgba(2,160,120,0.8)] md:border-white/25 md:[background:rgba(49,95,85,0.18)]"
     >
-      <span className="font-medium md:font-light text-[16px] md:text-[18px] tracking-[-1.5px] md:tracking-[0.5px] text-[#e6e6e6]">
+      <span className="font-medium md:font-light text-[16px] md:text-[18px] tracking-[-1.5px] md:tracking-[0.5px] text-text-primary">
         {t('landing.hero.cta')}
       </span>
       <div className="w-10 h-10 flex items-center justify-center bg-linear-to-l from-emerald-500/80 to-emerald-700 rounded-lg transition-bg duration-200 ease-out hover:bg-(--dark-accent)">
