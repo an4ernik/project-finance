@@ -57,8 +57,8 @@ export function SecurityItem({
   description: string;
 }) {
   return (
-    <div className="flex gap-5 md:gap-11 items-center max-w-80.5 md:max-w-140">
-      <p className="font-extralight text-[60px] md:text-[150px] leading-[1.167] tracking-[-1.5px] text-[#00aa85] shrink-0 w-16 md:w-auto text-center">
+    <div className="flex gap-5 md:gap-[15px] items-center max-w-80.5 md:max-w-140">
+      <p className="font-extralight text-[60px] md:text-[150px] leading-[1.167] tracking-[-1.5px] text-[#00aa85] shrink-0 w-16 md:w-[175px]">
         {number}
       </p>
       <div className="flex flex-col gap-2.5 md:gap-5.25 flex-1 md:w-89">
