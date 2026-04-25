@@ -99,8 +99,8 @@ export type Filters = {
     period: Period;
     fromDate?: Date;
     toDate?: Date;
-    category: string[];
-    search: string;
+    category?: string[];
+    search?: string;
 };
 
 export type TransactionFiltersFormValues = {
@@ -109,4 +109,31 @@ export type TransactionFiltersFormValues = {
     toDate?: Date;
     category?: string[];
     search?: string;
+};
+
+// *for statistics 
+export type PeriodOption = {
+  val: string;
+  Icon: LucideIcon;
+};
+
+export type StatisticsByDateProps = {
+  value: string;
+  onChange: (value: string) => void;
+};
+
+export type CustomTooltipProps = {
+  active?: boolean;
+  payload?: Array<{
+    payload: {
+      day: string;
+      fullDate: string;
+      value: number | string;
+      name: string;
+      key?: string;
+      val?: string;
+    };
+  }>;
+  type?: string;
+  className?: string;
 };

@@ -12,7 +12,62 @@
     "logOut": "Log out"
   },
   "dashboard": {
-    "title": "Dashboard"
+    "title": "Dashboard",
+
+    "periods": {
+      "week": "Week",
+      "month": "Month",
+      "year": "Year"
+    },
+
+    "labels": {
+      "income": "Income",
+      "expense": "Expenses",
+      "balance": "Balance"
+    },
+
+    "statistics": {
+      "title": "Financial Overview"
+    },
+
+    "cashFlowChart": {
+      "title": "Cash Flow",
+      "subtitle": "Net Cash Flow"
+    },
+
+    "expenseDistribution": {
+      "title": "Expense Distribution",
+      "total": "Total"
+    },
+    "dynamicsBalance": {
+      "title": "Balance Dynamics",
+      "currentBalance": "Current Balance",
+      "middleBalance": "Average Balance",
+      "difference": "Change",
+      "days": {
+        "mo": "Mo",
+        "tu": "Tu",
+        "we": "We",
+        "th": "Th",
+        "fr": "Fr",
+        "sa": "Sa",
+        "su": "Su"
+      },
+      "months":{
+        "jan": "Jan",
+        "feb": "Feb",
+        "mar": "Mar",
+        "apr": "Apr",
+        "may": "May",
+        "jun": "Jun",
+        "jul": "Jul",
+        "aug": "Aug",
+        "sep": "Sep",
+        "oct": "Oct",
+        "nov": "Nov",
+        "dec": "Dec"
+      }
+    }
   },
   "income": {
     "title": "Income",

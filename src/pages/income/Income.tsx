@@ -6,7 +6,7 @@ import CategoriesManager from './CategoriesManager';
 import {Cog, Plus, type LucideIcon} from 'lucide-react';
 import VirtualList from '@/components/VirtualList';
 import IncomeModal from '@/pages/income/modal/TransactionModal';
-
+import  {CURRENCY_SIGN} from '@/constances/constances';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import z from 'zod';
@@ -105,7 +105,7 @@ function Income() {
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      setDebouncedSearch(normalizedFilters.search);
+      setDebouncedSearch(normalizedFilters.search ?? '');
     }, 800);
 
     return () => clearTimeout(timeout);
@@ -120,55 +120,7 @@ function Income() {
     normalizedFilters.toDate,
     debouncedSearch,
   ]);
-  // return (
-  //   <AppLayout
-  //     title={t('income.title')}
-  //     subtitle={t('income.subtitle')}
-  //     action={
-  //       <div className="flex flex-col sm:flex-row gap-[36px]">
-  //         <Button
-  //           className="cursor-pointer flex flex-row w-[224px]"
-  //           onClick={() => setIsManageOpen(true)}
-  //         >
-  //           {t('income.actions.manageCategories')}
-  //           <Cog />
-  //         </Button>
-  //         <Button
-  //           onClick={() => setIsAddOpen(true)}
-  //           className="cursor-pointer  w-[224px]"
-  //         >
-  //           {t('income.actions.addIncome')}
-  //           <Plus />
-  //         </Button>
-  //       </div>
-  //     }
-  //   >
-  //     {isManageOpen && (
-  //       <CategoriesManager onClose={() => setIsManageOpen(false)} />
-  //     )}
-
-  //     {isAddOpen && (
-  //       <IncomeModal mode="create" onClose={() => setIsAddOpen(false)} />
-  //     )}
-  //     <div className="w-full min-h-0 rounded-[16px] p-6 bg-secondary flex flex-col gap-7">
-  //       <TransactionFilters type="income" form={form} />
-  //       <div className="flex justify-between items-center">
-  //         <span className="dark:text-[#BFD9D2]">
-  //           {t('incomeModal.filters.total.income')}
-  //         </span>
-  //         <div
-  //           className={cn(
-  //             'flex items-baseline gap-[10px] text-[24px] font-semibold text-[#00AA85]',
-  //           )}
-  //         >
-  //           <span>{totalAmount.toLocaleString('uk-UA')}</span>
-  //           <span>₴</span>
-  //         </div>
-  //       </div>
-  //     </div>
-  //     <VirtualList data={data} type="income" />
-  //   </AppLayout>
-  // );
+ 
   return (
     <AppLayout
       title={t('income.title')}
@@ -195,34 +147,29 @@ function Income() {
         </div>
       }
     >
-      {' '}
       {isManageOpen && (
         <CategoriesManager onClose={() => setIsManageOpen(false)} />
-      )}{' '}
+      )}
       {isAddOpen && (
         <IncomeModal mode="create" onClose={() => setIsAddOpen(false)} />
-      )}{' '}
+      )}
       <div className="w-full h-auto rounded-[16px] p-6 bg-secondary flex flex-col gap-7">
-        {' '}
-        <TransactionFilters type="income" form={form} />{' '}
+        <TransactionFilters type="income" form={form} />
         <div className="flex justify-between items-center">
-          {' '}
           <span className="dark:text-[#BFD9D2]">
-            {' '}
-            {t('incomeModal.filters.total.income')}{' '}
-          </span>{' '}
+            {t('incomeModal.filters.total.income')}
+          </span>
           <div
             className={cn(
               'flex items-baseline gap-[10px] text-[24px] font-semibold text-[#00AA85]',
             )}
           >
-            {' '}
-            <span>{totalAmount.toLocaleString('uk-UA')}</span>{' '}
-            <span>₴</span>{' '}
-          </div>{' '}
-        </div>{' '}
-      </div>{' '}
-      <VirtualList data={data} type="income" />{' '}
+            <span>{totalAmount.toLocaleString('uk-UA')}</span>
+            <span>{CURRENCY_SIGN}</span>
+          </div>
+        </div>
+      </div>
+      <VirtualList data={data} type="income" />
     </AppLayout>
   );
 }

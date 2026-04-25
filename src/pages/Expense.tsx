@@ -25,6 +25,7 @@ import {
   type TransactionFiltersFormValues,
 } from '@/types/types';
 import TransactionModal from '@/pages/income/modal/TransactionModal';
+import { CURRENCY_SIGN } from '@/constances/constances';
 
 export const MOCK_PAGES = Array.from({length: 3}).map((_, pageIndex) => ({
   items: Array.from({length: 20}).map((_, i) => {
@@ -88,11 +89,11 @@ function Expense() {
   };
   const totalAmount = 5500;
 
-  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState<string>('');
 
   useEffect(() => {
     const timeout = setTimeout(() => {
-      setDebouncedSearch(normalizedFilters.search);
+      setDebouncedSearch(filters.search ?? '');
     }, 800);
 
     return () => clearTimeout(timeout);
@@ -153,7 +154,7 @@ function Expense() {
             )}
           >
             <span>{formattedAmount(totalAmount) || '0'}</span>
-            <span>₴</span>
+            <span>{CURRENCY_SIGN}</span>
           </div>
         </div>
       </div>
