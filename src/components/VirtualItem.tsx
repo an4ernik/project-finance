@@ -5,7 +5,7 @@ import {useTranslation} from 'react-i18next';
 import {cn} from '@/lib/utils';
 import {formattedAmount, getIncomeCategoryById} from '@/helpers/helpers';
 import type {VirtualItemProps} from '@/types/types';
-
+import  {CURRENCY_SIGN} from '@/constances/constances';
 const THEMES = {
   income: {
     container:
@@ -144,7 +144,7 @@ export const VirtualItem = ({
               theme.amountColor,
             )}
           >
-            ₴
+            {CURRENCY_SIGN} 
           </span>
 
           <div

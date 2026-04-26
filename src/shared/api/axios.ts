@@ -1,9 +1,9 @@
-import axios, {AxiosError, type InternalAxiosRequestConfig} from 'axios';
-import {useAuthStore} from '../store/useAuthStore';
+import axios, { AxiosError, type InternalAxiosRequestConfig } from 'axios';
+import { useAuthStore } from '../store/useAuthStore';
 
 const API_BASE_URL = (
   import.meta.env.VITE_API_BASE_URL ||
-  ''
+  'https://37tsyfkuv9.eu-central-1.awsapprunner.com'
 ).replace(/\/$/, '');
 
 export const api = axios.create({
@@ -47,7 +47,7 @@ api.interceptors.response.use(
 
       if (isRefreshing) {
         return new Promise((resolve, reject) => {
-          failedQueue.push({resolve, reject});
+          failedQueue.push({ resolve, reject });
         })
           .then(token => {
             originalRequest.headers.Authorization = `Bearer ${token}`;
@@ -60,14 +60,14 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        const {setAuth, refreshToken} = useAuthStore.getState();
+        const { setAuth, refreshToken } = useAuthStore.getState();
         const response = await axios.post(
           `${API_BASE_URL}/api/v1/auth/refresh`,
-          refreshToken ? {refreshToken} : {},
-          {withCredentials: true},
+          refreshToken ? { refreshToken } : {},
+          { withCredentials: true },
         );
 
-        const {accessToken, refreshToken: nextRefreshToken} = response.data as {
+        const { accessToken, refreshToken: nextRefreshToken } = response.data as {
           accessToken: string;
           refreshToken?: string;
         };

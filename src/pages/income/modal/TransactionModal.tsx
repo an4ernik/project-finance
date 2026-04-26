@@ -5,7 +5,7 @@ import {useTranslation} from 'react-i18next';
 import z from 'zod';
 import {X} from 'lucide-react';
 import {toast} from 'sonner';
- 
+
 import {Button} from '../../../components/ui/button';
 import {cn} from '@/lib/utils';
 
@@ -161,21 +161,23 @@ const TransactionModal = ({
 
   const displayTitle = t(`incomeModal.title.${mode}.${type}`);
 
+
   const executeMutation = async (
     data: FormOutput,
     // updateScope?: 'this_only' | 'all_future',
   ) => {
+    console.log(data);
     try {
       if (mode === 'create') {
         await createIncome({
           data: {
             dto: {
               amount: data.amount,
+              type: toTransactionDtoType(type),
               categoryId: data.categoryId,
               date: data.date.toISOString(),
               description: data.description || '',
               // isRepeat: data.repeat ,
-              type: toTransactionDtoType(type),
             },
             receipts: data.file ?? undefined,
           },
@@ -250,14 +252,15 @@ const TransactionModal = ({
         <form onSubmit={handleSubmit(onSubmit)} className={modalWrapper}>
           <div className="w-full p-6">
             <div className="flex justify-between items-center mb-8">
-              <h2 className="font-medium text-xl font-iter">
-                {displayTitle}
-              </h2>
+              <h2 className="font-medium text-xl font-iter">{displayTitle}</h2>
 
-              <X
-                className="size-5 cursor-pointer opacity-70 hover:opacity-100"
+              <button
+                type="button"
                 onClick={onClose}
-              />
+                className="opacity-70 hover:opacity-100 p-1 transition-opacity"
+              >
+                <X className="size-5" />
+              </button>
             </div>
             {/* AMOUNT */}
             <IncomeAmountField

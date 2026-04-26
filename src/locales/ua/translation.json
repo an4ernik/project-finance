@@ -12,7 +12,63 @@
     "logOut": "Вийти"
   },
   "dashboard": {
-    "title": "Головна"
+    "title": "Головна",
+
+    "periods": {
+      "week": "Тиждень",
+      "month": "Місяць",
+      "year": "Рік"
+    },
+
+    "labels": {
+      "income": "Доходи",
+      "expense": "Витрати",
+      "balance": "Баланс"
+    },
+
+    "statistics": {
+      "title": "Фінансовий огляд"
+    },
+
+    "cashFlowChart": {
+      "title": "Грошовий потік",
+      "subtitle": "Чистий грошовий потік"
+    },
+
+    "expenseDistribution": {
+      "title": "Розподіл витрат",
+      "total": "Усього"
+    },
+
+    "dynamicsBalance": {
+      "title": "Динаміка балансу",
+      "currentBalance": "Поточний баланс",
+      "middleBalance": "Середній баланс",
+      "difference": "Зміна",
+      "days": {
+        "mo": "Пн",
+        "tu": "Вт",
+        "we": "Ср",
+        "th": "Чт",
+        "fr": "Пт",
+        "sa": "Сб",
+        "su": "Нд"
+      },
+      "months": {
+        "jan": "Січ",
+        "feb": "Лют",
+        "mar": "Бер",
+        "apr": "Квіт",
+        "may": "Трав",
+        "jun": "Черв",
+        "jul": "Лип",
+        "aug": "Серп",
+        "sep": "Вер",
+        "oct": "Жовт",
+        "nov": "Лист",
+        "dec": "Груд"
+      }
+    }
   },
   "income": {
     "title": "Доходи",

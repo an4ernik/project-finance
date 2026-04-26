@@ -4,7 +4,8 @@ import {cn} from '@/lib/utils';
 import {Button} from '@/components/ui/button';
 import {useTranslation} from 'react-i18next';
 import {formattedAmount, getIncomeCategoryById} from '@/helpers/helpers';
-import type { ModalProps } from '@/types/types';
+import type {ModalProps} from '@/types/types';
+import {CURRENCY_SIGN} from '@/constances/constances';
 
 const DIALOG_THEMES = {
   income: {
@@ -34,7 +35,7 @@ const DIALOG_THEMES = {
       'bg-[#CE0000] dark:bg-linear-to-t dark:from-[#C7000033] dark:to-[#C700004D] text-white hover:brightness-120',
   },
 };
- 
+
 const RemoveDialog = ({
   isOpen,
   onClose,
@@ -112,7 +113,7 @@ const RemoveDialog = ({
                 : item?.description}
             </span>
             <span className={cn('text-xl font-bold', theme.previewAmount)}>
-              {amount} ₴
+              {amount} {CURRENCY_SIGN}
             </span>
           </div>
           <div
