@@ -37,9 +37,20 @@ const ExpenseDonutChart = () => {
     const today = new Date();
     today.setHours(23, 59, 59, 999);
 
-    const filtered = rawExpenseTransactions.filter(item =>
+    let filtered = rawExpenseTransactions.filter(item =>
       isWithinInterval(new Date(item.date), {start: range.from, end: today}),
     );
+
+    if (filtered.length === 0) {
+      filtered = [
+        {
+          name: 'Life',
+          amount: 0.01,
+          date: new Date().toISOString().split('T')[0],
+          category: '',
+        },
+      ];
+    }
 
     const groups = filtered.reduce(
       (acc, item) => {
@@ -50,7 +61,7 @@ const ExpenseDonutChart = () => {
     );
 
     const total = Object.values(groups).reduce((a, b) => a + b, 0);
-    const dynamicPalette = getColors(rawExpenseTransactions.length);
+    const dynamicPalette = getColors(filtered.length);
 
     return Object.entries(groups)
       .map(([name, value], index) => ({
@@ -63,7 +74,6 @@ const ExpenseDonutChart = () => {
   }, [activePeriod]);
 
   const currentHighest = expenseDistributionData[0] || null;
-
 
   useEffect(() => {
     const handleResize = () => {
@@ -86,10 +96,13 @@ const ExpenseDonutChart = () => {
     <ChartWrapper>
       <div className="flex justify-between items-center mb-6">
         <ChartsTitle type="distribution" />
-        <StatisticsByDate value={activePeriod} onChange={value => setActivePeriod(value as Period)} />
+        <StatisticsByDate
+          value={activePeriod}
+          onChange={value => setActivePeriod(value as Period)}
+        />
       </div>
 
-      <div className="flex flex-col lg:flex-row justify-center items-center gap-2 sm:gap-8">
+      <div className="flex flex-wrap flex-col lg:flex-row justify-center items-center gap-2 sm:gap-8">
         <div className=" w-[300px] h-[300px] relative">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
@@ -108,7 +121,7 @@ const ExpenseDonutChart = () => {
                 ))}
                 <Label
                   content={({viewBox}) => {
-                    const {cx, cy} = viewBox as { cx: number; cy: number };
+                    const {cx, cy} = viewBox as {cx: number; cy: number};
                     return (
                       <text
                         x={cx}
@@ -118,7 +131,7 @@ const ExpenseDonutChart = () => {
                       >
                         <tspan
                           x={cx}
-                          dy="-25"
+                          dy="-15"
                           className="fill-[#6F7E7C] dark:fill-[#7F9E97] text-[14px]"
                         >
                           {currentHighest?.name}
@@ -129,7 +142,9 @@ const ExpenseDonutChart = () => {
                           dy="30"
                           className="fill-[#0B1514] dark:fill-white text-xl font-bold"
                         >
-                          {formattedAmount(currentHighest?.value || 0)}{' '}
+                          {currentHighest?.value > 1
+                            ? formattedAmount(currentHighest?.value || 0)
+                            : '0'}
                           {CURRENCY_SIGN}
                         </tspan>
 
@@ -138,7 +153,7 @@ const ExpenseDonutChart = () => {
                           dy="25"
                           className="fill-[#7F9E97] text-[14px]"
                         >
-                          {currentHighest
+                          {currentHighest?.value !== 0.01
                             ? `${currentHighest.percentage}%`
                             : '0%'}
                         </tspan>
@@ -151,9 +166,11 @@ const ExpenseDonutChart = () => {
           </ResponsiveContainer>
         </div>
 
-        <ExpenseDistributionList
-          expenseDistributionData={expenseDistributionData}
-        />
+        {expenseDistributionData.length > 0 && (
+          <ExpenseDistributionList
+            expenseDistributionData={expenseDistributionData}
+          />
+        )}
       </div>
     </ChartWrapper>
   );

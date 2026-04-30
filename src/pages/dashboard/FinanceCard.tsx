@@ -82,7 +82,7 @@ export function FinanceCard({
 
       <div>
         <div className={cn('text-2xl font-bold tracking-tight', v.amountColor)}>
-          {formattedAmount(value)}{' '}{CURRENCY_SIGN}
+          {value ? formattedAmount(value) : '0'}{' '}{CURRENCY_SIGN}
         </div>
 
         <div className={cn('text-xs mt-1 font-medium', v.subTitleColor)}>

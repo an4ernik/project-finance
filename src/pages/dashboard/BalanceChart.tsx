@@ -10,14 +10,14 @@ import {
 } from 'recharts';
 import ChartTooltip from './ChartTooltip';
 import {CURRENCY_SIGN, DAY_KEYS, MONTH_KEYS} from '@/constances/constances';
-import { useMemo } from 'react';
-import type { Period } from '@/types/types';
-import { cn } from '@/lib/utils';
-import { getPeriodRange } from '@/helpers/helpers';
-import { isWithinInterval } from 'date-fns';
+import {useMemo} from 'react';
+import type {Period} from '@/types/types';
+import {cn} from '@/lib/utils';
+import {getPeriodRange} from '@/helpers/helpers';
+import {isWithinInterval} from 'date-fns';
 
 const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
-const {t} = useTranslation();
+  const {t} = useTranslation();
 
   const fullYearBalanceData = useMemo(() => {
     const data = [];
@@ -142,6 +142,8 @@ const {t} = useTranslation();
     );
   }, [activePeriod, fullYearBalanceData]);
 
+ 
+
   // Summary Stats based on filtered data
   const definedDaysData = chartData.filter(d => d.value !== null);
   const currentBalance =
@@ -160,7 +162,7 @@ const {t} = useTranslation();
   const diffSign = diff >= 0 ? '+' : '';
 
   const chartDomain = useMemo(() => {
-    if (chartData.length === 0) return 10000;
+    if (chartData.length === 0) return 0;
 
     // Filter out null values and then map to get only numbers
     const validValues = chartData
@@ -169,9 +171,10 @@ const {t} = useTranslation();
         (value): value is number => value !== null && value !== undefined,
       );
 
-    if (validValues.length === 0) return 10000;
+    if (validValues.length === 0) return 0;
 
     const actualMax = Math.max(...validValues);
+
     return Math.max(5000, Math.floor(actualMax));
   }, [chartData]);
 
@@ -187,81 +190,98 @@ const {t} = useTranslation();
   return (
     <>
       <div className="w-full h-[280px] relative">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={chartData}
-            margin={{right: 35, left: 35, bottom: 10, top: 10}}
-          >
-            <defs>
-              {/* The Glow Effect Filter */}
-              <filter
-                id="lineGlow"
-                x="-20%"
-                y="-20%"
-                width="140%"
-                height="140%"
-              >
-                <feComposite in="SourceGraphic" in2="blur" operator="over" />
-              </filter>
-            </defs>
+        {chartData.length > 0 ? (
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={chartData}
+              margin={{right: 35, left: 35, bottom: 10, top: 10}}
+            >
+              <defs>
+                {/* The Glow Effect Filter */}
+                <filter
+                  id="lineGlow"
+                  x="-20%"
+                  y="-20%"
+                  width="140%"
+                  height="140%"
+                >
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
 
-            <CartesianGrid
-              vertical={true}
-              horizontal={false}
-              stroke="#1c3f35"
-              strokeOpacity={0.5}
-            />
+              <CartesianGrid
+                vertical={true}
+                horizontal={false}
+                stroke="#1c3f35"
+                strokeOpacity={0.5}
+              />
 
-            <XAxis
-              dataKey="day"
-              tickFormatter={tick => {
-                const month = MONTH_KEYS.some(month => month === tick)
-                  ? t(`dashboard.dynamicsBalance.months.${tick}`)
-                  : t(`dashboard.dynamicsBalance.days.${tick}`);
-                return month;
-              }}
-              axisLine={false}
-              tickLine={false}
-              tick={{fill: '#7F9E97', fontSize: 14}}
-              dy={10}
-            />
-            <YAxis
-              // 1. Keep your custom ticks
-              ticks={chartTicks}
-              // 2. FORCE every tick to render (this is the key!)
-              interval={0}
-              // 3. Ensure the scale can actually reach 10k
-              domain={[0, chartDomain]}
-              // 4. Formatter for the 'k' look
-              tickFormatter={value => (value === 0 ? '0' : `${value / 1000}K`)}
-              axisLine={false}
-              tickLine={false}
-              tick={{fill: '#7F9E97', fontSize: 14}}
-              width={45}
-            />
+              <XAxis
+                dataKey="day"
+                tickFormatter={tick => {
+                  const month = MONTH_KEYS.some(month => month === tick)
+                    ? t(`dashboard.dynamicsBalance.months.${tick}`)
+                    : t(`dashboard.dynamicsBalance.days.${tick}`);
+                  return month;
+                }}
+                axisLine={false}
+                tickLine={false}
+                tick={{fill: '#7F9E97', fontSize: 14}}
+                dy={10}
+              />
+              <YAxis
+                // 1. Keep your custom ticks
+                ticks={chartTicks}
+                // 2. FORCE every tick to render (this is the key!)
+                interval={0}
+                // 3. Ensure the scale can actually reach 10k
+                domain={[0, chartDomain]}
+                // 4. Formatter for the 'k' look
+                tickFormatter={value =>
+                  value === 0 ? '0' : `${value / 1000}K`
+                }
+                axisLine={false}
+                tickLine={false}
+                tick={{fill: '#7F9E97', fontSize: 14}}
+                width={45}
+              />
 
-            <Tooltip
-              content={<ChartTooltip type="balance" />}
-              cursor={{stroke: '#1c3f35', strokeWidth: 1}}
-            />
+              <Tooltip
+                content={<ChartTooltip type="balance" />}
+                cursor={{stroke: '#1c3f35', strokeWidth: 1}}
+              />
 
-            <Line
-              connectNulls={false}
-              type="linear"
-              dataKey="value"
-              stroke="#00AA85"
-              strokeWidth={2}
-              dot={false}
-              activeDot={{
-                r: 6,
-                fill: '#00AA85',
-                stroke: '#0B1514',
-                strokeWidth: 2,
-              }}
-              style={{filter: 'url(#lineGlow)'}} // Applies neon effect
-            />
-          </LineChart>
-        </ResponsiveContainer>
+              <Line
+                connectNulls={false}
+                type="linear"
+                dataKey="value"
+                stroke="#00AA85"
+                strokeWidth={2}
+                dot={
+                  definedDaysData.length === 1
+                    ? {
+                        r: 6,
+                        fill: '#00AA85',
+                        strokeWidth: 0,
+                        fillOpacity: 1,
+                      }
+                    : false
+                }
+                activeDot={{
+                  r: 6,
+                  fill: '#00AA85',
+                  stroke: '#0B1514',
+                  strokeWidth: 2,
+                }}
+                style={{filter: 'url(#lineGlow)'}} // Applies neon effect
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        ) : (
+          <div className="h-[280px] flex items-center justify-center text-[#7F9E97]">
+            {t('dashboard.noExpenses')}
+          </div>
+        )}
       </div>
 
       <div className="mt-4 pt-2 border-t border-[#1c3f35] flex flex-col sm:flex-row justify-between items-center text-[14px]">

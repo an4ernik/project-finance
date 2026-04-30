@@ -12,7 +12,7 @@ const data = [
   {
     title: 'Доходи',
     type: 'income',
-    value: '1000000200',
+    value: '0',
     subtitle: 'Цей місяць',
     icon: TrendingUp,
     variant: 'green',

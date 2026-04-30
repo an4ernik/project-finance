@@ -13,6 +13,7 @@
   },
   "dashboard": {
     "title": "Dashboard",
+    "noExpenses": "No expenses for this period",
 
     "periods": {
       "week": "Week",
@@ -53,7 +54,7 @@
         "sa": "Sa",
         "su": "Su"
       },
-      "months":{
+      "months": {
         "jan": "Jan",
         "feb": "Feb",
         "mar": "Mar",
