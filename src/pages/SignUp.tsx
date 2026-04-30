@@ -56,12 +56,12 @@ function SignUp() {
             .string()
             .min(8, t('auth.errors.tooShort'))
             .max(72, t('auth.errors.tooLong'))
+            .regex(/^[a-zA-Z0-9!@#$%^&*]*$/, t('auth.errors.latinOnly'))
             .regex(/[A-Z]/, t('auth.errors.uppercase'))
             .regex(/[a-z]/, t('auth.errors.lowercase'))
             .regex(/[0-9]/, t('auth.errors.number'))
             .regex(/[!@#$%^&*]/, t('auth.errors.symbol'))
-            .regex(/^\S*$/, t('auth.errors.space'))
-            .regex(/^[a-zA-Z0-9!@#$%^&*]*$/, t('auth.errors.latinOnly')),
+            .regex(/^\S*$/, t('auth.errors.space')),
           confirmPassword: z.string().min(1, t('auth.errors.confirmRequired')),
           fullName: z
             .string()
@@ -73,7 +73,7 @@ function SignUp() {
             }),
           currencyCode: z.string(),
           avatar: z
-            .any()
+            .custom<FileList | undefined>()
             .refine(
               files =>
                 !files || files.length === 0 || files[0].size <= MAX_FILE_SIZE,
@@ -140,9 +140,9 @@ function SignUp() {
     previousLanguage.current = i18n.language;
     const fieldsWithErrors = Object.keys(errors) as Array<keyof FormFields>;
     if (fieldsWithErrors.length > 0) {
-      void trigger(fieldsWithErrors as any);
+      void trigger(fieldsWithErrors);
     }
-  }, [i18n.language, errors, trigger]);
+  }, [errors, trigger]);
 
   const onSubmit: SubmitHandler<FormFields> = values => {
     const payload: SignUpBody = {
@@ -162,8 +162,13 @@ function SignUp() {
           toast.success(t('auth.signUpSuccess'));
           setTimeout(() => setIsModal(true), 2000);
         },
-        onError: (error: any) => {
-          if (error?.response?.status === 409) {
+        onError: (error: unknown) => {
+          if (
+            typeof error === 'object' &&
+            error !== null &&
+            'response' in error &&
+            (error as {response?: {status?: number}}).response?.status === 409
+          ) {
             setError('email', {message: t('auth.emailExists')});
             toast.error(t('auth.emailExists'));
           } else {

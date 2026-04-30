@@ -10,6 +10,13 @@ export function createSecuritySchema(t: TFunction) {
       newPassword: z
         .string()
         .min(8, t('settings.security.errors.passwordRequirements'))
+        .max(72, t('settings.security.errors.passwordRequirements'))
+        .regex(
+          /^[a-zA-Z0-9!@#$%^&*]*$/,
+          t('settings.security.errors.passwordRequirements'),
+        )
+        .regex(/[!@#$%^&*]/, t('settings.security.errors.passwordRequirements'))
+        .regex(/^\S*$/, t('settings.security.errors.passwordRequirements'))
         .regex(/[A-Z]/, t('settings.security.errors.passwordRequirements'))
         .regex(/[a-z]/, t('settings.security.errors.passwordRequirements'))
         .regex(/[0-9]/, t('settings.security.errors.passwordRequirements')),

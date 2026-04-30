@@ -37,7 +37,7 @@ export function HeroCta({onClick}: {onClick: () => void}) {
       onClick={onClick}
       className="relative h-12.5 md:h-14.5 flex items-center cursor-pointer justify-between px-2.5 rounded-[10px] backdrop-blur-[7px] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_4px_4px_0px_rgba(75,75,75,0.35)] w-full md:w-126.5 shrink-0 bg-linear-to-t from-[rgba(2,160,120,0.3)] via-[rgba(2,160,120,0.5)] to-[rgba(2,160,120,0.8)] md:border-white/25 md:[background:rgba(49,95,85,0.18)]"
     >
-      <span className="font-medium md:font-light text-[16px] md:text-[18px] tracking-[-1.5px] md:tracking-[0.5px] text-[#e6e6e6]">
+      <span className="font-medium md:font-light text-[16px] md:text-[18px] tracking-[-1.5px] md:tracking-[0.5px] text-text-primary">
         {t('landing.hero.cta')}
       </span>
       <div className="w-10 h-10 flex items-center justify-center bg-linear-to-l from-emerald-500/80 to-emerald-700 rounded-lg transition-bg duration-200 ease-out hover:bg-(--dark-accent)">
@@ -57,8 +57,8 @@ export function SecurityItem({
   description: string;
 }) {
   return (
-    <div className="flex gap-5 md:gap-11 items-center max-w-80.5 md:max-w-140">
-      <p className="font-extralight text-[60px] md:text-[150px] leading-[1.167] tracking-[-1.5px] text-[#00aa85] shrink-0 w-16 md:w-auto text-center">
+    <div className="flex gap-5 md:gap-[15px] items-center max-w-80.5 md:max-w-140">
+      <p className="font-extralight text-[60px] md:text-[150px] leading-[1.167] tracking-[-1.5px] text-[#00aa85] shrink-0 w-16 md:w-[175px]">
         {number}
       </p>
       <div className="flex flex-col gap-2.5 md:gap-5.25 flex-1 md:w-89">
