@@ -159,20 +159,27 @@ export function useGetTransactionById<TData = Awaited<ReturnType<typeof getTrans
 
 
 /**
- * Updates a transaction and recalculates related balances.
+ * Updates a one-time transaction and recalculates related balances. One-time transaction date can be in the past or today, but not in the future.
  * @summary Update transaction
  */
 export type updateTransactionResponse200 = {
   data: TransactionResponseDTO
   status: 200
 }
+
+export type updateTransactionResponse400 = {
+  data: ProblemDetail
+  status: 400
+}
     
 export type updateTransactionResponseSuccess = (updateTransactionResponse200) & {
   headers: Headers;
 };
-;
+export type updateTransactionResponseError = (updateTransactionResponse400) & {
+  headers: Headers;
+};
 
-export type updateTransactionResponse = (updateTransactionResponseSuccess)
+export type updateTransactionResponse = (updateTransactionResponseSuccess | updateTransactionResponseError)
 
 export const getUpdateTransactionUrl = (transactionId: number,) => {
 
@@ -198,7 +205,7 @@ export const updateTransaction = async (transactionId: number,
 
 
 
-export const getUpdateTransactionMutationOptions = <TError = ErrorType<unknown>,
+export const getUpdateTransactionMutationOptions = <TError = ErrorType<ProblemDetail>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTransaction>>, TError,{transactionId: number;data: TransactionCreateRequestDTO}, TContext>, request?: SecondParameter<typeof customInstance>}
 ): UseMutationOptions<Awaited<ReturnType<typeof updateTransaction>>, TError,{transactionId: number;data: TransactionCreateRequestDTO}, TContext> => {
 
@@ -227,12 +234,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type UpdateTransactionMutationResult = NonNullable<Awaited<ReturnType<typeof updateTransaction>>>
     export type UpdateTransactionMutationBody = TransactionCreateRequestDTO
-    export type UpdateTransactionMutationError = ErrorType<unknown>
+    export type UpdateTransactionMutationError = ErrorType<ProblemDetail>
 
     /**
  * @summary Update transaction
  */
-export const useUpdateTransaction = <TError = ErrorType<unknown>,
+export const useUpdateTransaction = <TError = ErrorType<ProblemDetail>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTransaction>>, TError,{transactionId: number;data: TransactionCreateRequestDTO}, TContext>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updateTransaction>>,
@@ -325,7 +332,7 @@ export const useDeleteTransaction = <TError = ErrorType<unknown>,
       return useMutation(getDeleteTransactionMutationOptions(options), queryClient);
     }
     /**
- * Returns the authenticated user's transactions filtered by account, category, type, and date range.
+ * Returns the authenticated user's transactions filtered by account, category, type, and date range. Category filters can reference both active and archived categories that still exist in historical transactions.
  * @summary Get transactions
  */
 export type getTransactionsResponse200 = {
@@ -443,20 +450,27 @@ export function useGetTransactions<TData = Awaited<ReturnType<typeof getTransact
 
 
 /**
- * Creates a transaction for the authenticated user and optionally uploads receipt files.
+ * Creates a one-time transaction for the authenticated user and optionally uploads receipt files. One-time transaction date can be in the past or today, but not in the future.
  * @summary Create transaction
  */
 export type createTransactionResponse201 = {
   data: TransactionResponseDTO
   status: 201
 }
+
+export type createTransactionResponse400 = {
+  data: ProblemDetail
+  status: 400
+}
     
 export type createTransactionResponseSuccess = (createTransactionResponse201) & {
   headers: Headers;
 };
-;
+export type createTransactionResponseError = (createTransactionResponse400) & {
+  headers: Headers;
+};
 
-export type createTransactionResponse = (createTransactionResponseSuccess)
+export type createTransactionResponse = (createTransactionResponseSuccess | createTransactionResponseError)
 
 export const getCreateTransactionUrl = () => {
 
@@ -486,7 +500,7 @@ if(createTransactionBody.receipts !== undefined) {
 
 
 
-export const getCreateTransactionMutationOptions = <TError = ErrorType<unknown>,
+export const getCreateTransactionMutationOptions = <TError = ErrorType<ProblemDetail>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createTransaction>>, TError,{data: CreateTransactionBody}, TContext>, request?: SecondParameter<typeof customInstance>}
 ): UseMutationOptions<Awaited<ReturnType<typeof createTransaction>>, TError,{data: CreateTransactionBody}, TContext> => {
 
@@ -515,12 +529,12 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
 
     export type CreateTransactionMutationResult = NonNullable<Awaited<ReturnType<typeof createTransaction>>>
     export type CreateTransactionMutationBody = CreateTransactionBody
-    export type CreateTransactionMutationError = ErrorType<unknown>
+    export type CreateTransactionMutationError = ErrorType<ProblemDetail>
 
     /**
  * @summary Create transaction
  */
-export const useCreateTransaction = <TError = ErrorType<unknown>,
+export const useCreateTransaction = <TError = ErrorType<ProblemDetail>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createTransaction>>, TError,{data: CreateTransactionBody}, TContext>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof createTransaction>>,

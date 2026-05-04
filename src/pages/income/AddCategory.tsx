@@ -1,6 +1,7 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {toast} from 'sonner';
+import {isAxiosError} from 'axios';
 
 import {Button} from '@/components/ui/button';
 import {
@@ -33,29 +34,30 @@ function AddCategory({
   onOpenChange,
   type = GetCategoriesTypeItem.INCOME,
 }: AddCategoryProps) {
-  const {t} = useTranslation();
+  const {t, i18n} = useTranslation();
   const queryClient = useQueryClient();
   const {mutate: createCategory, isPending} = useCreateCategory();
+
+  const trPrefix =
+    type === GetCategoriesTypeItem.EXPENSE ? 'expense' : 'income';
+  const addT = (suffix: string, fallbackSuffix?: string) => {
+    const primaryKey = `${trPrefix}.addCategory.${suffix}`;
+    if (i18n.exists(primaryKey)) return t(primaryKey);
+    return t(`income.addCategory.${fallbackSuffix ?? suffix}`);
+  };
 
   const [name, setName] = useState('');
   const [icon, setIcon] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (!open) return;
-    setName('');
-    setIcon(null);
-    setError(null);
-  }, [open]);
-
   const handleSave = () => {
     const trimmed = name.trim();
     if (!trimmed) {
-      setError(t('income.addCategory.errors.nameRequired'));
+      setError(addT('errors.nameRequired'));
       return;
     }
     if (!icon) {
-      setError(t('income.addCategory.errors.iconRequired'));
+      setError(addT('errors.iconRequired'));
       return;
     }
     setError(null);
@@ -73,15 +75,16 @@ function AddCategory({
           await queryClient.invalidateQueries({
             queryKey: getGetCategoriesQueryKey(),
           });
-          toast.success(t('income.addCategory.success'));
+          toast.success(addT('success'));
           onOpenChange(false);
         },
-        onError: (err: any) => {
-          if (err?.response?.status === 409) {
-            setError(t('income.addCategory.errors.duplicate'));
+        onError: (err: unknown) => {
+          const status = isAxiosError(err) ? err.response?.status : undefined;
+          if (status === 409) {
+            setError(addT('errors.duplicate'));
             return;
           }
-          toast.error(t('income.addCategory.errors.createFailed'));
+          toast.error(addT('errors.createFailed'));
         },
       },
     );
@@ -102,7 +105,7 @@ function AddCategory({
         <DialogHeader className="text-left">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-[24px] font-medium leading-[1.167]">
-              {t('income.addCategory.title')}
+              {addT('title')}
             </DialogTitle>
             <button
               type="button"
@@ -117,10 +120,10 @@ function AddCategory({
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-3">
             <label className="text-[16px] leading-[1.167] text-muted-foreground">
-              {t('income.addCategory.nameLabel')}
+              {addT('nameLabel')}
             </label>
             <Input
-              placeholder={t('income.addCategory.namePlaceholder')}
+              placeholder={addT('namePlaceholder')}
               value={name}
               onChange={event => setName(event.target.value)}
             />
@@ -128,7 +131,7 @@ function AddCategory({
 
           <div className="flex flex-col gap-3">
             <label className="text-[16px] leading-[1.167] text-muted-foreground">
-              {t('income.addCategory.iconLabel')}
+              {addT('iconLabel')}
             </label>
             <IconPicker
               value={icon}
@@ -153,7 +156,7 @@ function AddCategory({
             className="h-9 w-[140px]"
             variant="secondary"
           >
-            {t('income.addCategory.cancel')}
+            {addT('cancel')}
           </Button>
           <Button
             type="button"
@@ -161,9 +164,7 @@ function AddCategory({
             disabled={isPending}
             className="h-9 w-[140px]"
           >
-            {isPending
-              ? t('income.addCategory.saving')
-              : t('income.addCategory.save')}
+            {isPending ? addT('saving') : addT('save')}
           </Button>
         </DialogFooter>
       </DialogContent>

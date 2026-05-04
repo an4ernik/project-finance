@@ -19,13 +19,11 @@ import {
   getGetCategoriesQueryKey,
   useDeleteCategory,
   useGetCategories,
-  useUpdateCategory,
+  useArchiveCategory,
+  useUnarchiveCategory,
 } from '@/shared/api/generated/category-management/category-management';
 import type {CategoryResponseDTO} from '@/shared/api/models';
-import {CategoryResponseDTOStatus} from '@/shared/api/models/categoryResponseDTOStatus';
 import {GetCategoriesTypeItem} from '@/shared/api/models/getCategoriesTypeItem';
-import {UpdateCategoryDTOStatus} from '@/shared/api/models/updateCategoryDTOStatus';
-import {UpdateCategoryDTOType} from '@/shared/api/models/updateCategoryDTOType';
 
 import AddCategory from './AddCategory';
 import CategoryActionDialog from './CategoryActionDialog';
@@ -34,10 +32,14 @@ import {ICONS_BY_ID} from './IconPicker';
 
 type Props = {
   onClose: () => void;
+  type?: GetCategoriesTypeItem; // INCOME | EXPENSE
 };
 
-function CategoriesManager({onClose}: Props) {
-  const {t} = useTranslation();
+function CategoriesManager({
+  onClose,
+  type = GetCategoriesTypeItem.INCOME,
+}: Props) {
+  const {t, i18n} = useTranslation();
   const queryClient = useQueryClient();
 
   const [isArchive, setIsArchive] = useState(false);
@@ -52,56 +54,49 @@ function CategoriesManager({onClose}: Props) {
 
   const {mutateAsync: deleteCategory, isPending: isDeleting} =
     useDeleteCategory();
-  const {mutateAsync: updateCategory, isPending: isUpdating} =
-    useUpdateCategory();
+  const {mutateAsync: archiveCategory, isPending: isArchiving} =
+    useArchiveCategory();
+  const {mutateAsync: unarchiveCategory, isPending: isRestoring} =
+    useUnarchiveCategory();
+
+  const trPrefix =
+    type === GetCategoriesTypeItem.EXPENSE ? 'expense' : 'income';
+  const catT = (suffix: string, fallbackSuffix?: string) => {
+    const primaryKey = `${trPrefix}.categories.${suffix}`;
+    if (i18n.exists(primaryKey)) return t(primaryKey);
+    return t(`income.categories.${fallbackSuffix ?? suffix}`);
+  };
 
   const trimmedSearch = search.trim();
   const categoriesParams = {
-    name: trimmedSearch,
-    type: [GetCategoriesTypeItem.INCOME],
+    name: trimmedSearch || undefined,
+    type: [type],
     archived: isArchive,
   };
 
-  const {data, isLoading} = useGetCategories(categoriesParams as any);
-  const categories = (Array.isArray(data) ? data : (data?.data ?? [])) as
-    | CategoryResponseDTO[]
-    | [];
+  const {data: response, isLoading} = useGetCategories(categoriesParams);
 
-  const visibleCategories = categories.filter(category => {
-    const status = category.status ?? CategoryResponseDTOStatus.ACTIVE;
-    return isArchive
-      ? status === CategoryResponseDTOStatus.ARCHIVED
-      : status === CategoryResponseDTOStatus.ACTIVE;
-  });
+  // Orval returns an object like: { data: CategoryResponseDTO[] | ProblemDetail; status: 200 }
+  const categories = Array.isArray(response) ? response : [];
 
-  const listTitle = isArchive
-    ? t('income.categories.archivedTitle')
-    : t('income.categories.incomeTitle');
+  const visibleCategories = categories;
+
+  const listTitle = isArchive ? catT('archivedTitle') : catT('incomeTitle');
 
   const invalidateCategories = async () => {
     await queryClient.invalidateQueries({queryKey: getGetCategoriesQueryKey()});
   };
 
   const handleToggleArchive = async (category: CategoryResponseDTO) => {
-    if (!category.id || isUpdating) return;
-    const nextStatus =
-      (category.status ?? CategoryResponseDTOStatus.ACTIVE) ===
-      CategoryResponseDTOStatus.ARCHIVED
-        ? UpdateCategoryDTOStatus.ACTIVE
-        : UpdateCategoryDTOStatus.ARCHIVED;
-
+    if (!category.id || isArchiving || isRestoring) return;
     try {
-      await updateCategory({
-        categoryId: category.id,
-        data: {
-          name: category.name ?? '',
-          icon: category.icon,
-          type: (category.type ??
-            GetCategoriesTypeItem.INCOME) as unknown as UpdateCategoryDTOType,
-          status: nextStatus,
-        },
-      });
+      if (isArchive) {
+        await unarchiveCategory({categoryId: category.id});
+      } else {
+        await archiveCategory({categoryId: category.id});
+      }
       await invalidateCategories();
+      toast.success(t('common.success'));
     } catch {
       toast.error(t('common.error'));
     }
@@ -120,18 +115,19 @@ function CategoriesManager({onClose}: Props) {
   return (
     <div className="md:fixed inset-0 flex items-center md:justify-center md:z-50 md:bg-black/40 md:backdrop-blur-[6.2px] md:p-4">
       <div className="flex h-[781px] w-full max-w-[342px] flex-col overflow-hidden rounded-2xl bg-card dark:bg-[#142624] [box-shadow:0px_4px_4px_0px_rgba(75,75,75,0.2),inset_0px_1px_0px_0px_rgba(255,255,255,0.25)] backdrop-blur-[32px] md:h-[766px] md:max-w-[900px]">
-        <AddCategory
-          open={isAddOpen}
-          onOpenChange={setIsAddOpen}
-          type={GetCategoriesTypeItem.INCOME}
-        />
-        <EditCategory
-          open={!!editingCategory}
-          category={editingCategory}
-          onOpenChange={open => {
-            if (!open) setEditingCategory(null);
-          }}
-        />
+        {isAddOpen ? (
+          <AddCategory open onOpenChange={setIsAddOpen} type={type} />
+        ) : null}
+        {editingCategory ? (
+          <EditCategory
+            open
+            category={editingCategory}
+            type={type}
+            onOpenChange={open => {
+              if (!open) setEditingCategory(null);
+            }}
+          />
+        ) : null}
         <CategoryActionDialog
           open={!!confirm}
           onOpenChange={open => setConfirm(open ? confirm : null)}
@@ -153,22 +149,22 @@ function CategoriesManager({onClose}: Props) {
           confirmVariant={
             confirm?.action === 'delete' ? 'destructive' : 'primary'
           }
-          isPending={isDeleting || isUpdating}
+          isPending={isDeleting || isArchiving || isRestoring}
           onConfirm={() => {
             if (!confirm) return;
             const {action, category} = confirm;
             setConfirm(null);
             if (action === 'delete') {
               void handleDelete(category);
-              return;
+            } else {
+              void handleToggleArchive(category);
             }
-            void handleToggleArchive(category);
           }}
         />
         <>
           <div className="flex h-[79px] items-center justify-between px-6">
             <h2 className="text-[20px] font-medium leading-[1.167]">
-              {t('income.categories.managerTitle')}
+              {catT('managerTitle')}
             </h2>
             <button
               type="button"
@@ -205,7 +201,7 @@ function CategoriesManager({onClose}: Props) {
                 <Input
                   type="search"
                   icon={<Search className="size-4" />}
-                  placeholder={t('income.categories.searchPlaceholder')}
+                  placeholder={catT('searchPlaceholder')}
                   value={search}
                   onChange={event => setSearch(event.target.value)}
                   showErrorSlot={false}
@@ -219,14 +215,12 @@ function CategoriesManager({onClose}: Props) {
               variant="primary"
             >
               <Plus className="size-4" />
-              {t('income.categories.createNew')}
+              {catT('createNew')}
             </Button>
 
             <div className="mt-2 flex w-full max-w-[820px] min-h-0 flex-1 flex-col gap-3 overflow-y-auto pb-3">
               {isLoading ? (
-                <div className="text-muted-foreground">
-                  {t('income.categories.loading')}
-                </div>
+                <div className="text-muted-foreground">{catT('loading')}</div>
               ) : visibleCategories.length > 0 ? (
                 <>
                   <p className="text-[16px] leading-[1.167] text-foreground">
@@ -242,7 +236,8 @@ function CategoriesManager({onClose}: Props) {
                         key={category.id ?? `${category.type}-${category.name}`}
                         className={cn(
                           'flex items-center justify-between rounded-[12px] border border-white/10 px-4 py-4 transition-all duration-500',
-                          'bg-[var(--glass-bg-strong)] hover:border-transparent hover:[background:linear-gradient(0deg,rgba(2,98,77,0.6)_0%,rgba(4,200,158,1)_60%)]',
+                          // Figma uses solid base fill (#193432) for cards in this area.
+                          'bg-[#193432] hover:border-transparent hover:[background:linear-gradient(0deg,rgba(2,98,77,0.6)_0%,rgba(4,200,158,1)_60%)]',
                         )}
                       >
                         <div className="flex items-center gap-3">
@@ -256,7 +251,7 @@ function CategoriesManager({onClose}: Props) {
                               {category.name}
                             </span>
                             <span className="mt-1 inline-flex w-fit items-center rounded-md bg-foreground/10 px-2 py-0.5 text-[10px] leading-[1.167] text-foreground">
-                              {category.type === 'INCOME'
+                              {type === GetCategoriesTypeItem.INCOME
                                 ? t('income.categories.typeIncome')
                                 : t('income.categories.typeExpense')}
                             </span>
@@ -313,13 +308,13 @@ function CategoriesManager({onClose}: Props) {
                   </div>
                   <h3 className="text-[16px] leading-[1.167] text-foreground">
                     {isArchive
-                      ? t('income.categories.emptyArchivedTitle')
-                      : t('income.categories.emptyTitle')}
+                      ? catT('emptyArchivedTitle')
+                      : catT('emptyTitle')}
                   </h3>
                   <p className="text-[14px] leading-[1.167] text-muted-foreground">
                     {isArchive
-                      ? t('income.categories.emptyArchivedSubtitle')
-                      : t('income.categories.emptySubtitle')}
+                      ? catT('emptyArchivedSubtitle')
+                      : catT('emptySubtitle')}
                   </p>
                 </div>
               )}

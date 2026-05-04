@@ -18,7 +18,7 @@ export interface UpdatePasswordRequestDto {
   /**
    * New password. Must contain at least one uppercase letter, one lowercase letter, one special character from !@#$%^&*, and must not contain spaces.
    * @minLength 1
-   * @pattern ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\\|,.<>/?~`]).{8,72}$
+   * @pattern ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\\|,.<>/?~`])\S{8,72}$
    */
   newPassword: string;
   /**

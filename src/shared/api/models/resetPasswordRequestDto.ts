@@ -13,13 +13,13 @@ export interface ResetPasswordRequestDto {
   /**
    * User's password (min 8 chars).
    * @minLength 1
-   * @pattern ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\\|,.<>/?~`]).{8,72}$
+   * @pattern ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\\|,.<>/?~`])\S{8,72}$
    */
   password: string;
   /**
    * User's confirmPassword (min 8 chars).
    * @minLength 1
-   * @pattern ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\\|,.<>/?~`]).{8,72}$
+   * @pattern ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\\|,.<>/?~`])\S{8,72}$
    */
   confirmPassword: string;
 }

@@ -27,6 +27,7 @@ import type {
 import type {
   CategoryResponseDTO,
   CreateCategoryDTO,
+  DeleteCategoryParams,
   GetCategoriesParams,
   ProblemDetail,
   UpdateCategoryDTO
@@ -159,7 +160,7 @@ export function useGetCategoryById<TData = Awaited<ReturnType<typeof getCategory
 
 
 /**
- * Updates a user-owned category.
+ * Updates a user-owned category name, type, and icon.
  * @summary Update category
  */
 export type updateCategoryResponse200 = {
@@ -250,12 +251,17 @@ export const useUpdateCategory = <TError = ErrorType<ProblemDetail>,
       return useMutation(getUpdateCategoryMutationOptions(options), queryClient);
     }
     /**
- * Archives a user-owned category instead of physically deleting it.
- * @summary Archive category
+ * Deletes a user-owned category. If transactions or recurring transactions already use it, provide replacementCategoryId to move those references first.
+ * @summary Delete category
  */
 export type deleteCategoryResponse204 = {
   data: void
   status: 204
+}
+
+export type deleteCategoryResponse400 = {
+  data: ProblemDetail
+  status: 400
 }
 
 export type deleteCategoryResponse404 = {
@@ -266,23 +272,32 @@ export type deleteCategoryResponse404 = {
 export type deleteCategoryResponseSuccess = (deleteCategoryResponse204) & {
   headers: Headers;
 };
-export type deleteCategoryResponseError = (deleteCategoryResponse404) & {
+export type deleteCategoryResponseError = (deleteCategoryResponse400 | deleteCategoryResponse404) & {
   headers: Headers;
 };
 
 export type deleteCategoryResponse = (deleteCategoryResponseSuccess | deleteCategoryResponseError)
 
-export const getDeleteCategoryUrl = (categoryId: number,) => {
+export const getDeleteCategoryUrl = (categoryId: number,
+    params?: DeleteCategoryParams,) => {
+  const normalizedParams = new URLSearchParams();
 
+  Object.entries(params || {}).forEach(([key, value]) => {
+    
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
 
-  
+  const stringifiedParams = normalizedParams.toString();
 
-  return `/api/v1/categories/${categoryId}`
+  return stringifiedParams.length > 0 ? `/api/v1/categories/${categoryId}?${stringifiedParams}` : `/api/v1/categories/${categoryId}`
 }
 
-export const deleteCategory = async (categoryId: number, options?: RequestInit): Promise<deleteCategoryResponse> => {
+export const deleteCategory = async (categoryId: number,
+    params?: DeleteCategoryParams, options?: RequestInit): Promise<deleteCategoryResponse> => {
   
-  return customInstance<deleteCategoryResponse>(getDeleteCategoryUrl(categoryId),
+  return customInstance<deleteCategoryResponse>(getDeleteCategoryUrl(categoryId,params),
   {      
     ...options,
     method: 'DELETE'
@@ -295,8 +310,8 @@ export const deleteCategory = async (categoryId: number, options?: RequestInit):
 
 
 export const getDeleteCategoryMutationOptions = <TError = ErrorType<ProblemDetail>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCategory>>, TError,{categoryId: number}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteCategory>>, TError,{categoryId: number}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCategory>>, TError,{categoryId: number;params?: DeleteCategoryParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteCategory>>, TError,{categoryId: number;params?: DeleteCategoryParams}, TContext> => {
 
 const mutationKey = ['deleteCategory'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -308,10 +323,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteCategory>>, {categoryId: number}> = (props) => {
-          const {categoryId} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteCategory>>, {categoryId: number;params?: DeleteCategoryParams}> = (props) => {
+          const {categoryId,params} = props ?? {};
 
-          return  deleteCategory(categoryId,requestOptions)
+          return  deleteCategory(categoryId,params,requestOptions)
         }
 
 
@@ -326,14 +341,14 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type DeleteCategoryMutationError = ErrorType<ProblemDetail>
 
     /**
- * @summary Archive category
+ * @summary Delete category
  */
 export const useDeleteCategory = <TError = ErrorType<ProblemDetail>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCategory>>, TError,{categoryId: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteCategory>>, TError,{categoryId: number;params?: DeleteCategoryParams}, TContext>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof deleteCategory>>,
         TError,
-        {categoryId: number},
+        {categoryId: number;params?: DeleteCategoryParams},
         TContext
       > => {
       return useMutation(getDeleteCategoryMutationOptions(options), queryClient);
@@ -567,5 +582,183 @@ export const useCreateCategory = <TError = ErrorType<ProblemDetail>,
         TContext
       > => {
       return useMutation(getCreateCategoryMutationOptions(options), queryClient);
+    }
+    /**
+ * Restores an archived user-owned category back to the active state.
+ * @summary Unarchive category
+ */
+export type unarchiveCategoryResponse204 = {
+  data: void
+  status: 204
+}
+
+export type unarchiveCategoryResponse404 = {
+  data: ProblemDetail
+  status: 404
+}
+    
+export type unarchiveCategoryResponseSuccess = (unarchiveCategoryResponse204) & {
+  headers: Headers;
+};
+export type unarchiveCategoryResponseError = (unarchiveCategoryResponse404) & {
+  headers: Headers;
+};
+
+export type unarchiveCategoryResponse = (unarchiveCategoryResponseSuccess | unarchiveCategoryResponseError)
+
+export const getUnarchiveCategoryUrl = (categoryId: number,) => {
+
+
+  
+
+  return `/api/v1/categories/${categoryId}/unarchive`
+}
+
+export const unarchiveCategory = async (categoryId: number, options?: RequestInit): Promise<unarchiveCategoryResponse> => {
+  
+  return customInstance<unarchiveCategoryResponse>(getUnarchiveCategoryUrl(categoryId),
+  {      
+    ...options,
+    method: 'PATCH'
+    
+    
+  }
+);}
+
+
+
+
+export const getUnarchiveCategoryMutationOptions = <TError = ErrorType<ProblemDetail>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof unarchiveCategory>>, TError,{categoryId: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof unarchiveCategory>>, TError,{categoryId: number}, TContext> => {
+
+const mutationKey = ['unarchiveCategory'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof unarchiveCategory>>, {categoryId: number}> = (props) => {
+          const {categoryId} = props ?? {};
+
+          return  unarchiveCategory(categoryId,requestOptions)
+        }
+
+
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UnarchiveCategoryMutationResult = NonNullable<Awaited<ReturnType<typeof unarchiveCategory>>>
+    
+    export type UnarchiveCategoryMutationError = ErrorType<ProblemDetail>
+
+    /**
+ * @summary Unarchive category
+ */
+export const useUnarchiveCategory = <TError = ErrorType<ProblemDetail>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof unarchiveCategory>>, TError,{categoryId: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof unarchiveCategory>>,
+        TError,
+        {categoryId: number},
+        TContext
+      > => {
+      return useMutation(getUnarchiveCategoryMutationOptions(options), queryClient);
+    }
+    /**
+ * Archives a user-owned category. Archived categories stay in existing transactions but cannot be used for new ones.
+ * @summary Archive category
+ */
+export type archiveCategoryResponse204 = {
+  data: void
+  status: 204
+}
+
+export type archiveCategoryResponse404 = {
+  data: ProblemDetail
+  status: 404
+}
+    
+export type archiveCategoryResponseSuccess = (archiveCategoryResponse204) & {
+  headers: Headers;
+};
+export type archiveCategoryResponseError = (archiveCategoryResponse404) & {
+  headers: Headers;
+};
+
+export type archiveCategoryResponse = (archiveCategoryResponseSuccess | archiveCategoryResponseError)
+
+export const getArchiveCategoryUrl = (categoryId: number,) => {
+
+
+  
+
+  return `/api/v1/categories/${categoryId}/archive`
+}
+
+export const archiveCategory = async (categoryId: number, options?: RequestInit): Promise<archiveCategoryResponse> => {
+  
+  return customInstance<archiveCategoryResponse>(getArchiveCategoryUrl(categoryId),
+  {      
+    ...options,
+    method: 'PATCH'
+    
+    
+  }
+);}
+
+
+
+
+export const getArchiveCategoryMutationOptions = <TError = ErrorType<ProblemDetail>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof archiveCategory>>, TError,{categoryId: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof archiveCategory>>, TError,{categoryId: number}, TContext> => {
+
+const mutationKey = ['archiveCategory'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof archiveCategory>>, {categoryId: number}> = (props) => {
+          const {categoryId} = props ?? {};
+
+          return  archiveCategory(categoryId,requestOptions)
+        }
+
+
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type ArchiveCategoryMutationResult = NonNullable<Awaited<ReturnType<typeof archiveCategory>>>
+    
+    export type ArchiveCategoryMutationError = ErrorType<ProblemDetail>
+
+    /**
+ * @summary Archive category
+ */
+export const useArchiveCategory = <TError = ErrorType<ProblemDetail>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof archiveCategory>>, TError,{categoryId: number}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof archiveCategory>>,
+        TError,
+        {categoryId: number},
+        TContext
+      > => {
+      return useMutation(getArchiveCategoryMutationOptions(options), queryClient);
     }
     
