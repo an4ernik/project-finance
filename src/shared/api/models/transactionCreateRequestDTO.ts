@@ -7,12 +7,24 @@
  */
 import type { TransactionCreateRequestDTOType } from './transactionCreateRequestDTOType';
 
+/**
+ * Create or update a one-time transaction. Date can be in the past or today, but not in the future.
+ */
 export interface TransactionCreateRequestDTO {
-  /** @minimum 0 */
+  /**
+   * Transaction amount, min 0.01 max 999_999_999_999.99
+   * @minimum 0.01
+   * @maximum 999999999999.99
+   */
   amount: number;
+  /** Transaction type */
   type: TransactionCreateRequestDTOType;
+  /** Category ID */
   categoryId: number;
+  /** Transaction date. For one-time transactions only past or today is allowed. */
   date: string;
+  /** Optional transaction description */
   description?: string;
+  /** Optional account ID. If omitted, the default account is used. */
   accountId?: number;
 }
