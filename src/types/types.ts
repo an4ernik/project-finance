@@ -1,9 +1,10 @@
 import type { LucideIcon } from "lucide-react";
+import type { CategoryResponseDTO, TransactionResponseDTO } from '@/shared/api/models';
 
 export type ModalMode = 'create' | 'update';
-export type ModalType = 'income' | 'expense';
+export type ModalType = 'INCOME' | 'EXPENSE';
 export type RepeatType = 'this_only' | 'all_future';
-export type TransactionType = 'income' | 'expense';
+export type TransactionType = 'INCOME' | 'EXPENSE';
 export const ALL_CATEGORIES_VALUE = 'allCategories';
 
 //* transaction types
@@ -11,37 +12,57 @@ export type Transaction = {
   id?: number;
   description?: string;
   amount: number | string;
-  categoryId: number;
+  category: {
+    id: number;
+    name: string;
+    icon: string;
+    type: 'INCOME' | 'EXPENSE';
+    status?: 'ACTIVE' | 'ARCHIVED';
+  };
   isRepeat?: string;
   date: Date | string;
   files?: File[];
-};
- 
-export type TransactionUI = Transaction & {
-  Icon: LucideIcon;
-  isRepeat: string;
+  type?: 'INCOME' | 'EXPENSE';
+  receiptsUrls?: string[];
 };
 
-export type Props = {
-  data: TransactionUI[];
-  type: 'income' | 'expense';
+export type TransactionUI = Transaction & {
+  Icon?: LucideIcon;
+  isRepeat?: string;
+};
+
+export type Props = { 
+  type: 'INCOME' | 'EXPENSE';
+  data?: TransactionUI[];
 };
 
 // ==========================================================================
 
 //* VirtualItem types and props
+export interface Category {
+  id: number;
+  name: string;
+  icon: string;
+  type?: 'INCOME' | 'EXPENSE';
+  status?: 'ACTIVE' | 'ARCHIVED';
+}
+
 export interface Item {
   id?: number;
-  description?: string;
+  accountId?: number;
   amount: number | string;
-  categoryId: number;
-  Icon: LucideIcon;
-  isRepeat: string ;
+  description?: string;
+  category: Category;
+  isRepeat?: string;
+  type?: 'INCOME' | 'EXPENSE';
   date: Date | string;
+  createdAt?: Date | string;
+  updatedAt?: Date | string;
+  receiptsUrls?: string[];
 }
 export interface VirtualItemProps {
   item: Item;
-  type?: 'income' | 'expense';
+  type?: 'INCOME' | 'EXPENSE';
   onEdit: (item: Item) => void;
   onDelete: (item: Item) => void;
 }
@@ -53,7 +74,12 @@ export interface VirtualItemProps {
 export interface IncomeFormData {
   id?: number;
   amount: number | string;
-  categoryId: number;
+  category: {
+    id: number;
+    name: string;
+    icon: string;
+    type: 'INCOME' | 'EXPENSE';
+  };
   date: string | Date;
   isRepeat?: string;
   description?: string;
@@ -64,51 +90,57 @@ export type ModalProps = {
   isOpen: boolean;
   onClose: () => void;
   onConfirm: (id: number) => void;
-  item: IncomeFormData | null;
-  type?: 'income' | 'expense';
+  item: IncomeFormData | Item | null;
+  type?: 'INCOME' | 'EXPENSE';
 };
 
-export interface MainModalData{
-      id?: number;
-      amount: number | string;
-      categoryId: number;
-      date: string | Date;
-      description?: string;
-      isRepeat?: string;
-      repeatType?: RepeatType;
-      files?: File[];
+export interface MainModalData {
+  id?: number;
+  amount: number | string;
+  categoryId?: number;
+  category: { id: number; name: string; icon: string; type: 'INCOME' | 'EXPENSE' };
+  date: string | Date;
+  description?: string;
+  isRepeat?: string;
+  repeatType?: RepeatType;
+  files?: File[];
 }
 
 export interface IncomeModalProps {
   title?: string;
-  type?: 'income' | 'expense';
+  type?: 'INCOME' | 'EXPENSE';
   mode?: ModalMode;
   onClose: () => void;
   initialData?: MainModalData | null;
 }
+
+export type CategoryInItem = Category;
+
+export type ApiTransaction = TransactionResponseDTO;
+export type ApiCategory = CategoryResponseDTO;
 // ==========================================================================
 
 // *for filters
 export type Period = 'all' | 'today' | 'week' | 'month' | 'year' | 'custom';
 export type DateRange = {
-    from: Date;
-    to: Date;
+  from: Date;
+  to: Date;
 } | null;
 
 export type Filters = {
-    period: Period;
-    fromDate?: Date;
-    toDate?: Date;
-    category?: string[];
-    search?: string;
+  period: Period;
+  fromDate?: Date;
+  toDate?: Date;
+  category?: string[];
+  search?: string;
 };
 
 export type TransactionFiltersFormValues = {
-    period?: Period;
-    fromDate?: Date;
-    toDate?: Date;
-    category?: string[];
-    search?: string;
+  period?: Period;
+  fromDate?: Date;
+  toDate?: Date;
+  category?: string[];
+  search?: string;
 };
 
 // *for statistics 
@@ -128,7 +160,7 @@ export type CustomTooltipProps = {
     payload: {
       day: string;
       fullDate: string;
-      value: number | string;
+      amount: number | string;
       name: string;
       key?: string;
       val?: string;

@@ -9,17 +9,17 @@ import {toast} from 'sonner';
 import {useDeleteTransaction} from '@/shared/api/generated/transaction-management/transaction-management';
 import RemoveDialog from '@/pages/income/modal/RemoveDialog';
 import NotAvailableTransactions from './NotAvailableTransactions';
-import type {Props, Transaction, TransactionUI} from '@/types/types';
+import type {Item, Props, TransactionUI} from '@/types/types';
 
 const VirtualList = ({data, type}: Props) => {
   const parentRef = useRef<HTMLDivElement>(null);
-
+console.log(data);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<TransactionUI | null>(null);
   const [modalMode, setModalMode] = useState<'create' | 'update'>('update');
 
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
-  const [itemToDelete, setItemToDelete] = useState<Transaction | null>(null);
+  const [itemToDelete, setItemToDelete] = useState<Item | null>(null);
 
   const {mutateAsync: deleteIncome} = useDeleteTransaction();
 
@@ -37,20 +37,25 @@ const VirtualList = ({data, type}: Props) => {
     }
   };
 
-  const handleOpenDelete = (item: Transaction) => {
+  const handleOpenDelete = (item: Item) => {
     setItemToDelete(item);
     setIsRemoveDialogOpen(true);
   };
 
-  const handleEdit = (item: TransactionUI) => {
+  const handleEdit = (item: Item) => {
     setSelectedItem({
       id: item.id,
       amount: Number(item.amount),
-      categoryId: item.categoryId,
+      category: {
+        id: item.category.id,
+        name: item.category.name,
+        icon: item.category.icon,
+        type: item.category.type ?? type,
+      },
       date: item.date,
       description: item.description,
       isRepeat: item.isRepeat,
-      Icon: item.Icon,
+      Icon: undefined,
     });
     setModalMode('update');
     setIsModalOpen(true);
@@ -61,7 +66,7 @@ const VirtualList = ({data, type}: Props) => {
     setSelectedItem(null);
   };
 
-  const allRows = data;
+  const allRows = data ?? [];
 
   const isToday = (date: Date) => {
     const today = new Date();
@@ -72,9 +77,9 @@ const VirtualList = ({data, type}: Props) => {
     );
   };
 
-  const todayRows = allRows.filter(item => isToday(new Date(item.date)));
-  const earlierRows = allRows.filter(item => !isToday(new Date(item.date)));
-
+  const todayRows = allRows?.filter(item => isToday(new Date(item.date)));
+  const earlierRows = allRows?.filter(item => !isToday(new Date(item.date)));
+ 
   const rowVirtualizer = useVirtualizer({
     count: earlierRows.length,
     getScrollElement: () => parentRef.current,
@@ -83,6 +88,7 @@ const VirtualList = ({data, type}: Props) => {
   });
 
   const virtualItems = rowVirtualizer.getVirtualItems();
+  const hasEarlierRows = (earlierRows?.length ?? 0) > 0;
 
   return (
     <div className="flex flex-col h-full sm:h-4/6 w-full pt-8 overflow-hidden">
@@ -136,20 +142,19 @@ const VirtualList = ({data, type}: Props) => {
 
           {/* list */}
           <div>
-            {virtualItems && virtualItems?.length > 0 && (
+            {hasEarlierRows && (
               <h2 className="text-[#0B1514] dark:text-[#EAF6F3]">
                 {t('incomeModal.earlier')}
               </h2>
             )}
-            {(virtualItems && virtualItems?.length > 0) ||
-            (todayRows && todayRows?.length > 0) ? (
+            {hasEarlierRows && (
               <ul
                 className="relative w-full mt-4!"
                 style={{height: `${rowVirtualizer.getTotalSize()}px`}}
               >
                 {virtualItems.map(virtualRow => {
-                  const isLoaderRow = virtualRow.index > allRows.length - 1;
-                  const item = allRows[virtualRow.index];
+                  const isLoaderRow = virtualRow.index > earlierRows.length - 1;
+                  const item = earlierRows[virtualRow.index];
 
                   return (
                     <li
@@ -166,18 +171,21 @@ const VirtualList = ({data, type}: Props) => {
                           <Spinner />
                         </div>
                       ) : (
-                        <VirtualItem
-                          onDelete={handleOpenDelete}
-                          item={item}
-                          onEdit={handleEdit}
-                          type={type}
-                        />
+                        item && (
+                          <VirtualItem
+                            onDelete={handleOpenDelete}
+                            item={item}
+                            onEdit={handleEdit}
+                            type={type}
+                          />
+                        )
                       )}
                     </li>
                   );
                 })}
               </ul>
-            ) : (
+            )}
+            {!hasEarlierRows && (!todayRows || todayRows.length === 0) && (
               <NotAvailableTransactions type={type} />
             )}
           </div>

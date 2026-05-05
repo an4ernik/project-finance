@@ -8,23 +8,26 @@ import ChartWrapper from './ChartWrapper';
 import type {Period} from '@/types/types';
 import {CURRENCY_SIGN} from '@/constances/constances';
 import ExpenseDistributionList from './ExpenseDistributionList';
+import {useGetTransactions} from '@/shared/api/generated/transaction-management/transaction-management';
+import type {TransactionResponseDTO} from '@/shared/api/models';
 
-const rawExpenseTransactions = [
-  {name: 'products', amount: 1200, date: '2026-04-20', category: 'products'},
-  {name: 'products', amount: 1000, date: '2026-04-15', category: 'products'},
-  {name: 'products', amount: 1000, date: '2026-03-25', category: 'products'},
-  {name: 'Netflix', amount: 600, date: '2026-04-01', category: 'subscriptions'},
-  {name: 'Spotify', amount: 400, date: '2026-03-15', category: 'subscriptions'},
-  {name: 'Dog Food', amount: 700, date: '2026-04-18', category: 'petFood'},
-  {name: 'Starbucks', amount: 150, date: '2026-04-21', category: 'coffee'},
-  {name: 'Local Cafe', amount: 150, date: '2026-04-10', category: 'coffee'},
-  {name: 'Local Cafe', amount: 150, date: '2026-04-25', category: 'coffee'},
-  {name: 'Gas', amount: 200, date: '2026-04-19', category: 'machine'},
-];
+const EMPTY_DISTRIBUTION_ITEM = {
+  name: '',
+  value: 0.01,
+  color: '#F97316',
+  percentage: 0,
+};
 
 const ExpenseDonutChart = () => {
+  const {data} = useGetTransactions();
   const [activePeriod, setActivePeriod] = useState<Period>('week');
   const [radii, setRadii] = useState({innerRadius: 100, outerRadius: 140});
+
+  const transactions = useMemo(() => {
+    return (
+      Array.isArray(data) ? data : (data?.data ?? [])
+    ) as TransactionResponseDTO[];
+  }, [data]);
 
   const expenseDistributionData = useMemo(() => {
     const range = getPeriodRange({
@@ -32,25 +35,37 @@ const ExpenseDonutChart = () => {
       category: [],
       search: '',
     });
+
     if (!range) return [];
 
     const today = new Date();
     today.setHours(23, 59, 59, 999);
 
-    const filtered = rawExpenseTransactions.filter(item =>
-      isWithinInterval(new Date(item.date), {start: range.from, end: today}),
-    );
+    const filtered = transactions.filter(item => {
+      if (item.type !== 'EXPENSE') return false;
+      if (!item.date) return false;
 
-    const groups = filtered.reduce(
-      (acc, item) => {
-        acc[item.category] = (acc[item.category] || 0) + item.amount;
-        return acc;
-      },
-      {} as Record<string, number>,
-    );
+      return isWithinInterval(new Date(item.date), {
+        start: range.from,
+        end: today,
+      });
+    });
 
-    const total = Object.values(groups).reduce((a, b) => a + b, 0);
-    const dynamicPalette = getColors(rawExpenseTransactions.length);
+    if (filtered.length === 0) {
+      return [EMPTY_DISTRIBUTION_ITEM];
+    }
+
+    const groups = filtered.reduce<Record<string, number>>((acc, item) => {
+      const categoryName = item.category?.name ?? 'Other';
+      const amount = Number(item.amount ?? 0);
+
+      acc[categoryName] = (acc[categoryName] || 0) + amount;
+
+      return acc;
+    }, {});
+
+    const total = Object.values(groups).reduce((sum, value) => sum + value, 0);
+    const dynamicPalette = getColors(Object.keys(groups).length);
 
     return Object.entries(groups)
       .map(([name, value], index) => ({
@@ -60,25 +75,25 @@ const ExpenseDonutChart = () => {
         percentage: total > 0 ? Math.round((value / total) * 100) : 0,
       }))
       .sort((a, b) => b.value - a.value);
-  }, [activePeriod]);
+  }, [activePeriod, transactions]);
 
   const currentHighest = expenseDistributionData[0] || null;
-
 
   useEffect(() => {
     const handleResize = () => {
       const width = window.innerWidth;
+
       if (width < 640) {
-        // mobile
         setRadii({innerRadius: 90, outerRadius: 120});
       } else {
-        // desktop
         setRadii({innerRadius: 100, outerRadius: 140});
       }
     };
 
-    handleResize(); // Set initial values
+    handleResize();
+
     window.addEventListener('resize', handleResize);
+
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
@@ -86,11 +101,15 @@ const ExpenseDonutChart = () => {
     <ChartWrapper>
       <div className="flex justify-between items-center mb-6">
         <ChartsTitle type="distribution" />
-        <StatisticsByDate value={activePeriod} onChange={value => setActivePeriod(value as Period)} />
+
+        <StatisticsByDate
+          value={activePeriod}
+          onChange={value => setActivePeriod(value as Period)}
+        />
       </div>
 
-      <div className="flex flex-col lg:flex-row justify-center items-center gap-2 sm:gap-8">
-        <div className=" w-[300px] h-[300px] relative">
+      <div className="flex flex-wrap flex-col lg:flex-row justify-center items-center gap-2 sm:gap-8">
+        <div className="w-[300px] h-[300px] relative">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
@@ -100,15 +119,17 @@ const ExpenseDonutChart = () => {
                 innerRadius={radii.innerRadius}
                 outerRadius={radii.outerRadius}
                 paddingAngle={5}
-                dataKey="value"
+                dataKey="value" 
                 stroke="none"
               >
                 {expenseDistributionData.map((entry, index) => (
-                  <Cell key={`cell-${index}`} fill={entry.color} />
+                  <Cell key={`${entry.name}-${index}`} fill={entry.color} />
                 ))}
+
                 <Label
                   content={({viewBox}) => {
-                    const {cx, cy} = viewBox as { cx: number; cy: number };
+                    const {cx, cy} = viewBox as {cx: number; cy: number};
+
                     return (
                       <text
                         x={cx}
@@ -118,7 +139,7 @@ const ExpenseDonutChart = () => {
                       >
                         <tspan
                           x={cx}
-                          dy="-25"
+                          dy="-15"
                           className="fill-[#6F7E7C] dark:fill-[#7F9E97] text-[14px]"
                         >
                           {currentHighest?.name}
@@ -129,7 +150,9 @@ const ExpenseDonutChart = () => {
                           dy="30"
                           className="fill-[#0B1514] dark:fill-white text-xl font-bold"
                         >
-                          {formattedAmount(currentHighest?.value || 0)}{' '}
+                          {currentHighest && currentHighest.value > 1
+                            ? formattedAmount(currentHighest.value)
+                            : '0'}
                           {CURRENCY_SIGN}
                         </tspan>
 
@@ -138,7 +161,7 @@ const ExpenseDonutChart = () => {
                           dy="25"
                           className="fill-[#7F9E97] text-[14px]"
                         >
-                          {currentHighest
+                          {currentHighest && currentHighest.value !== 0.01
                             ? `${currentHighest.percentage}%`
                             : '0%'}
                         </tspan>
@@ -151,9 +174,11 @@ const ExpenseDonutChart = () => {
           </ResponsiveContainer>
         </div>
 
-        <ExpenseDistributionList
-          expenseDistributionData={expenseDistributionData}
-        />
+        {expenseDistributionData.length > 0 && (
+          <ExpenseDistributionList
+            expenseDistributionData={expenseDistributionData}
+          />
+        )}
       </div>
     </ChartWrapper>
   );

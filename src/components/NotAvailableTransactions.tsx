@@ -21,7 +21,7 @@ const NotAvailableTransactions = ({type}: Props) => {
           'dark:border-[#183f35] dark:shadow-[#1d2f1c]',
         )}
       >
-        {type === 'income' ? (
+        {type === 'INCOME' ? (
           <TrendingUp className="text-[#9AA7A5] dark:text-[#7F9E97]" />
         ) : (
           <TrendingDown className="text-[#9AA7A5] dark:text-[#7F9E97]" />

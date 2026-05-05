@@ -25,7 +25,7 @@ const InfoDialog = ({
   onClose,
   selectedScope,
   setSelectedScope,
-  type = 'income',
+  type = 'INCOME',
 }: Props) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const {t} = useTranslation();

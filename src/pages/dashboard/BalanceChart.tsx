@@ -10,36 +10,36 @@ import {
 } from 'recharts';
 import ChartTooltip from './ChartTooltip';
 import {CURRENCY_SIGN, DAY_KEYS, MONTH_KEYS} from '@/constances/constances';
-import { useMemo } from 'react';
-import type { Period } from '@/types/types';
-import { cn } from '@/lib/utils';
-import { getPeriodRange } from '@/helpers/helpers';
-import { isWithinInterval } from 'date-fns';
+import {useMemo} from 'react';
+import type {Period} from '@/types/types';
+import {cn} from '@/lib/utils';
+import {formattedAmount, getPeriodRange} from '@/helpers/helpers';
+import type {TransactionResponseDTO} from '@/shared/api/models';
+import {useGetTransactions} from '@/shared/api/generated/transaction-management/transaction-management';
+import {endOfDay} from 'date-fns';
+
+const calculateYAxisWidth = (maxValue: number) => {
+  // 1. Format the max value exactly how it will appear in the YAxis
+  // Example: 1234567 -> "1234.6K"
+  const formatted =
+    maxValue >= 1000 ? `${(maxValue / 1000).toFixed(1)}K` : maxValue.toString();
+
+  // 2. Estimate width: Base padding (20px) + ~9px per character (at 14px font size)
+  const estimatedWidth = 10 + formatted.length * 9;
+
+  // 3. Set a reasonable floor and ceiling
+  return Math.min(Math.max(estimatedWidth, 40), 80);
+};
 
 const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
-const {t} = useTranslation();
+  const {t} = useTranslation();
+  const {data} = useGetTransactions();
 
-  const fullYearBalanceData = useMemo(() => {
-    const data = [];
-    const start = new Date(2026, 0, 1);
-    const end = new Date(2026, 11, 31);
-    let currentBalance = 5000;
-
-    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-      const change = Math.floor(Math.random() * 2000) - 800;
-      currentBalance = Math.max(1000, Math.min(15000, currentBalance + change));
-
-      data.push({
-        name: 'balance',
-        day: d.toLocaleDateString('uk-UA', {weekday: 'short'}),
-        date: d.toLocaleDateString('uk-UA', {day: '2-digit', month: '2-digit'}),
-        month: d.toLocaleDateString('uk-UA', {month: 'short'}),
-        value: currentBalance,
-        fullDate: new Date(d),
-      });
-    }
-    return data;
-  }, []);
+  const transactions = useMemo(() => {
+    return (
+      Array.isArray(data) ? data : (data?.data ?? [])
+    ) as TransactionResponseDTO[];
+  }, [data]);
 
   const chartData = useMemo(() => {
     const range = getPeriodRange({
@@ -47,110 +47,98 @@ const {t} = useTranslation();
       category: [],
       search: '',
     });
+
     if (!range) return [];
 
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
+    const today = endOfDay(new Date());
 
-    // --- WEEK (7 days) ---
+    const getBalanceUntil = (date: Date) => {
+      const endDate = endOfDay(date);
+
+      return transactions.reduce((acc, t) => {
+        if (!t.date) return acc;
+
+        const transactionDate = new Date(t.date);
+
+        if (transactionDate > endDate) return acc;
+
+        const amount = Number(t.amount ?? 0);
+
+        return t.category?.type === 'INCOME' ? acc + amount : acc - amount;
+      }, 0);
+    };
+
     if (activePeriod === 'week') {
-      const days = [];
-      for (let i = 0; i < 7; i++) {
+      return Array.from({length: 7}, (_, i) => {
         const d = new Date(range.from);
         d.setDate(d.getDate() + i);
 
-        const found = fullYearBalanceData.find(
-          item =>
-            item.fullDate.getDate() === d.getDate() &&
-            item.fullDate.getMonth() === d.getMonth() &&
-            item.fullDate.getFullYear() === d.getFullYear(),
-        );
-
-        days.push({
-          day: DAY_KEYS[d?.getDay()],
-          value: d <= today ? (found ? found.value : null) : null,
+        return {
+          day: DAY_KEYS[d.getDay()],
+          amount: d <= today ? getBalanceUntil(d) : null,
           fullDate: d.toLocaleDateString('ua-UA', {
             day: '2-digit',
             month: '2-digit',
           }),
-        });
-      }
-      return days;
+        };
+      });
     }
 
-    // --- MONTH (all days in that month) ---
     if (activePeriod === 'month') {
       const daysInMonth = [];
-      const start = new Date(range.from);
-      const end = new Date(range.to);
 
-      for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-        const currentDate = new Date(d);
-
-        const found = fullYearBalanceData.find(
-          item =>
-            item.fullDate.getDate() === currentDate.getDate() &&
-            item.fullDate.getMonth() === currentDate.getMonth() &&
-            item.fullDate.getFullYear() === currentDate.getFullYear(),
-        );
+      for (
+        let d = new Date(range.from);
+        d <= range.to;
+        d.setDate(d.getDate() + 1)
+      ) {
+        const currentD = new Date(d);
 
         daysInMonth.push({
-          day: DAY_KEYS[currentDate.getDay()],
-          dayNumber: currentDate.getDate(),
-          value: currentDate <= today ? (found ? found.value : null) : null,
-          fullDate: d.toLocaleDateString('ua-UA', {
+          day: DAY_KEYS[currentD.getDay()],
+          amount: currentD <= today ? getBalanceUntil(currentD) : null,
+          fullDate: currentD.toLocaleDateString('ua-UA', {
             day: '2-digit',
             month: '2-digit',
           }),
         });
       }
+
       return daysInMonth;
     }
 
-    // --- YEAR (12 months, aggregated values) ---
     if (activePeriod === 'year') {
-      const months = [];
-      const year = range.from.getFullYear();
+      return Array.from({length: 12}, (_, m) => {
+        const monthStart = new Date(range.from.getFullYear(), m, 1);
+        const monthEnd = new Date(range.from.getFullYear(), m + 1, 0);
 
-      for (let month = 0; month < 12; month++) {
-        const monthData = fullYearBalanceData.filter(
-          item =>
-            item.fullDate.getFullYear() === year &&
-            item.fullDate.getMonth() === month &&
-            item.fullDate <= today,
-        );
+        if (monthStart > today) {
+          return {
+            day: MONTH_KEYS[m],
+            amount: null,
+          };
+        }
 
-        const totalValue = monthData.reduce((sum, item) => sum + item.value, 0);
-        const avgValue =
-          monthData.length > 0
-            ? Math.round(totalValue / monthData.length)
-            : null;
+        const dateForBalance = monthEnd > today ? today : monthEnd;
 
-        months.push({
-          day: MONTH_KEYS[month],
-          value: monthData.length > 0 ? avgValue : null,
-        });
-      }
-      return months;
+        return {
+          day: MONTH_KEYS[m],
+          amount: getBalanceUntil(dateForBalance),
+        };
+      });
     }
 
-    // Default fallback
-    return fullYearBalanceData.filter(
-      item =>
-        isWithinInterval(item.fullDate, {start: range.from, end: range.to}) &&
-        item.fullDate <= today,
-    );
-  }, [activePeriod, fullYearBalanceData]);
+    return [];
+  }, [activePeriod, transactions]);
 
-  // Summary Stats based on filtered data
-  const definedDaysData = chartData.filter(d => d.value !== null);
-  const currentBalance =
-    definedDaysData[definedDaysData.length - 1]?.value || 0;
+  const definedDaysData = chartData.filter(d => d.amount !== null);
+
+  const currentBalance = definedDaysData.at(-1)?.amount ?? 0;
 
   const avgBalance =
     definedDaysData.length > 0
       ? Math.round(
-          definedDaysData.reduce((a, b) => a + (b?.value || 0), 0) /
+          definedDaysData.reduce((sum, item) => sum + item.amount, 0) /
             definedDaysData.length,
         )
       : 0;
@@ -160,22 +148,22 @@ const {t} = useTranslation();
   const diffSign = diff >= 0 ? '+' : '';
 
   const chartDomain = useMemo(() => {
-    if (chartData.length === 0) return 10000;
+    if (chartData.length === 0) return 0;
 
     // Filter out null values and then map to get only numbers
     const validValues = chartData
-      .map(d => d.value)
+      .map(d => d.amount)
       .filter(
         (value): value is number => value !== null && value !== undefined,
       );
 
-    if (validValues.length === 0) return 10000;
+    if (validValues.length === 0) return 0;
 
     const actualMax = Math.max(...validValues);
-    return Math.max(5000, Math.floor(actualMax));
+
+    return Math.max(1000, Math.floor(actualMax));
   }, [chartData]);
 
-  // Generate dynamic ticks based on the domain
   const chartTicks = useMemo(() => {
     const numberOfTicks = 5;
     const step = chartDomain / numberOfTicks;
@@ -184,84 +172,109 @@ const {t} = useTranslation();
     );
   }, [chartDomain]);
 
+  const dynamicYAxisWidth = useMemo(() => {
+    return calculateYAxisWidth(chartDomain);
+  }, [chartDomain]); 
+  
+  const hasData =
+    chartData.length > 0 && chartData.some(item => item?.amount ?? 0 > 0);
+
   return (
     <>
       <div className="w-full h-[280px] relative">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart
-            data={chartData}
-            margin={{right: 35, left: 35, bottom: 10, top: 10}}
-          >
-            <defs>
-              {/* The Glow Effect Filter */}
-              <filter
-                id="lineGlow"
-                x="-20%"
-                y="-20%"
-                width="140%"
-                height="140%"
-              >
-                <feComposite in="SourceGraphic" in2="blur" operator="over" />
-              </filter>
-            </defs>
+        {hasData ? (
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart
+              data={chartData}
+              margin={{right: 35, left: 35, bottom: 10, top: 10}}
+            >
+              <defs>
+                {/* The Glow Effect Filter */}
+                <filter
+                  id="lineGlow"
+                  x="-20%"
+                  y="-20%"
+                  width="140%"
+                  height="140%"
+                >
+                  <feComposite in="SourceGraphic" in2="blur" operator="over" />
+                </filter>
+              </defs>
 
-            <CartesianGrid
-              vertical={true}
-              horizontal={false}
-              stroke="#1c3f35"
-              strokeOpacity={0.5}
-            />
+              <CartesianGrid
+                vertical={true}
+                horizontal={false}
+                stroke="#1c3f35"
+                strokeOpacity={0.5}
+              />
 
-            <XAxis
-              dataKey="day"
-              tickFormatter={tick => {
-                const month = MONTH_KEYS.some(month => month === tick)
-                  ? t(`dashboard.dynamicsBalance.months.${tick}`)
-                  : t(`dashboard.dynamicsBalance.days.${tick}`);
-                return month;
-              }}
-              axisLine={false}
-              tickLine={false}
-              tick={{fill: '#7F9E97', fontSize: 14}}
-              dy={10}
-            />
-            <YAxis
-              // 1. Keep your custom ticks
-              ticks={chartTicks}
-              // 2. FORCE every tick to render (this is the key!)
-              interval={0}
-              // 3. Ensure the scale can actually reach 10k
-              domain={[0, chartDomain]}
-              // 4. Formatter for the 'k' look
-              tickFormatter={value => (value === 0 ? '0' : `${value / 1000}K`)}
-              axisLine={false}
-              tickLine={false}
-              tick={{fill: '#7F9E97', fontSize: 14}}
-              width={45}
-            />
+              <XAxis
+                dataKey="day"
+                tickFormatter={tick => {
+                  const month = MONTH_KEYS.some(month => month === tick)
+                    ? t(`dashboard.dynamicsBalance.months.${tick}`)
+                    : t(`dashboard.dynamicsBalance.days.${tick}`);
+                  return month;
+                }}
+                axisLine={false}
+                tickLine={false}
+                tick={{fill: '#7F9E97', fontSize: 14}}
+                dy={10}
+              />
+              <YAxis
+                // 1. Keep your custom ticks
+                ticks={chartTicks}
+                // 2. FORCE every tick to render (this is the key!)
+                interval={0}
+                // 3. Ensure the scale can actually reach 10k
+                domain={[0, chartDomain]}
+                // 4. Formatter for the 'k' look
+                tickFormatter={value =>
+                  value === 0
+                    ? '0'
+                    : `${formattedAmount((value / 1000).toFixed(1))}K`
+                }
+                axisLine={false}
+                tickLine={false}
+                tick={{fill: '#7F9E97', fontSize: 14}}
+                width={dynamicYAxisWidth}
+              />
 
-            <Tooltip
-              content={<ChartTooltip type="balance" />}
-              cursor={{stroke: '#1c3f35', strokeWidth: 1}}
-            />
+              <Tooltip
+                content={<ChartTooltip type="balance" />}
+                cursor={{stroke: '#1c3f35', strokeWidth: 1}}
+              />
 
-            <Line
-              connectNulls={false}
-              type="linear"
-              dataKey="value"
-              stroke="#00AA85"
-              strokeWidth={2}
-              dot={false}
-              activeDot={{
-                r: 6,
-                fill: '#00AA85',
-                stroke: '#0B1514',
-                strokeWidth: 2,
-              }}
-              style={{filter: 'url(#lineGlow)'}} // Applies neon effect
-            />
-          </LineChart>
-        </ResponsiveContainer>
+              <Line
+                connectNulls={true}
+                type="linear"
+                dataKey="amount"
+                stroke="#00AA85"
+                strokeWidth={2}
+                dot={
+                  definedDaysData.length === 1
+                    ? {
+                        r: 6,
+                        fill: '#00AA85',
+                        strokeWidth: 0,
+                        fillOpacity: 1,
+                      }
+                    : false
+                }
+                activeDot={{
+                  r: 6,
+                  fill: '#00AA85',
+                  stroke: '#0B1514',
+                  strokeWidth: 2,
+                }}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+        ) : (
+          <div className="h-[280px] flex items-center justify-center text-[#7F9E97]">
+            {t('dashboard.noBalance')}
+          </div>
+        )}
       </div>
 
       <div className="mt-4 pt-2 border-t border-[#1c3f35] flex flex-col sm:flex-row justify-between items-center text-[14px]">
@@ -270,7 +283,7 @@ const {t} = useTranslation();
             {t('dashboard.dynamicsBalance.currentBalance')}
           </span>
           <span className="text-[#3A4A48] dark:text-[#7F9E97] font-medium">
-            {currentBalance} {CURRENCY_SIGN}
+            {formattedAmount(currentBalance)} {CURRENCY_SIGN}
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -278,7 +291,7 @@ const {t} = useTranslation();
             {t('dashboard.dynamicsBalance.middleBalance')}
           </span>
           <span className="text-[#3A4A48] dark:text-[#7F9E97] font-medium">
-            {avgBalance} {CURRENCY_SIGN}
+            {formattedAmount(avgBalance)} {CURRENCY_SIGN}
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -286,7 +299,7 @@ const {t} = useTranslation();
             {t('dashboard.dynamicsBalance.difference')}
           </span>
           <span className={cn('font-bold', diffColor)}>
-            {diffSign} {diff} {CURRENCY_SIGN}
+            {diffSign} {formattedAmount(diff)} {CURRENCY_SIGN}
           </span>
         </div>
       </div>

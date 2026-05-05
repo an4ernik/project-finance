@@ -26,13 +26,13 @@ export interface IncomeCategoryOption {
 
 export const TRANSACTION_CATEGORIES: Record<TransactionType, CategoryOption[]> =
   {
-    income: [ 
+    INCOME: [
       {val: 'salary', icon: DollarSign, id: 1},
       {val: 'freelance', icon: MonitorCheck, id: 2},
       {val: 'investments', icon: Percent, id: 3},
       {val: 'cashback', icon: TrendingUp, id: 4},
     ],
-    expense: [ 
+    EXPENSE: [
       {val: 'coffee', icon: Coffee, id: 1},
       {val: 'products', icon: ShoppingCart, id: 2},
       {val: 'petFood', icon: Dog, id: 3},

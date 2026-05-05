@@ -1,7 +1,7 @@
 import AppLayout from '@/layouts/AppLayout';
 import {useTranslation} from 'react-i18next';
 import {Button} from '@/components/ui/button';
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import CategoriesManager from './income/CategoriesManager';
 import {Cog, Plus} from 'lucide-react';
 import VirtualList from '@/components/VirtualList'; 
@@ -13,51 +13,22 @@ import z from 'zod';
 import TransactionFilters from './income/TransactionFilters';
 import {cn} from '@/lib/utils';
 import {
-  applyFilters,
-  formattedAmount,
-  TRANSACTION_CATEGORIES,
-  REPEAT_TYPES,
-  type IncomeFormData,
+  formattedAmount,  
 } from '@/helpers/helpers';
 import {
   ALL_CATEGORIES_VALUE,
-  type Filters,
   type TransactionFiltersFormValues,
 } from '@/types/types';
 import TransactionModal from '@/pages/income/modal/TransactionModal';
 import { CURRENCY_SIGN } from '@/constances/constances';
-
-export const MOCK_PAGES = Array.from({length: 3}).map((_, pageIndex) => ({
-  items: Array.from({length: 20}).map((_, i) => {
-    const typeIndex =
-      (pageIndex + i) % TRANSACTION_CATEGORIES['expense'].length;
-    const randomType = TRANSACTION_CATEGORIES['expense'][typeIndex];
-    const randomRepeat =
-      REPEAT_TYPES[Math.floor(Math.random() * REPEAT_TYPES.length)];
-
-    const id = (pageIndex + 1) * 100 + i;
-
-    return {
-      id,
-      description: `${randomType.val.charAt(0).toUpperCase() + randomType.val.slice(1)} #${id}`,
-      amount: (1000 + ((id * 7.5) % 4000)).toFixed(2),
-      categoryId: randomType.id,
-      Icon: randomType.icon,
-      isRepeat: randomRepeat,
-      date: new Date(2026, 3, (i % 28) + 1),
-    };
-  }),
-  nextCursor: pageIndex < 2 ? pageIndex + 2 : null,
-}));
+import FiltersWrapper from '@/components/FiltersWrapper';
+ 
 
 function Expense() {
-  const [data, setData] = useState<IncomeFormData[]>([]);
   const [isManageOpen, setIsManageOpen] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const {t} = useTranslation();
-
-  const ALL_ITEMS = MOCK_PAGES.flatMap(p => p.items);
-
+ 
   const filtersSchema = z.object({
     period: z
       .enum(['all', 'today', 'week', 'month', 'year', 'custom'])
@@ -79,35 +50,8 @@ function Expense() {
     },
   });
 
-  const filters = form.watch();
-  const normalizedFilters: Filters = {
-    period: filters.period ?? 'all',
-    fromDate: filters.fromDate,
-    toDate: filters.toDate,
-    category: filters.category ?? [ALL_CATEGORIES_VALUE],
-    search: filters.search ?? '',
-  };
   const totalAmount = 5500;
 
-  const [debouncedSearch, setDebouncedSearch] = useState<string>('');
-
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      setDebouncedSearch(filters.search ?? '');
-    }, 800);
-
-    return () => clearTimeout(timeout);
-  }, [normalizedFilters.search]);
-
-  useEffect(() => {
-    setData(applyFilters(ALL_ITEMS, normalizedFilters, debouncedSearch));
-  }, [
-    normalizedFilters.period,
-    normalizedFilters.category,
-    normalizedFilters.fromDate,
-    normalizedFilters.toDate,
-    debouncedSearch,
-  ]);
   return (
     <AppLayout
       title={t('income.title')}
@@ -125,7 +69,7 @@ function Expense() {
             onClick={() => setIsAddOpen(true)}
             className="cursor-pointer  w-[224px]"
           >
-            {t(`incomeModal.title.create.${'expense'}`)}
+            {t(`incomeModal.title.create.${'EXPENSE'}`)}
             <Plus />
           </Button>
         </div>
@@ -137,16 +81,16 @@ function Expense() {
 
       {isAddOpen && (
         <TransactionModal
-          type="expense"
+          type="EXPENSE"
           mode="create"
           onClose={() => setIsAddOpen(false)}
         />
       )}
-      <div className="w-full h-auto rounded-[16px] p-6 bg-secondary flex flex-col gap-7">
-        <TransactionFilters type="expense" form={form} />
+      <FiltersWrapper>
+        <TransactionFilters type="EXPENSE" form={form} />
         <div className="flex justify-between items-center">
           <span className="dark:text-[#BFD9D2]">
-            {t('incomeModal.filters.total.expense')}
+            {t('incomeModal.filters.total.EXPENSE')}
           </span>
           <div
             className={cn(
@@ -157,8 +101,8 @@ function Expense() {
             <span>{CURRENCY_SIGN}</span>
           </div>
         </div>
-      </div>
-      <VirtualList data={data} type="expense" />
+      </FiltersWrapper>
+      <VirtualList type="EXPENSE" />
     </AppLayout>
   );
 }

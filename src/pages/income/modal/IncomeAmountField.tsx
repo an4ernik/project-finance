@@ -17,7 +17,7 @@ export const IncomeAmountField = <T extends FieldValues>({
   register, 
   name,
   error,
-  type = 'income'
+  type = 'INCOME'
 }: Props<T>) => {
   const {t} = useTranslation();
 

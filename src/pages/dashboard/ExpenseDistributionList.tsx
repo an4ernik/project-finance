@@ -16,15 +16,17 @@ const ExpenseDistributionList = ({
   expenseDistributionData,
 }: ExpenseDistributionListProps) => {
   return (
-    <ul className="flex w-full md:max-w-[300px] max-h-[300px] p-1 overflow-y-auto custom-scrollbar flex-col gap-2 flex-1">
+    <ul className="flex w-full md:max-w-[320px] max-h-[300px] p-1 overflow-y-auto custom-scrollbar flex-col gap-2 flex-1">
       {expenseDistributionData.map(item => (
         <li
           key={item.name}
-          className="flex w-full  items-center justify-between bg-[#FAFAFA] dark:bg-[#122421] p-1.5 sm:p-3 rounded-lg dark:border dark:border-[#1c3f35]"
+          className="flex w-full items-center justify-between bg-[#FAFAFA] dark:bg-[#122421] p-1.5 sm:p-2 rounded-lg dark:border dark:border-[#1c3f35]"
         >
           <div className="flex items-center gap-2">
-            <span className="text-[12px] text-[#3A4A48] dark:text-[#7F9E97] w-7">
-              {item.percentage}%
+            <span className="text-[12px] text-[#3A4A48] dark:text-[#7F9E97] w-10">
+              {item?.value !== 0.01
+                ? item.percentage
+                : '0'} % 
             </span>
             <div
               className="size-4 rounded-sm"
@@ -34,8 +36,8 @@ const ExpenseDistributionList = ({
               {item.name}
             </span>
           </div>
-          <span className="text-[12px] text-[#3A4A48] dark:text-[#BFD9D2] font-medium last:text-[#6F7E7C]">
-            {formattedAmount(item.value)} {CURRENCY_SIGN}
+          <span className="text-[14px] text-[#3A4A48] dark:text-[#BFD9D2] font-medium last:text-[#6F7E7C]">
+            {item.value === 0.01 ? '0' : formattedAmount(item.value)} {CURRENCY_SIGN}
           </span>
         </li>
       ))}
