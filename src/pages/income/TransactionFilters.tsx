@@ -31,13 +31,15 @@ const dropdownClass = cn(
 
 import {Input} from '@/components/ui/input';
 import type {UseFormReturn} from 'react-hook-form';
-import {TRANSACTION_CATEGORIES} from '@/helpers/helpers';
 import {
   ALL_CATEGORIES_VALUE,
   type Period,
   type TransactionFiltersFormValues,
   type TransactionType,
 } from '@/types/types';
+import {useGetCategories} from '@/shared/api/generated/category-management/category-management';
+import type {CategoryResponseDTO} from '@/shared/api/models';
+import {ICONS_BY_ID} from './IconPicker';
 
 type PeriodOption = {
   val: Period;
@@ -58,31 +60,51 @@ type Props = {
   type?: TransactionType;
 };
 
-const TransactionFilters = ({form, type = 'income'}: Props) => {
+const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
+  const {data: responseCategories} = useGetCategories();
+  const categoryItems = Array.isArray(responseCategories)
+    ? responseCategories
+    : [];
+
+  const categories = categoryItems.filter(
+    (
+      category,
+    ): category is CategoryResponseDTO & {name: string; icon: string} =>
+      category.name !== undefined &&
+      category.icon !== undefined &&
+      category.type === type,
+  );
+
   const {control, watch, register} = form;
   const {t} = useTranslation();
   const [periodOpen, setPeriodOpen] = useState(false);
   const [categoryOpen, setCategoryOpen] = useState(false);
-  const currentCategories = TRANSACTION_CATEGORIES[type];
   const {period, fromDate, toDate, category = [ALL_CATEGORIES_VALUE]} = watch();
 
+  console.log('category', categories);
+
+  const selectedCategories = categories?.filter(cat =>
+    category.includes(cat.name),
+  );
+  
   const selectedCategoriesLabel = category.includes(ALL_CATEGORIES_VALUE)
     ? t(`incomeModal.filters.category.${ALL_CATEGORIES_VALUE}`)
-    : category
-        .map(item => t(`incomeModal.filters.category.${item}`))
-        .join(', ');
+    : selectedCategories.map(cat => cat.name).join(', ') || '';
 
   const selectedPeriod =
     PERIOD_OPTIONS.find(item => item.val === period) ?? PERIOD_OPTIONS[0];
 
   const SelectedPeriodIcon = selectedPeriod.icon;
+
   return (
     <div className="w-full bg-secondary flex-wrap flex flex-col sm:flex-row  gap-7 dark:border-b dark:border-[#434e4b]">
+      {/* Period filter */}
       <div className="flex flex-col gap-2 w-full lg:max-w-[240px] md:flex-1 md:min-w-[200px]">
         <h2>{t('incomeModal.filters.period.label')}</h2>
         <Popover open={periodOpen} onOpenChange={setPeriodOpen}>
           <PopoverTrigger asChild>
             <Button
+              disabled={categories?.length === 0}
               variant="tab"
               className={cn(
                 'flex h-10 w-full   text-[#6F7E7C] dark:text-[#A9C1BB] items-center justify-between px-4 truncate',
@@ -271,6 +293,7 @@ const TransactionFilters = ({form, type = 'income'}: Props) => {
         <Popover open={categoryOpen} onOpenChange={setCategoryOpen}>
           <PopoverTrigger asChild>
             <Button
+              disabled={categories?.length === 0}
               variant="tab"
               type="button"
               className={cn(
@@ -290,7 +313,7 @@ const TransactionFilters = ({form, type = 'income'}: Props) => {
           </PopoverTrigger>
 
           <PopoverContent
-            className="max-w-[240px] p-2 bg-[#EEF3F2] dark:bg-[#142624]"
+            className="max-w-[240px] rounded-[12px] py-3 px-3 bg-[#EEF3F2] dark:bg-[#142624]"
             align="start"
             sideOffset={8}
           >
@@ -299,14 +322,15 @@ const TransactionFilters = ({form, type = 'income'}: Props) => {
               name="category"
               render={({field}) => (
                 <FieldGroup className="gap-2">
-                  {currentCategories.map(item => {
+                  {categories?.map(item => {
                     const selectedValues = field.value ?? [
                       ALL_CATEGORIES_VALUE,
                     ];
-                    const isChecked = selectedValues.includes(item.val);
+                    const isChecked = selectedValues.includes(item.name);
+                    const Icon = ICONS_BY_ID[item.icon];
 
                     const toggleCategory = (checked: boolean) => {
-                      if (item.val === ALL_CATEGORIES_VALUE) {
+                      if (item.name === ALL_CATEGORIES_VALUE) {
                         field.onChange(
                           checked ? [ALL_CATEGORIES_VALUE] : selectedValues,
                         );
@@ -318,9 +342,9 @@ const TransactionFilters = ({form, type = 'income'}: Props) => {
                             ...selectedValues.filter(
                               value => value !== ALL_CATEGORIES_VALUE,
                             ),
-                            item.val,
+                            item.name,
                           ]
-                        : selectedValues.filter(value => value !== item.val);
+                        : selectedValues.filter(value => value !== item.name);
 
                       field.onChange(
                         nextValues.length ? nextValues : [ALL_CATEGORIES_VALUE],
@@ -329,10 +353,10 @@ const TransactionFilters = ({form, type = 'income'}: Props) => {
 
                     return (
                       <Field
-                        key={item.val}
+                        key={item.name}
                         orientation="horizontal"
                         className={cn(
-                          'flex items-center gap-3 rounded-[12px] px-4 py-2 cursor-pointer transition-all',
+                          'flex items-center gap-3 rounded-[12px] px-4 py-2 cursor-pointer transition-all truncate',
                           isChecked
                             ? 'border dark:border-[#4B6560] dark:bg-[linear-gradient(180deg,rgba(27,52,47,0.95)_0%,rgba(19,37,34,0.98)_100%)] text-[#EAF6F3] shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_0_0_1px_rgba(125,164,154,0.08),0_10px_24px_rgba(0,0,0,0.2)]'
                             : 'border border-transparent text-[#7F9E97] hover:bg-linear-to-b hover: hover:bg-[#0B151403] hover:via-[#315F551A] hover:shadow-xs hover:to-[#90D0B60D] dark:hover:bg-[#17302c]',
@@ -340,7 +364,7 @@ const TransactionFilters = ({form, type = 'income'}: Props) => {
                         onClick={() => toggleCategory(!isChecked)}
                       >
                         <Checkbox
-                          id={`cat-${item.val}`}
+                          id={`cat-${item.name}`}
                           checked={isChecked}
                           onClick={e => e.stopPropagation()}
                           onCheckedChange={checked =>
@@ -349,9 +373,11 @@ const TransactionFilters = ({form, type = 'income'}: Props) => {
                           className="size-4 bg-white! rounded-sm data-[state=checked]:bg-[#171717]! dark:border-none!"
                         />
 
-                        <FieldLabel className="pointer-events-none flex flex-1 items-center gap-2 text-sm font-normal">
-                          <item.icon className="size-5 text-[#6F7E7C] dark:text-[#7F9E97]" />
-                          {t(`incomeModal.filters.category.${item.val}`)}
+                        <FieldLabel className="pointer-events-none flex flex-1 items-center gap-2 text-sm font-normal truncate">
+                          {Icon ? (
+                            <Icon className="size-5 text-[#6F7E7C] dark:text-[#7F9E97]" />
+                          ) : null}
+                          {item.name}
                         </FieldLabel>
                       </Field>
                     );
@@ -367,6 +393,7 @@ const TransactionFilters = ({form, type = 'income'}: Props) => {
       <div className="flex flex-col gap-2 w-full lg:max-w-[320px] md:flex-1 md:min-w-[200px]">
         <h2>{t('incomeModal.filters.search.label')}</h2>
         <Input
+          disabled={categories?.length === 0}
           className="text-[#6F7E7C] dark:text-[#A9C1BB] placeholder:text-[#6F7E7C] dark:placeholder:text-[#A9C1BB]"
           icon={
             <Search className="size-5 text-[#0B1514] dark:text-[#EAF6F3]" />

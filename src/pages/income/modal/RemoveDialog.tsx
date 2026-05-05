@@ -3,12 +3,12 @@ import {TriangleAlert} from 'lucide-react';
 import {cn} from '@/lib/utils';
 import {Button} from '@/components/ui/button';
 import {useTranslation} from 'react-i18next';
-import {formattedAmount, getIncomeCategoryById} from '@/helpers/helpers';
+import {formattedAmount } from '@/helpers/helpers';
 import type {ModalProps} from '@/types/types';
 import {CURRENCY_SIGN} from '@/constances/constances';
 
 const DIALOG_THEMES = {
-  income: {
+  INCOME: {
     panel: 'bg-[#EEF3F2] dark:bg-[#142624]',
     iconContainer:
       'flex items-center justify-center bg-linear-to-b from-[#C7000033] to-[#C700004D] dark:bg-linear-to-b dark:from-[#C7000033] dark:to-[#C700004D] border border-gray-200 dark:border-none rounded-[8px]',
@@ -21,7 +21,7 @@ const DIALOG_THEMES = {
     confirmBtn:
       'bg-[#CE0000] dark:bg-linear-to-t dark:from-[#C7000033] dark:to-[#C700004D] text-white hover:brightness-130',
   },
-  expense: {
+  EXPENSE: {
     panel: 'bg-[#EEF3F2] dark:bg-[#142624]',
     iconContainer:
       'flex items-center justify-center bg-linear-to-b from-[#C7000033] to-[#C700004D] dark:bg-linear-to-b dark:from-[#C7000033] dark:to-[#C700004D] rounded-[5px]',
@@ -41,12 +41,12 @@ const RemoveDialog = ({
   onClose,
   onConfirm,
   item,
-  type = 'income',
+  type = 'INCOME',
 }: ModalProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const {t} = useTranslation();
   const theme = DIALOG_THEMES[type];
-  const category = getIncomeCategoryById(type, item?.categoryId);
+  const category = item?.category  
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -109,7 +109,7 @@ const RemoveDialog = ({
               )}
             >
               {category
-                ? t(`incomeModal.categories.${category.val}`)
+                ?  category.name 
                 : item?.description}
             </span>
             <span className={cn('text-xl font-bold', theme.previewAmount)}>

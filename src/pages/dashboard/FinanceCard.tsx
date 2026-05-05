@@ -1,29 +1,20 @@
-import { formattedAmount } from '@/helpers/helpers';
+import {formattedAmount} from '@/helpers/helpers';
 import {cn} from '@/lib/utils';
 import {CURRENCY_SIGN} from '@/constances/constances';
 
-import type {LucideIcon} from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import {TrendingUp, TrendingDown, Wallet} from 'lucide-react';
+import {useTranslation} from 'react-i18next'; 
 
-interface FinanceCardProps {
-  title?: string;
-  value: string;
-  subtitle: string;
-  Icon: LucideIcon;
-  variant?: 'green' | 'yellow' | 'teal';
-  type: 'income' | 'expense' | 'balance';
+interface CardProps {
+  type: 'INCOME' | 'EXPENSE' | 'BALANCE';
+  total: number; 
 }
 
-export function FinanceCard({
-  value,
-  subtitle,
-  Icon,
-  variant = 'green',
-  type
+export function FinanceCard({type, total}: CardProps) {
+  const {t} = useTranslation();
 
-}: FinanceCardProps) {
-  
-  const {t} = useTranslation()
+  const variant =
+    type === 'INCOME' ? 'green' : type === 'EXPENSE' ? 'yellow' : 'teal';
 
   const variants = {
     green: {
@@ -61,36 +52,38 @@ export function FinanceCard({
     },
   } as const;
 
-  const v = variants[variant];
+  const theme = variants[variant];
+  const Icon =
+    type === 'INCOME' ? TrendingUp : type === 'EXPENSE' ? TrendingDown : Wallet;
 
   return (
     <div
       className={cn(
         'p-4 rounded-xl border flex flex-col justify-between transition-all duration-300',
-        'bg-gradient-to-b h-full w-full', // Take full height/width of grid cell
-        v.bg,
-        v.border, 
+        'bg-gradient-to-b h-full w-full',
+        theme.bg,
+        theme.border,
       )}
     >
       <div className="flex justify-between items-start mb-4 flex-wrap">
-        <span className="text-base font-medium pr-2">{t(`dashboard.labels.${type}`)}</span>
+        <span className="text-base font-medium pr-2">
+          {t(`dashboard.labels.${type}`)}
+        </span>
 
-        <div className={cn('p-2 rounded-lg shrink-0', v.iconBg)}>
-          <Icon className={cn(v.iconColor, 'size-6 sm:size-7')} />
+        <div className={cn('p-2 rounded-lg shrink-0', theme.iconBg)}>
+          <Icon className={cn(theme.iconColor, 'size-6 sm:size-7')} />
         </div>
       </div>
 
       <div>
-        <div className={cn('text-2xl font-bold tracking-tight', v.amountColor)}>
-          {value ? formattedAmount(value) : '0'}{' '}{CURRENCY_SIGN}
+        <div
+          className={cn('text-2xl font-bold tracking-tight break-words', theme.amountColor)}
+        >
+          {total ? formattedAmount(total) : '0'} {CURRENCY_SIGN}
         </div>
 
-        <div className={cn('text-xs mt-1 font-medium', v.subTitleColor)}>
-          {type === 'balance' ? (
-            <span className="opacity-0">placeholder</span>
-          ) : (
-            subtitle
-          )}
+        <div className={cn('text-xs mt-1 font-medium', theme.subTitleColor)}>
+            <span>{t(`dashboard.thisMonth`)}</span>
         </div>
       </div>
     </div>

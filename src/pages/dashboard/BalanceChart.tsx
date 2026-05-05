@@ -13,33 +13,33 @@ import {CURRENCY_SIGN, DAY_KEYS, MONTH_KEYS} from '@/constances/constances';
 import {useMemo} from 'react';
 import type {Period} from '@/types/types';
 import {cn} from '@/lib/utils';
-import {getPeriodRange} from '@/helpers/helpers';
-import {isWithinInterval} from 'date-fns';
+import {formattedAmount, getPeriodRange} from '@/helpers/helpers';
+import type {TransactionResponseDTO} from '@/shared/api/models';
+import {useGetTransactions} from '@/shared/api/generated/transaction-management/transaction-management';
+import {endOfDay} from 'date-fns';
+
+const calculateYAxisWidth = (maxValue: number) => {
+  // 1. Format the max value exactly how it will appear in the YAxis
+  // Example: 1234567 -> "1234.6K"
+  const formatted =
+    maxValue >= 1000 ? `${(maxValue / 1000).toFixed(1)}K` : maxValue.toString();
+
+  // 2. Estimate width: Base padding (20px) + ~9px per character (at 14px font size)
+  const estimatedWidth = 10 + formatted.length * 9;
+
+  // 3. Set a reasonable floor and ceiling
+  return Math.min(Math.max(estimatedWidth, 40), 80);
+};
 
 const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
   const {t} = useTranslation();
+  const {data} = useGetTransactions();
 
-  const fullYearBalanceData = useMemo(() => {
-    const data = [];
-    const start = new Date(2026, 0, 1);
-    const end = new Date(2026, 11, 31);
-    let currentBalance = 5000;
-
-    for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-      const change = Math.floor(Math.random() * 2000) - 800;
-      currentBalance = Math.max(1000, Math.min(15000, currentBalance + change));
-
-      data.push({
-        name: 'balance',
-        day: d.toLocaleDateString('uk-UA', {weekday: 'short'}),
-        date: d.toLocaleDateString('uk-UA', {day: '2-digit', month: '2-digit'}),
-        month: d.toLocaleDateString('uk-UA', {month: 'short'}),
-        value: currentBalance,
-        fullDate: new Date(d),
-      });
-    }
-    return data;
-  }, []);
+  const transactions = useMemo(() => {
+    return (
+      Array.isArray(data) ? data : (data?.data ?? [])
+    ) as TransactionResponseDTO[];
+  }, [data]);
 
   const chartData = useMemo(() => {
     const range = getPeriodRange({
@@ -47,112 +47,98 @@ const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
       category: [],
       search: '',
     });
+
     if (!range) return [];
 
-    const today = new Date();
-    today.setHours(23, 59, 59, 999);
+    const today = endOfDay(new Date());
 
-    // --- WEEK (7 days) ---
+    const getBalanceUntil = (date: Date) => {
+      const endDate = endOfDay(date);
+
+      return transactions.reduce((acc, t) => {
+        if (!t.date) return acc;
+
+        const transactionDate = new Date(t.date);
+
+        if (transactionDate > endDate) return acc;
+
+        const amount = Number(t.amount ?? 0);
+
+        return t.category?.type === 'INCOME' ? acc + amount : acc - amount;
+      }, 0);
+    };
+
     if (activePeriod === 'week') {
-      const days = [];
-      for (let i = 0; i < 7; i++) {
+      return Array.from({length: 7}, (_, i) => {
         const d = new Date(range.from);
         d.setDate(d.getDate() + i);
 
-        const found = fullYearBalanceData.find(
-          item =>
-            item.fullDate.getDate() === d.getDate() &&
-            item.fullDate.getMonth() === d.getMonth() &&
-            item.fullDate.getFullYear() === d.getFullYear(),
-        );
-
-        days.push({
-          day: DAY_KEYS[d?.getDay()],
-          value: d <= today ? (found ? found.value : null) : null,
+        return {
+          day: DAY_KEYS[d.getDay()],
+          amount: d <= today ? getBalanceUntil(d) : null,
           fullDate: d.toLocaleDateString('ua-UA', {
             day: '2-digit',
             month: '2-digit',
           }),
-        });
-      }
-      return days;
+        };
+      });
     }
 
-    // --- MONTH (all days in that month) ---
     if (activePeriod === 'month') {
       const daysInMonth = [];
-      const start = new Date(range.from);
-      const end = new Date(range.to);
 
-      for (let d = new Date(start); d <= end; d.setDate(d.getDate() + 1)) {
-        const currentDate = new Date(d);
-
-        const found = fullYearBalanceData.find(
-          item =>
-            item.fullDate.getDate() === currentDate.getDate() &&
-            item.fullDate.getMonth() === currentDate.getMonth() &&
-            item.fullDate.getFullYear() === currentDate.getFullYear(),
-        );
+      for (
+        let d = new Date(range.from);
+        d <= range.to;
+        d.setDate(d.getDate() + 1)
+      ) {
+        const currentD = new Date(d);
 
         daysInMonth.push({
-          day: DAY_KEYS[currentDate.getDay()],
-          dayNumber: currentDate.getDate(),
-          value: currentDate <= today ? (found ? found.value : null) : null,
-          fullDate: d.toLocaleDateString('ua-UA', {
+          day: DAY_KEYS[currentD.getDay()],
+          amount: currentD <= today ? getBalanceUntil(currentD) : null,
+          fullDate: currentD.toLocaleDateString('ua-UA', {
             day: '2-digit',
             month: '2-digit',
           }),
         });
       }
+
       return daysInMonth;
     }
 
-    // --- YEAR (12 months, aggregated values) ---
     if (activePeriod === 'year') {
-      const months = [];
-      const year = range.from.getFullYear();
+      return Array.from({length: 12}, (_, m) => {
+        const monthStart = new Date(range.from.getFullYear(), m, 1);
+        const monthEnd = new Date(range.from.getFullYear(), m + 1, 0);
 
-      for (let month = 0; month < 12; month++) {
-        const monthData = fullYearBalanceData.filter(
-          item =>
-            item.fullDate.getFullYear() === year &&
-            item.fullDate.getMonth() === month &&
-            item.fullDate <= today,
-        );
+        if (monthStart > today) {
+          return {
+            day: MONTH_KEYS[m],
+            amount: null,
+          };
+        }
 
-        const totalValue = monthData.reduce((sum, item) => sum + item.value, 0);
-        const avgValue =
-          monthData.length > 0
-            ? Math.round(totalValue / monthData.length)
-            : null;
+        const dateForBalance = monthEnd > today ? today : monthEnd;
 
-        months.push({
-          day: MONTH_KEYS[month],
-          value: monthData.length > 0 ? avgValue : null,
-        });
-      }
-      return months;
+        return {
+          day: MONTH_KEYS[m],
+          amount: getBalanceUntil(dateForBalance),
+        };
+      });
     }
 
-    // Default fallback
-    return fullYearBalanceData.filter(
-      item =>
-        isWithinInterval(item.fullDate, {start: range.from, end: range.to}) &&
-        item.fullDate <= today,
-    );
-  }, [activePeriod, fullYearBalanceData]);
+    return [];
+  }, [activePeriod, transactions]);
 
- 
+  const definedDaysData = chartData.filter(d => d.amount !== null);
 
-  // Summary Stats based on filtered data
-  const definedDaysData = chartData.filter(d => d.value !== null);
-  const currentBalance =
-    definedDaysData[definedDaysData.length - 1]?.value || 0;
+  const currentBalance = definedDaysData.at(-1)?.amount ?? 0;
 
   const avgBalance =
     definedDaysData.length > 0
       ? Math.round(
-          definedDaysData.reduce((a, b) => a + (b?.value || 0), 0) /
+          definedDaysData.reduce((sum, item) => sum + item.amount, 0) /
             definedDaysData.length,
         )
       : 0;
@@ -166,7 +152,7 @@ const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
 
     // Filter out null values and then map to get only numbers
     const validValues = chartData
-      .map(d => d.value)
+      .map(d => d.amount)
       .filter(
         (value): value is number => value !== null && value !== undefined,
       );
@@ -175,10 +161,9 @@ const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
 
     const actualMax = Math.max(...validValues);
 
-    return Math.max(5000, Math.floor(actualMax));
+    return Math.max(1000, Math.floor(actualMax));
   }, [chartData]);
 
-  // Generate dynamic ticks based on the domain
   const chartTicks = useMemo(() => {
     const numberOfTicks = 5;
     const step = chartDomain / numberOfTicks;
@@ -187,10 +172,18 @@ const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
     );
   }, [chartDomain]);
 
+  const dynamicYAxisWidth = useMemo(() => {
+    return calculateYAxisWidth(chartDomain);
+  }, [chartDomain]);
+
+  console.log(chartData, 'chartData');
+  const hasData =
+    chartData.length > 0 && chartData.some(item => item?.amount ?? 0 > 0);
+
   return (
     <>
       <div className="w-full h-[280px] relative">
-        {chartData.length > 0 ? (
+        {hasData ? (
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={chartData}
@@ -238,12 +231,14 @@ const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
                 domain={[0, chartDomain]}
                 // 4. Formatter for the 'k' look
                 tickFormatter={value =>
-                  value === 0 ? '0' : `${value / 1000}K`
+                  value === 0
+                    ? '0'
+                    : `${formattedAmount((value / 1000).toFixed(1))}K`
                 }
                 axisLine={false}
                 tickLine={false}
                 tick={{fill: '#7F9E97', fontSize: 14}}
-                width={45}
+                width={dynamicYAxisWidth}
               />
 
               <Tooltip
@@ -252,9 +247,9 @@ const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
               />
 
               <Line
-                connectNulls={false}
+                connectNulls={true}
                 type="linear"
-                dataKey="value"
+                dataKey="amount"
                 stroke="#00AA85"
                 strokeWidth={2}
                 dot={
@@ -273,13 +268,12 @@ const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
                   stroke: '#0B1514',
                   strokeWidth: 2,
                 }}
-                style={{filter: 'url(#lineGlow)'}} // Applies neon effect
               />
             </LineChart>
           </ResponsiveContainer>
         ) : (
           <div className="h-[280px] flex items-center justify-center text-[#7F9E97]">
-            {t('dashboard.noExpenses')}
+            {t('dashboard.noBalance')}
           </div>
         )}
       </div>
@@ -290,7 +284,7 @@ const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
             {t('dashboard.dynamicsBalance.currentBalance')}
           </span>
           <span className="text-[#3A4A48] dark:text-[#7F9E97] font-medium">
-            {currentBalance} {CURRENCY_SIGN}
+            {formattedAmount(currentBalance)} {CURRENCY_SIGN}
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -298,7 +292,7 @@ const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
             {t('dashboard.dynamicsBalance.middleBalance')}
           </span>
           <span className="text-[#3A4A48] dark:text-[#7F9E97] font-medium">
-            {avgBalance} {CURRENCY_SIGN}
+            {formattedAmount(avgBalance)} {CURRENCY_SIGN}
           </span>
         </div>
         <div className="flex items-center gap-2">
@@ -306,7 +300,7 @@ const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
             {t('dashboard.dynamicsBalance.difference')}
           </span>
           <span className={cn('font-bold', diffColor)}>
-            {diffSign} {diff} {CURRENCY_SIGN}
+            {diffSign} {formattedAmount(diff)} {CURRENCY_SIGN}
           </span>
         </div>
       </div>

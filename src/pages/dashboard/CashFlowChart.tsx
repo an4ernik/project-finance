@@ -44,41 +44,6 @@ const chartTheme = {
   },
 };
 
-const now = new Date();
-const currentYear = now.getFullYear();
-const currentMonth = now.getMonth();
-
-const generateDatesFromJanToNow = () => {
-  const dates = [];
-  for (let month = 0; month <= currentMonth; month++) {
-    const daysInMonth = new Date(currentYear, month + 1, 0).getDate();
-    for (let day = 1; day <= daysInMonth; day++) {
-      dates.push(new Date(currentYear, month, day));
-    }
-  }
-  return dates;
-};
-
-export const incomeData = [
-  {
-    items: generateDatesFromJanToNow().map(date => ({
-      title: 'income',
-      amount: (10000 + Math.random() * 4000).toFixed(2),
-      date: date,
-    })),
-  },
-];
-
-export const expenseData = [
-  {
-    items: generateDatesFromJanToNow().map(date => ({
-      title: 'expense',
-      amount: (700 + Math.random() * 4000).toFixed(2),
-      date: date,
-    })),
-  },
-];
-
 import {isWithinInterval} from 'date-fns';
 import {formattedAmount, getPeriodRange} from '@/helpers/helpers';
 import {useMemo, useState} from 'react';
@@ -94,7 +59,12 @@ export type Filters = {
   category: string[];
   search: string;
 };
-const CashFlowChart = () => {
+
+import type {Transaction} from '@/types/types';
+interface Props {
+  data: Transaction[];
+}
+const CashFlowChart = ({data = []}: Props) => {
   const [activePeriod, setActivePeriod] = useState<Period>('week');
   const isMobile = useMediaQuery('(max-width: 768px)');
   const {t} = useTranslation();
@@ -106,42 +76,53 @@ const CashFlowChart = () => {
       category: [],
       search: '',
     });
-    if (!range) return {income: 0, expense: 0};
+
+    if (!range) return {income: 0, expense: 0, max: 0};
 
     const today = new Date();
     today.setHours(23, 59, 59, 999);
-    const sumData = (data: any[]) =>
-      data
-        .flatMap(g => g.items)
-        .filter(i =>
-          isWithinInterval(new Date(i.date), {
-            start: range.from,
-            end: today,
-          }),
-        )
-        .reduce((acc, curr) => acc + parseFloat(curr.amount), 0);
+
+    let income = 0;
+    let expense = 0;
+    let max = 0;
+
+    data.forEach(item => {
+      const date = new Date(item.date);
+
+      if (
+        isWithinInterval(date, {
+          start: range.from,
+          end: today,
+        })
+      ) {
+        const amount = Number(item.amount);
+
+        if (item.category.type === 'INCOME') income += amount;
+        else expense += amount;
+      }
+      max = Math.max(income, expense);
+    });
 
     return {
-      income: sumData(incomeData),
-      expense: sumData(expenseData),
+      chartData: [
+        {name: 'INCOME', type: 'INCOME', amount: income},
+        {name: 'EXPENSE', type: 'EXPENSE', amount: expense},
+      ],
+      netFlow: income - expense,
+      max,
     };
-  }, [activePeriod]);
-
-  const chartData = [
-    {name: 'income', value: totals?.income || 0, type: 'income'},
-    {name: 'expense', value: totals?.expense || 0, type: 'expense'},
-  ];
-
-  const netFlow = totals?.income - totals?.expense || 0;
-  const activeTheme = chartTheme[theme] || chartTheme.dark;
-
-  const dataMax = Math.max(...chartData.map(d => d.value));
-  const chartDomain = dataMax > 0 ? dataMax : 0;
+  }, [activePeriod, data]);
 
   const generateTicks = (max: number, count: number = 5) => {
+    if (max === 0) return [0];
     const step = max / (count - 1);
     return Array.from({length: count}, (_, i) => Math.round(step * i));
   };
+
+  const activeTheme = chartTheme[theme] || chartTheme.dark;
+  const chartDomain = totals.max;
+  const netFlow = totals.netFlow;
+  const chartData = totals.chartData;
 
   return (
     <ChartWrapper>
@@ -153,15 +134,15 @@ const CashFlowChart = () => {
         />
       </div>
 
-      {chartData.length > 0 ? (
-        <div className="w-full h-[180px] pb-[5px]">
+      {chartDomain ? (
+        <div className="w-full pb-[5px] min-h-[180px] pb-[5px]">
           <ResponsiveContainer>
             <BarChart
               layout={'vertical'}
               data={chartData}
               margin={{
                 top: isMobile ? 20 : 5,
-                right: 30,
+                right: 0,
                 left: isMobile ? 10 : 5,
                 bottom: 5,
               }}
@@ -224,9 +205,11 @@ const CashFlowChart = () => {
                 tick={{fill: activeTheme.tick, fontSize: isMobile ? 12 : 14}}
                 tickFormatter={value => {
                   if (value >= 1000) {
-                    return `${(value / 1000).toFixed(1)}K`;
+                    const kiloValue = value.toFixed(1);
+                    return `${formattedAmount(kiloValue)}K`;
                   }
-                  return value;
+
+                  return formattedAmount(value);
                 }}
                 domain={[0, chartDomain]}
                 ticks={generateTicks(chartDomain, 5)}
@@ -241,13 +224,11 @@ const CashFlowChart = () => {
                 axisLine={false}
                 tickLine={false}
                 tick={{fill: activeTheme.tick, fontSize: 14}}
-                tickFormatter={value =>
-                  t(`dashboard.labels.${value.toLowerCase()}`)
-                }
+                tickFormatter={value => t(`dashboard.labels.${value}`)}
               />
 
               <Bar
-                dataKey="value"
+                dataKey="amount"
                 radius={[4, 4, 4, 4]}
                 barSize={isMobile ? 30 : 45}
                 style={{filter: 'url(#blackShadow)'}}
@@ -268,20 +249,18 @@ const CashFlowChart = () => {
                           fontWeight="500"
                           textAnchor="start"
                         >
-                          {t(
-                            `dashboard.labels.${value?.toString().toLowerCase()}`,
-                          )}
+                          {t(`dashboard.labels.${value}`)}
                         </text>
                       );
                     }}
                   />
                 )}
 
-                {chartData.map((entry, index) => (
+                {chartData?.map((entry, index) => (
                   <Cell
                     key={`cell-${index}`}
                     fill={
-                      entry.type === 'income'
+                      entry.type === 'INCOME'
                         ? 'url(#incomeGradient)'
                         : 'url(#expenseGradient)'
                     }
@@ -293,7 +272,7 @@ const CashFlowChart = () => {
         </div>
       ) : (
         <div className="h-[180px] flex items-center justify-center text-[#7F9E97]">
-          {t('dashboard.noExpenses')}
+          {t('dashboard.noExpensesCashFlow')}
         </div>
       )}
 
@@ -314,7 +293,7 @@ const CashFlowChart = () => {
             'text-[#00AA85] dark:text-[#00AA85] font-bold text-[14px] sm:text-[20px]',
           )}
         >
-          {formattedAmount(netFlow)} {CURRENCY_SIGN}
+          {netFlow && formattedAmount(netFlow)} {CURRENCY_SIGN}
         </span>
       </div>
     </ChartWrapper>

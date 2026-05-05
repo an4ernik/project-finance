@@ -29,7 +29,7 @@ export const IncomeDateField = ({
   error,
   onChange,
   disabledDate,
-  type = 'income',
+  type = 'INCOME',
 }: Props) => {
   const {t} = useTranslation();
 

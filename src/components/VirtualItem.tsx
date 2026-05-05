@@ -3,11 +3,12 @@ import {format} from 'date-fns';
 import {uk} from 'date-fns/locale';
 import {useTranslation} from 'react-i18next';
 import {cn} from '@/lib/utils';
-import {formattedAmount, getIncomeCategoryById} from '@/helpers/helpers';
+import {formattedAmount} from '@/helpers/helpers';
 import type {VirtualItemProps} from '@/types/types';
 import  {CURRENCY_SIGN} from '@/constances/constances';
+import { ICONS_BY_ID } from '@/pages/income/IconPicker';
 const THEMES = {
-  income: {
+  INCOME: {
     container:
       'hover:bg-[#015E4680] dark:hover:bg-none dark:hover:bg-linear-to-b dark:hover:from-[#059979] dark:hover:to-[#02624D99]',
     bgIcon:
@@ -29,7 +30,7 @@ const THEMES = {
     amountPrefix: '+',
   },
 
-  expense: {
+  EXPENSE: {
     container:
       'hover:bg-[#015E4680] dark:hover:bg-none dark:hover:bg-linear-to-b dark:hover:from-[#AA7D00] dark:hover:to-[#AA7D0033]',
 
@@ -55,14 +56,16 @@ const THEMES = {
 
 export const VirtualItem = ({
   item,
-  type = 'income',
+  type = 'INCOME',
   onEdit,
   onDelete,
 }: VirtualItemProps) => {
   const {t} = useTranslation();
   const theme = THEMES[type];
-  const category = getIncomeCategoryById(type, item.categoryId);
-  const itemAmount = formattedAmount(item.amount);
+  const dbItem = item.category;
+  const category = item.type ?? dbItem.type ?? type;
+  const itemAmount = formattedAmount(item.amount); 
+  const Icon = ICONS_BY_ID[dbItem.icon];
 
   return (
     <div
@@ -79,7 +82,9 @@ export const VirtualItem = ({
           theme.bgIcon,
         )}
       >
-        <item.Icon className={cn('size-5 transition-colors', theme.textIcon)} />
+        {Icon ? (
+          <Icon className={cn('size-5 transition-colors', theme.textIcon)} />
+        ) : null}
       </div>
 
       <div className="relative flex items-center justify-between w-full flex-wrap gap-4">
@@ -91,7 +96,7 @@ export const VirtualItem = ({
             )}
           >
             {category
-              ? t(`incomeModal.filters.category.${category.val}`)
+              ? dbItem?.name
               : t('incomeModal.categories.categoryPlaceholder')}
 
             {item.isRepeat && item.isRepeat !== 'once' && (

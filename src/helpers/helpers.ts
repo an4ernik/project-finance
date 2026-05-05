@@ -1,19 +1,11 @@
 import {
     CalendarClock,
     CalendarDays,
-    Coffee,
-    Dog,
-    DollarSign,
-    Film,
     History,
-    MonitorCheck,
-    Percent,
-    ShoppingCart,
-    TrendingUp,
     type LucideIcon,
 } from 'lucide-react';
 
-import type { DateRange, Filters, PeriodOption, TransactionType } from '@/types/types';
+import type { DateRange, Filters, PeriodOption, TransactionType, TransactionUI } from '@/types/types';
 import {
     startOfDay,
     endOfDay,
@@ -23,6 +15,8 @@ import {
     endOfMonth,
     startOfYear,
     endOfYear,
+    isWithinInterval,
+    parseISO,
 } from 'date-fns';
 
 export const REPEAT_TYPES = ['once', 'yearly', 'monthly'];
@@ -33,8 +27,7 @@ export const PERIOD_OPTIONS: PeriodOption[] = [
     { val: 'year', Icon: CalendarClock },
 ];
 
-export const toTransactionDtoType = (type: TransactionType) =>
-    type.toUpperCase() as Uppercase<TransactionType>;
+export const toTransactionDtoType = (type: TransactionType) => type;
 
 
 // * format this: 15400 -> 15 400
@@ -90,60 +83,49 @@ export const getPeriodRange = (filters: Partial<Filters>): DateRange => {
             return null;
     }
 };
-
-
-export type RepeatType = 'this_only' | 'all_future';
-export interface IncomeFormData {
-    id: number;
-    amount: string | number;
-    categoryId: number;
-    date: Date;
-    description?: string;
-    isRepeat: string;
-    repeatType?: RepeatType;
-    files?: File[];
-    Icon: LucideIcon;
-
-}
-
-export const CATEGORY_MAP = (type: 'income' | 'expense') => Object.fromEntries(
-    TRANSACTION_CATEGORIES[type].map(c => [c.val, c.id]),
-);
+ 
 
 export const applyFilters = (
-    items: IncomeFormData[],
+    items: TransactionUI[],
     filters: Filters,
-    search: string,
+    search: string
 ) => {
-    let result = [...items];
+    let result = [...items]; 
 
+    // 🔍 SEARCH
     if (search) {
         const normalized = search.toLowerCase();
 
         result = result.filter(item =>
-            (item.description ?? '')
+            (item.description ?? "")
                 .toLowerCase()
                 .includes(normalized)
         );
     }
 
-    if (filters.category && !filters.category.includes('allCategories')) {
-        const selectedIds = filters.category.map(
-            val => CATEGORY_MAP('income')[val] ?? CATEGORY_MAP('expense')[val]
-        ).filter((id): id is number => id !== undefined);
-
-        result = result.filter(item => selectedIds.includes(item.categoryId));
+    // 🗂 CATEGORY FILTER
+    if (
+        filters.category &&
+        !filters.category.includes("allCategories")
+    ) {
+        result = result.filter(item =>
+            filters.category && filters.category.includes(String(item.category?.name))
+        );
     }
 
+    // 📅 DATE FILTER
     const range = getPeriodRange(filters);
 
     if (range?.from && range?.to) {
-        const { from, to } = range;
-
-        result = result.filter(
-            item => item.date >= from && item.date <= to,
-        );
+        result = result.filter(item => {
+            const date = typeof item.date === 'string' ? parseISO(item.date) : item.date;
+            return isWithinInterval(date, {
+                start: range.from,
+                end: range.to,
+            });
+        });
     }
+
     return result;
 };
 
@@ -153,30 +135,28 @@ export interface CategoryOption {
     icon: LucideIcon;
     id: number;
 }
-export const TRANSACTION_CATEGORIES: Record<TransactionType, CategoryOption[]> =
-{
-    income: [
-        { val: 'salary', icon: DollarSign, id: 1 },
-        { val: 'freelance', icon: MonitorCheck, id: 2 },
-        { val: 'investments', icon: Percent, id: 3 },
-        { val: 'cashback', icon: TrendingUp, id: 4 },
-    ],
-    expense: [
-        { val: 'coffee', icon: Coffee, id: 1 },
-        { val: 'products', icon: ShoppingCart, id: 2 },
-        { val: 'petFood', icon: Dog, id: 3 },
-        { val: 'subscriptions', icon: Film, id: 4 },
-    ],
-};
-
-export const getIncomeCategoryById = (type: 'expense' | 'income', id?: number | null) =>
-    TRANSACTION_CATEGORIES[type].find(category => category.id === id);
-
-
-// * get random color for getCategories in PieChart
+ 
 export const getColors = (length: number): string[] => {
-    return Array.from({ length }, (_, i) => {
-        const hue = (i * 137.5) % 360;
-        return `hsl(${hue}, 65%, 55%)`;
-    });
+  // 1. Define the starting colors exactly as seen in your image
+  const baseColors = [
+    "hsl(24, 95%, 53%)",  // Vibrant Orange
+    "hsl(45, 95%, 50%)",  // Golden Yellow
+    "hsl(85, 75%, 50%)",  // Lime Green
+    "hsl(190, 80%, 50%)", // Cyan/Light Blue
+    "hsl(262, 70%, 65%)", // Soft Purple
+    "hsl(150, 70%, 45%)", // Sea Green
+    "hsl(330, 80%, 60%)", // Pink/Magenta
+  ];
+
+  return Array.from({ length }, (_, i) => {
+    // 2. If the index is within our base colors, use them
+    if (i < baseColors.length) {
+      return baseColors[i];
+    }
+
+    // 3. For any extra categories, generate distinct HSL colors
+    // We offset the index so it doesn't repeat the same hues as above immediately
+    const hue = ((i - baseColors.length) * 137.5 + 200) % 360;
+    return `hsl(${hue}, 65%, 55%)`;
+  });
 };

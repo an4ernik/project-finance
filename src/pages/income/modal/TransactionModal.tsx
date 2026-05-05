@@ -23,6 +23,7 @@ import Spinner from '@/components/Spinner';
 import InfoDialog, {type RecurringUpdateScope} from './InfoDialog';
 import type {IncomeModalProps} from '@/types/types';
 import {toTransactionDtoType} from '@/helpers/helpers';
+import {format} from 'date-fns';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ACCEPTED_FILE_TYPES = [
@@ -40,7 +41,7 @@ const TransactionModal = ({
   mode = 'create',
   onClose,
   initialData,
-  type = 'income',
+  type = 'INCOME',
 }: IncomeModalProps) => {
   const {t} = useTranslation();
 
@@ -48,6 +49,7 @@ const TransactionModal = ({
     useCreateTransaction();
   const {mutateAsync: updateIncome, isPending: isUpdating} =
     useUpdateTransaction();
+
   // SCHEMA
   const modalSchema = useMemo(
     () =>
@@ -65,11 +67,15 @@ const TransactionModal = ({
           z
             .number({message: t(`incomeModal.errors.amountRequired.${type}`)})
             .min(0.01, t(`incomeModal.errors.amountLessThanZero.${type}`))
-            .max(1_000_000, t(`incomeModal.errors.amountMax.${type}`)),
+            .max(1_000_000_000, t(`incomeModal.errors.amountMax.${type}`)),
         ),
         categoryId: z.coerce
-          .number()
-          .min(1, t(`incomeModal.errors.categoryRequired.${type}`)),
+          .number({
+            message: t(`incomeModal.errors.categoryRequired.${type}`),
+          })
+          .refine(val => !isNaN(val) && val >= 1, {
+            message: t(`incomeModal.errors.categoryRequired.${type}`),
+          }),
         date: z
           .date()
           .refine(
@@ -109,7 +115,7 @@ const TransactionModal = ({
 
   const getDefaultValues = (): FormValues => ({
     amount: initialData?.amount !== undefined ? String(initialData.amount) : '',
-    categoryId: initialData?.categoryId,
+    categoryId: initialData?.categoryId ?? initialData?.category?.id,
     date: initialData?.date ? new Date(initialData.date) : new Date(),
     isRepeat: initialData?.isRepeat ?? 'once',
     description: initialData?.description ?? '',
@@ -161,12 +167,10 @@ const TransactionModal = ({
 
   const displayTitle = t(`incomeModal.title.${mode}.${type}`);
 
-
   const executeMutation = async (
     data: FormOutput,
     // updateScope?: 'this_only' | 'all_future',
   ) => {
-    console.log(data);
     try {
       if (mode === 'create') {
         await createIncome({
@@ -175,7 +179,7 @@ const TransactionModal = ({
               amount: data.amount,
               type: toTransactionDtoType(type),
               categoryId: data.categoryId,
-              date: data.date.toISOString(),
+              date: format(data.date, 'yyyy-MM-dd'),
               description: data.description || '',
               // isRepeat: data.repeat ,
             },
@@ -194,7 +198,7 @@ const TransactionModal = ({
           data: {
             amount: data.amount,
             categoryId: data.categoryId,
-            date: data.date.toISOString(),
+            date: format(data.date, 'yyyy-MM-dd'),
             description: data.description || '',
             // isRepeat: data.repeat ,
             // receipts: data.file ?? undefined,

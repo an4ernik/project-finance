@@ -1,74 +1,40 @@
 import AppLayout from '@/layouts/AppLayout';
 import {useTranslation} from 'react-i18next';
 import {Button} from '@/components/ui/button';
-import {useEffect, useState} from 'react';
+import {useEffect, useMemo, useState} from 'react';
 import CategoriesManager from './CategoriesManager';
-import {Cog, Plus, type LucideIcon} from 'lucide-react';
+import {Cog, Plus} from 'lucide-react';
 import VirtualList from '@/components/VirtualList';
 import IncomeModal from '@/pages/income/modal/TransactionModal';
-import  {CURRENCY_SIGN} from '@/constances/constances';
+import {CURRENCY_SIGN} from '@/constances/constances';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import z from 'zod';
 import TransactionFilters from './TransactionFilters';
 
 import {cn} from '@/lib/utils';
-import {applyFilters, TRANSACTION_CATEGORIES} from '@/helpers/helpers';
+import {applyFilters} from '@/helpers/helpers';
 import {
   ALL_CATEGORIES_VALUE,
   type Filters,
+  type TransactionUI,
   type TransactionFiltersFormValues,
 } from '@/types/types';
-
-const REPEAT_TYPES = ['once', 'yearly', 'monthly'];
-
-export const MOCK_PAGES = Array.from({length: 3}).map((_, pageIndex) => ({
-  items: Array.from({length: 20}).map((_, i) => {
-    const typeIndex = (pageIndex + i) % TRANSACTION_CATEGORIES['income'].length;
-    const randomType = TRANSACTION_CATEGORIES['income'][typeIndex];
-    const randomRepeat =
-      REPEAT_TYPES[Math.floor(Math.random() * REPEAT_TYPES.length)];
-
-    const id = (pageIndex + 1) * 100 + i;
-
-    return {
-      id,
-      description: `${randomType.val.charAt(0).toUpperCase() + randomType.val.slice(1)} #${id}`,
-      amount: (1000 + ((id * 7.5) % 4000)).toFixed(2),
-      categoryId: randomType.id,
-      Icon: randomType.icon,
-      isRepeat: randomRepeat,
-      date: new Date(2026, 3, (i % 28) + 1),
-    };
-  }),
-  nextCursor: pageIndex < 2 ? pageIndex + 2 : null,
-}));
-
-export type DateRange = {
-  from: Date;
-  to: Date;
-} | null;
-
-export type RepeatType = 'this_only' | 'all_future';
-export interface IncomeFormData {
-  id: number;
-  amount: string | number;
-  categoryId: number;
-  date: Date;
-  description?: string;
-  isRepeat: string;
-  repeatType?: RepeatType;
-  files?: File[];
-  Icon: LucideIcon;
-}
+import {useGetTransactions} from '@/shared/api/generated/transaction-management/transaction-management';
+import {useGetCategories} from '@/shared/api/generated/category-management/category-management';
+import FiltersWrapper from '@/components/FiltersWrapper';
 
 function Income() {
-  const [data, setData] = useState<IncomeFormData[]>([]);
+  const {data} = useGetCategories();
+  const categories = Array.isArray(data) ? data : []; 
+  const transactionsResponse = useGetTransactions();
   const [isManageOpen, setIsManageOpen] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const {t} = useTranslation();
 
-  const ALL_ITEMS = MOCK_PAGES.flatMap(p => p.items);
+  const transactions = useMemo(() => {
+    return Array.isArray(transactionsResponse?.data) ? transactionsResponse.data : [];
+  }, [transactionsResponse]);
 
   const filtersSchema = z.object({
     period: z
@@ -92,14 +58,23 @@ function Income() {
   });
 
   const filters = form.watch();
-  const normalizedFilters: Filters = {
-    period: filters.period ?? 'all',
-    fromDate: filters.fromDate,
-    toDate: filters.toDate,
-    category: filters.category ?? [ALL_CATEGORIES_VALUE],
-    search: filters.search ?? '',
-  };
-  const totalAmount = 10500;
+
+  const normalizedFilters: Filters = useMemo(
+    () => ({
+      period: filters.period ?? 'all',
+      fromDate: filters.fromDate,
+      toDate: filters.toDate,
+      category: filters.category ?? [ALL_CATEGORIES_VALUE],
+      search: filters.search ?? '',
+    }),
+    [
+      filters.period,
+      filters.fromDate,
+      filters.toDate,
+      filters.category,
+      filters.search,
+    ],
+  );
 
   const [debouncedSearch, setDebouncedSearch] = useState('');
 
@@ -111,16 +86,14 @@ function Income() {
     return () => clearTimeout(timeout);
   }, [normalizedFilters.search]);
 
-  useEffect(() => {
-    setData(applyFilters(ALL_ITEMS, normalizedFilters, debouncedSearch));
-  }, [
-    normalizedFilters.period,
-    normalizedFilters.category,
-    normalizedFilters.fromDate,
-    normalizedFilters.toDate,
-    debouncedSearch,
-  ]);
- 
+  const totalAmount: number = useMemo(() => {
+    return transactions.reduce((sum, item) => sum + (item.amount ?? 0), 0);
+  }, [transactions]);
+
+  const filteredData: TransactionUI[] = useMemo(() => {
+    return applyFilters(transactions, normalizedFilters, debouncedSearch);
+  }, [transactions, normalizedFilters, debouncedSearch]);
+
   return (
     <AppLayout
       title={t('income.title')}
@@ -138,6 +111,7 @@ function Income() {
             <Cog />
           </Button>
           <Button
+            disabled={categories.length === 0}
             className="cursor-pointer w-full md:w-[224px]"
             onClick={() => setIsAddOpen(true)}
           >
@@ -151,13 +125,17 @@ function Income() {
         <CategoriesManager onClose={() => setIsManageOpen(false)} />
       )}
       {isAddOpen && (
-        <IncomeModal mode="create" onClose={() => setIsAddOpen(false)} />
+        <IncomeModal
+          type="INCOME"
+          mode="create"
+          onClose={() => setIsAddOpen(false)}
+        />
       )}
-      <div className="w-full h-auto rounded-[16px] p-6 bg-secondary flex flex-col gap-7">
-        <TransactionFilters type="income" form={form} />
+      <FiltersWrapper>
+        <TransactionFilters type="INCOME" form={form} />
         <div className="flex justify-between items-center">
           <span className="dark:text-[#BFD9D2]">
-            {t('incomeModal.filters.total.income')}
+            {t('incomeModal.filters.total.INCOME')}
           </span>
           <div
             className={cn(
@@ -168,8 +146,8 @@ function Income() {
             <span>{CURRENCY_SIGN}</span>
           </div>
         </div>
-      </div>
-      <VirtualList data={data} type="income" />
+      </FiltersWrapper>
+      <VirtualList data={filteredData} type="INCOME" />
     </AppLayout>
   );
 }

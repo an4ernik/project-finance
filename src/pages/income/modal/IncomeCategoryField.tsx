@@ -1,4 +1,4 @@
-import {Controller, type Control} from 'react-hook-form';
+
 import {useTranslation} from 'react-i18next';
 
 import {Label} from '@/components/ui/label';
@@ -11,18 +11,49 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import {cn} from '@/lib/utils';
-import { TRANSACTION_CATEGORIES } from './incomeCategoryOptions';
 import type {TransactionType} from '@/types/types';
- 
+import {useGetCategories} from '@/shared/api/generated/category-management/category-management';
+import {ICONS_BY_ID} from '../IconPicker';
+import type {CategoryResponseDTO} from '@/shared/api/models';
+import {Controller, type Control, type FieldValues, type Path} from 'react-hook-form';
 
-type Props = {
-  control: Control<any>;
+type CategoryFieldValue = {
+  categoryId: unknown;
+};
+
+type Props<T extends FieldValues & CategoryFieldValue> = {
+  control: Control<T>;
   error?: string;
   type?: TransactionType;
 };
+ 
 
-export const IncomeCategoryField = ({control, error, type='income'}: Props) => {
+export const IncomeCategoryField = <T extends FieldValues & CategoryFieldValue>({
+  control,
+  error,
+  type = 'INCOME',
+}: Props<T>) => {
   const {t} = useTranslation();
+  const {data: categoriesResponse} = useGetCategories();
+  const categoryItems = (
+    Array.isArray(categoriesResponse)
+      ? categoriesResponse
+      : categoriesResponse?.data ?? []
+  ) as CategoryResponseDTO[];
+
+  const categories = categoryItems.filter(
+    (
+      category,
+    ): category is CategoryResponseDTO & {
+      id: number;
+      name: string;
+      icon: string;
+    } =>
+      category.id !== undefined &&
+      category.name !== undefined &&
+      category.icon !== undefined &&
+      category.type === type,
+  );
 
   return (
     <div className="flex flex-col gap-2">
@@ -31,13 +62,13 @@ export const IncomeCategoryField = ({control, error, type='income'}: Props) => {
       </Label>
 
       <Controller
-        name="categoryId"
+         name={'categoryId' as Path<T>}
         control={control}
         render={({field}) => (
           <Select
             onOpenChange={open => !open && field.onBlur()}
-            onValueChange={val => field.onChange(Number(val))}
-            value={field.value ? String(field.value) : ''}
+            onValueChange={val => field.onChange(Number(val))} 
+            value={(field.value !== null && field.value !== undefined) ? String(field.value) : ''}
           >
             <SelectTrigger
               size="default"
@@ -53,12 +84,13 @@ export const IncomeCategoryField = ({control, error, type='income'}: Props) => {
             </SelectTrigger>
 
             <SelectContent className="w-full">
-              {TRANSACTION_CATEGORIES[type].map(({val, icon: Icon, id}) => {
+              {categories.map(({name, icon, id}) => {
+                const Icon = ICONS_BY_ID[icon];
                 return (
-                  <SelectItem key={val} value={String(id)}>
-                    <div className="flex items-center gap-2 text-[16px]">
-                      <Icon className="size-4 shrink-0" />
-                      {t(`incomeModal.categories.${val}`)}
+                  <SelectItem key={id} value={String(id)}>
+                    <div className="flex items-center gap-4 text-[16px]">
+                      {Icon ? <Icon className="size-4 shrink-0" /> : null}
+                      {name}
                     </div>
                   </SelectItem>
                 );
