@@ -6,6 +6,9 @@
  * OpenAPI spec version: 1.0
  */
 
+/**
+ * Transaction type
+ */
 export type TransactionCreateRequestDTOType = typeof TransactionCreateRequestDTOType[keyof typeof TransactionCreateRequestDTOType];
 
 

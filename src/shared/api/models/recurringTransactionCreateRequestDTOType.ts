@@ -9,10 +9,10 @@
 /**
  * Transaction type
  */
-export type TransactionResponseDTOType = typeof TransactionResponseDTOType[keyof typeof TransactionResponseDTOType];
+export type RecurringTransactionCreateRequestDTOType = typeof RecurringTransactionCreateRequestDTOType[keyof typeof RecurringTransactionCreateRequestDTOType];
 
 
-export const TransactionResponseDTOType = {
+export const RecurringTransactionCreateRequestDTOType = {
   INCOME: 'INCOME',
   EXPENSE: 'EXPENSE',
 } as const;

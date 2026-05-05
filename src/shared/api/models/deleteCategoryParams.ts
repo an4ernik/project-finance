@@ -6,15 +6,6 @@
  * OpenAPI spec version: 1.0
  */
 
-/**
- * Update category
- */
-export interface UpdateCategoryDTO {
-  /**
-   * Name
-   * @minLength 1
-   */
-  name: string;
-  /** Icon */
-  icon?: string;
-}
+export type DeleteCategoryParams = {
+replacementCategoryId?: number;
+};

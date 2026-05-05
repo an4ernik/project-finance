@@ -1,6 +1,7 @@
-import {useEffect, useState} from 'react';
+import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {toast} from 'sonner';
+import {isAxiosError} from 'axios';
 
 import {Button} from '@/components/ui/button';
 import {
@@ -14,13 +15,11 @@ import {Input} from '@/components/ui/input';
 import {useQueryClient} from '@tanstack/react-query';
 
 import type {CategoryResponseDTO} from '@/shared/api/models';
+import {GetCategoriesTypeItem} from '@/shared/api/models/getCategoriesTypeItem';
 import {
   getGetCategoriesQueryKey,
   useUpdateCategory,
 } from '@/shared/api/generated/category-management/category-management';
-import {UpdateCategoryDTOStatus} from '@/shared/api/models/updateCategoryDTOStatus';
-import {UpdateCategoryDTOType} from '@/shared/api/models/updateCategoryDTOType';
-import {GetCategoriesTypeItem} from '@/shared/api/models/getCategoriesTypeItem';
 
 import IconPicker from './IconPicker';
 
@@ -28,34 +27,36 @@ type EditCategoryProps = {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   category: CategoryResponseDTO | null;
+  type?: GetCategoriesTypeItem;
 };
 
-function EditCategory({open, onOpenChange, category}: EditCategoryProps) {
-  const {t} = useTranslation();
+function EditCategory({open, onOpenChange, category, type}: EditCategoryProps) {
+  const {t, i18n} = useTranslation();
   const queryClient = useQueryClient();
   const {mutate: updateCategory, isPending} = useUpdateCategory();
 
-  const [name, setName] = useState('');
-  const [icon, setIcon] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const trPrefix =
+    type === GetCategoriesTypeItem.EXPENSE ? 'expense' : 'income';
+  const editT = (suffix: string, fallbackSuffix?: string) => {
+    const primaryKey = `${trPrefix}.editCategory.${suffix}`;
+    if (i18n.exists(primaryKey)) return t(primaryKey);
+    return t(`income.editCategory.${fallbackSuffix ?? suffix}`);
+  };
 
-  useEffect(() => {
-    if (!open || !category) return;
-    setName(category.name ?? '');
-    setIcon(category.icon ?? null);
-    setError(null);
-  }, [open, category]);
+  const [name, setName] = useState(category?.name ?? '');
+  const [icon, setIcon] = useState<string | null>(category?.icon ?? null);
+  const [error, setError] = useState<string | null>(null);
 
   const handleSave = () => {
     if (!category?.id) return;
 
     const trimmed = name.trim();
     if (!trimmed) {
-      setError(t('income.editCategory.errors.nameRequired'));
+      setError(editT('errors.nameRequired'));
       return;
     }
     if (!icon) {
-      setError(t('income.editCategory.errors.iconRequired'));
+      setError(editT('errors.iconRequired'));
       return;
     }
     setError(null);
@@ -66,10 +67,6 @@ function EditCategory({open, onOpenChange, category}: EditCategoryProps) {
         data: {
           name: trimmed,
           icon,
-          type: (category.type ??
-            GetCategoriesTypeItem.INCOME) as unknown as UpdateCategoryDTOType,
-          status: (category.status ??
-            UpdateCategoryDTOStatus.ACTIVE) as UpdateCategoryDTOStatus,
         },
       },
       {
@@ -77,15 +74,16 @@ function EditCategory({open, onOpenChange, category}: EditCategoryProps) {
           await queryClient.invalidateQueries({
             queryKey: getGetCategoriesQueryKey(),
           });
-          toast.success(t('income.editCategory.success'));
+          toast.success(editT('success'));
           onOpenChange(false);
         },
-        onError: (err: any) => {
-          if (err?.response?.status === 409) {
-            setError(t('income.editCategory.errors.duplicate'));
+        onError: (err: unknown) => {
+          const status = isAxiosError(err) ? err.response?.status : undefined;
+          if (status === 409) {
+            setError(editT('errors.duplicate'));
             return;
           }
-          toast.error(t('income.editCategory.errors.updateFailed'));
+          toast.error(editT('errors.updateFailed'));
         },
       },
     );
@@ -108,7 +106,7 @@ function EditCategory({open, onOpenChange, category}: EditCategoryProps) {
         <DialogHeader className="text-left">
           <div className="flex items-center justify-between">
             <DialogTitle className="text-[24px] font-medium leading-[1.167]">
-              {t('income.editCategory.title')}
+              {editT('title')}
             </DialogTitle>
             <button
               type="button"
@@ -123,10 +121,10 @@ function EditCategory({open, onOpenChange, category}: EditCategoryProps) {
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-3">
             <label className="text-[16px] leading-[1.167] text-muted-foreground">
-              {t('income.editCategory.nameLabel')}
+              {editT('nameLabel')}
             </label>
             <Input
-              placeholder={t('income.editCategory.namePlaceholder')}
+              placeholder={editT('namePlaceholder')}
               value={name}
               onChange={event => setName(event.target.value)}
             />
@@ -134,7 +132,7 @@ function EditCategory({open, onOpenChange, category}: EditCategoryProps) {
 
           <div className="flex flex-col gap-3">
             <label className="text-[16px] leading-[1.167] text-muted-foreground">
-              {t('income.editCategory.iconLabel')}
+              {editT('iconLabel')}
             </label>
             <IconPicker
               value={icon}
@@ -159,7 +157,7 @@ function EditCategory({open, onOpenChange, category}: EditCategoryProps) {
             className="h-9 w-[140px]"
             variant="secondary"
           >
-            {t('income.editCategory.cancel')}
+            {editT('cancel')}
           </Button>
           <Button
             type="button"
@@ -167,9 +165,7 @@ function EditCategory({open, onOpenChange, category}: EditCategoryProps) {
             disabled={isPending}
             className="h-9 w-[140px]"
           >
-            {isPending
-              ? t('income.editCategory.saving')
-              : t('income.editCategory.save')}
+            {isPending ? editT('saving') : editT('save')}
           </Button>
         </DialogFooter>
       </DialogContent>
