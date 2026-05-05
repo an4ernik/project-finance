@@ -6,13 +6,14 @@
  * OpenAPI spec version: 1.0
  */
 import type { CategoryResponseDTO } from './categoryResponseDTO';
-import type { TransactionResponseDTOType } from './transactionResponseDTOType';
+import type { RecurringTransactionResponseDTOIntervalUnit } from './recurringTransactionResponseDTOIntervalUnit';
+import type { RecurringTransactionResponseDTOType } from './recurringTransactionResponseDTOType';
 
 /**
- * One-time transaction
+ * Recurring transaction
  */
-export interface TransactionResponseDTO {
-  /** Transaction ID */
+export interface RecurringTransactionResponseDTO {
+  /** Recurring transaction ID */
   id?: number;
   /** Account ID */
   accountId?: number;
@@ -23,11 +24,13 @@ export interface TransactionResponseDTO {
   /** Optional description */
   description?: string;
   /** Transaction type */
-  type?: TransactionResponseDTOType;
-  /** Receipt URLs */
-  receiptsUrls?: string[];
-  /** Transaction date */
-  date?: string;
+  type?: RecurringTransactionResponseDTOType;
+  /** Recurring start date */
+  startDate?: string;
+  /** Next execution date */
+  nextExecutionDate?: string;
+  /** Recurring interval */
+  intervalUnit?: RecurringTransactionResponseDTOIntervalUnit;
   /** Creation timestamp */
   createdAt?: string;
   /** Last update timestamp */

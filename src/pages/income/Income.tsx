@@ -7,6 +7,7 @@ import {Cog, Plus} from 'lucide-react';
 import VirtualList from '@/components/VirtualList';
 import IncomeModal from '@/pages/income/modal/TransactionModal';
 import {CURRENCY_SIGN} from '@/constances/constances';
+
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import z from 'zod';
@@ -86,13 +87,15 @@ function Income() {
     return () => clearTimeout(timeout);
   }, [normalizedFilters.search]);
 
-  const totalAmount: number = useMemo(() => {
-    return transactions.reduce((sum, item) => sum + (item.amount ?? 0), 0);
-  }, [transactions]);
-
-  const filteredData: TransactionUI[] = useMemo(() => {
-    return applyFilters(transactions, normalizedFilters, debouncedSearch);
-  }, [transactions, normalizedFilters, debouncedSearch]);
+  useEffect(() => {
+    setData(applyFilters(ALL_ITEMS, normalizedFilters, debouncedSearch));
+  }, [
+    normalizedFilters.period,
+    normalizedFilters.category,
+    normalizedFilters.fromDate,
+    normalizedFilters.toDate,
+    debouncedSearch,
+  ]);
 
   return (
     <AppLayout

@@ -19,7 +19,7 @@ export interface RegistrationRequestDto {
   /**
    * User's password (min 8 chars max 72 char) at least one uppercase character, at least one lowercase character, at least one digit, without spaces.
    * @minLength 1
-   * @pattern ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\\|,.<>/?~`]).{8,72}$
+   * @pattern ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=\[\]{};':\\|,.<>/?~`])\S{8,72}$
    */
   password: string;
   /**
