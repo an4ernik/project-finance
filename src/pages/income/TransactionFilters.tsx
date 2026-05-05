@@ -80,9 +80,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
   const [periodOpen, setPeriodOpen] = useState(false);
   const [categoryOpen, setCategoryOpen] = useState(false);
   const {period, fromDate, toDate, category = [ALL_CATEGORIES_VALUE]} = watch();
-
-  console.log('category', categories);
-
+ 
   const selectedCategories = categories?.filter(cat =>
     category.includes(cat.name),
   );

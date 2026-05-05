@@ -174,9 +174,8 @@ const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
 
   const dynamicYAxisWidth = useMemo(() => {
     return calculateYAxisWidth(chartDomain);
-  }, [chartDomain]);
-
-  console.log(chartData, 'chartData');
+  }, [chartDomain]); 
+  
   const hasData =
     chartData.length > 0 && chartData.some(item => item?.amount ?? 0 > 0);
 
