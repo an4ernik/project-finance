@@ -17,7 +17,7 @@
     "noExpensesCashFlow": "Нема грошового потоку для цього періоду",
     "noBalance": "Баланс порожній для цього періоду",
 
-     "thisMonth": "Цей місяць",
+    "thisMonth": "Цей місяць",
 
     "periods": {
       "week": "Тиждень",
@@ -109,7 +109,10 @@
         "restoreTitle": "Відновити категорію?",
         "restoreConfirm": "Відновити",
         "deleteTitle": "Видалити категорію?",
-        "deleteConfirm": "Видалити"
+        "deleteConfirm": "Видалити",
+        "deleteTransferDescription": "Ця категорія використовується. Виберіть нову категорію для перенесення транзакцій.",
+        "transferLabel": "Перенести до категорії",
+        "transferPlaceholder": "Виберіть категорію"
       }
     },
     "addCategory": {
@@ -261,7 +264,8 @@
   },
   "common": {
     "error": "Щось пішло не так",
-    "loading": "Створення..."
+    "loading": "Створення...",
+    "success": "Готово!"
   },
   "login": {
     "title": "Раді знову вас бачити!",

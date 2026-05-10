@@ -14,6 +14,7 @@ import {
 import {useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {toast} from 'sonner';
+import {isAxiosError} from 'axios';
 
 import {
   getGetCategoriesQueryKey,
@@ -51,6 +52,8 @@ function CategoriesManager({
     action: 'archive' | 'restore' | 'delete';
     category: CategoryResponseDTO;
   } | null>(null);
+  const [needsTransfer, setNeedsTransfer] = useState(false);
+  const [transferId, setTransferId] = useState<string | undefined>(undefined);
 
   const {mutateAsync: deleteCategory, isPending: isDeleting} =
     useDeleteCategory();
@@ -75,9 +78,22 @@ function CategoriesManager({
   };
 
   const {data: response, isLoading} = useGetCategories(categoriesParams);
+  const {data: activeCategoriesResponse} = useGetCategories({
+    type: [type],
+    archived: false,
+  });
 
   // Orval returns an object like: { data: CategoryResponseDTO[] | ProblemDetail; status: 200 }
-  const categories = Array.isArray(response) ? response : [];
+  const categories = Array.isArray(response)
+    ? response
+    : Array.isArray(response)
+      ? response
+      : [];
+  const activeCategories = Array.isArray(activeCategoriesResponse)
+    ? activeCategoriesResponse
+    : Array.isArray(activeCategoriesResponse)
+      ? activeCategoriesResponse
+      : [];
 
   const visibleCategories = categories;
 
@@ -105,12 +121,36 @@ function CategoriesManager({
   const handleDelete = async (category: CategoryResponseDTO) => {
     if (!category.id || isDeleting) return;
     try {
-      await deleteCategory({categoryId: category.id});
+      await deleteCategory({
+        categoryId: category.id,
+        params: {
+          replacementCategoryId: transferId ? Number(transferId) : undefined,
+        },
+      });
       await invalidateCategories();
-    } catch {
+      setConfirm(null);
+      setNeedsTransfer(false);
+      setTransferId(undefined);
+      toast.success(t('common.success'));
+    } catch (error: unknown) {
+      const status = isAxiosError(error) ? error.response?.status : undefined;
+      if (!transferId && (status === 400 || status === 409)) {
+        setNeedsTransfer(true);
+        return;
+      }
       toast.error(t('common.error'));
     }
   };
+
+  const closeConfirm = () => {
+    setConfirm(null);
+    setNeedsTransfer(false);
+    setTransferId(undefined);
+  };
+
+  const transferOptions = activeCategories.filter(
+    category => category.id && category.id !== confirm?.category.id,
+  );
 
   return (
     <div className="md:fixed inset-0 flex items-center md:justify-center md:z-50 md:bg-black/40 md:backdrop-blur-[6.2px] md:p-4">
@@ -130,33 +170,44 @@ function CategoriesManager({
         ) : null}
         <CategoryActionDialog
           open={!!confirm}
-          onOpenChange={open => setConfirm(open ? confirm : null)}
+          onOpenChange={open => {
+            if (!open) closeConfirm();
+          }}
           title={
             confirm?.action === 'archive'
-              ? t('income.categories.modals.archiveTitle')
+              ? catT('modals.archiveTitle')
               : confirm?.action === 'restore'
-                ? t('income.categories.modals.restoreTitle')
-                : t('income.categories.modals.deleteTitle')
+                ? catT('modals.restoreTitle')
+                : catT('modals.deleteTitle')
           }
-          cancelLabel={t('income.categories.modals.cancel')}
+          description={
+            needsTransfer ? catT('modals.deleteTransferDescription') : undefined
+          }
+          cancelLabel={catT('modals.cancel')}
           confirmLabel={
             confirm?.action === 'archive'
-              ? t('income.categories.modals.archiveConfirm')
+              ? catT('modals.archiveConfirm')
               : confirm?.action === 'restore'
-                ? t('income.categories.modals.restoreConfirm')
-                : t('income.categories.modals.deleteConfirm')
+                ? catT('modals.restoreConfirm')
+                : catT('modals.deleteConfirm')
           }
           confirmVariant={
             confirm?.action === 'delete' ? 'destructive' : 'primary'
           }
           isPending={isDeleting || isArchiving || isRestoring}
+          showTransfer={needsTransfer}
+          transferOptions={transferOptions}
+          selectedTransferId={transferId}
+          onTransferChange={setTransferId}
+          transferLabel={catT('modals.transferLabel')}
+          transferPlaceholder={catT('modals.transferPlaceholder')}
           onConfirm={() => {
             if (!confirm) return;
             const {action, category} = confirm;
-            setConfirm(null);
             if (action === 'delete') {
               void handleDelete(category);
             } else {
+              setConfirm(null);
               void handleToggleArchive(category);
             }
           }}
@@ -236,8 +287,9 @@ function CategoriesManager({
                         key={category.id ?? `${category.type}-${category.name}`}
                         className={cn(
                           'flex items-center justify-between rounded-[12px] border border-white/10 px-4 py-4 transition-all duration-500',
-                          // Figma uses solid base fill (#193432) for cards in this area.
                           'bg-[#193432] hover:border-transparent hover:[background:linear-gradient(0deg,rgba(2,98,77,0.6)_0%,rgba(4,200,158,1)_60%)]',
+                          category.type === 'EXPENSE' &&
+                            'hover:bg-[#015E4680] dark:hover:bg-none dark:hover:bg-linear-to-b dark:hover:from-[#AA7D00] dark:hover:to-[#AA7D0033]',
                         )}
                       >
                         <div className="flex items-center gap-3">
@@ -286,9 +338,11 @@ function CategoriesManager({
                           </button>
                           <button
                             type="button"
-                            onClick={() =>
-                              setConfirm({action: 'delete', category})
-                            }
+                            onClick={() => {
+                              setNeedsTransfer(false);
+                              setTransferId(undefined);
+                              setConfirm({action: 'delete', category});
+                            }}
                             className="flex size-11 items-center justify-center rounded-[10px] border border-white/10 bg-[#8a0f0f] text-white [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.2),0px_4px_4px_0px_rgba(75,75,75,0.2)]"
                           >
                             <Trash className="size-5" />

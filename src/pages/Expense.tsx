@@ -4,31 +4,28 @@ import {Button} from '@/components/ui/button';
 import {useState} from 'react';
 import CategoriesManager from './income/CategoriesManager';
 import {Cog, Plus} from 'lucide-react';
-import VirtualList from '@/components/VirtualList'; 
+import VirtualList from '@/components/VirtualList';
 
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import z from 'zod';
- 
+
 import TransactionFilters from './income/TransactionFilters';
 import {cn} from '@/lib/utils';
-import {
-  formattedAmount,  
-} from '@/helpers/helpers';
+import {formattedAmount} from '@/helpers/helpers';
 import {
   ALL_CATEGORIES_VALUE,
   type TransactionFiltersFormValues,
 } from '@/types/types';
 import TransactionModal from '@/pages/income/modal/TransactionModal';
-import { CURRENCY_SIGN } from '@/constances/constances';
+import {CURRENCY_SIGN} from '@/constances/constances';
 import FiltersWrapper from '@/components/FiltersWrapper';
- 
 
 function Expense() {
   const [isManageOpen, setIsManageOpen] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
   const {t} = useTranslation();
- 
+
   const filtersSchema = z.object({
     period: z
       .enum(['all', 'today', 'week', 'month', 'year', 'custom'])
@@ -76,7 +73,10 @@ function Expense() {
       }
     >
       {isManageOpen && (
-        <CategoriesManager onClose={() => setIsManageOpen(false)} />
+        <CategoriesManager
+          onClose={() => setIsManageOpen(false)}
+          type="EXPENSE"
+        />
       )}
 
       {isAddOpen && (
