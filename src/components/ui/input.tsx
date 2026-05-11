@@ -108,14 +108,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               </button>
             )}
           </div>
-          {/* {errorMessage && ( */}
-          <DisplayError errorText={errorMessage} />
-          {/* )} */}
-          {showErrorSlot && (
-            <p className="text-[10px] leading-[1.167] text-destructive min-h-3">
-              {errorMessage || ''}
-            </p>
-          )}
+          {showErrorSlot && <DisplayError errorText={errorMessage} />}
         </div>
       </div>
     );
