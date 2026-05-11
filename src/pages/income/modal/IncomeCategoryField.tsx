@@ -1,8 +1,7 @@
-
 import {useTranslation} from 'react-i18next';
 
 import {Label} from '@/components/ui/label';
-import DisplayError from '@/components/ui/DisplayError';
+import DisplayError from '@/components/DisplayError';
 import {
   Select,
   SelectContent,
@@ -15,7 +14,12 @@ import type {TransactionType} from '@/types/types';
 import {useGetCategories} from '@/shared/api/generated/category-management/category-management';
 import {ICONS_BY_ID} from '../IconPicker';
 import type {CategoryResponseDTO} from '@/shared/api/models';
-import {Controller, type Control, type FieldValues, type Path} from 'react-hook-form';
+import {
+  Controller,
+  type Control,
+  type FieldValues,
+  type Path,
+} from 'react-hook-form';
 
 type CategoryFieldValue = {
   categoryId: unknown;
@@ -26,9 +30,10 @@ type Props<T extends FieldValues & CategoryFieldValue> = {
   error?: string;
   type?: TransactionType;
 };
- 
 
-export const IncomeCategoryField = <T extends FieldValues & CategoryFieldValue>({
+export const IncomeCategoryField = <
+  T extends FieldValues & CategoryFieldValue,
+>({
   control,
   error,
   type = 'INCOME',
@@ -38,7 +43,7 @@ export const IncomeCategoryField = <T extends FieldValues & CategoryFieldValue>(
   const categoryItems = (
     Array.isArray(categoriesResponse)
       ? categoriesResponse
-      : categoriesResponse?.data ?? []
+      : (categoriesResponse?.data ?? [])
   ) as CategoryResponseDTO[];
 
   const categories = categoryItems.filter(
@@ -62,13 +67,17 @@ export const IncomeCategoryField = <T extends FieldValues & CategoryFieldValue>(
       </Label>
 
       <Controller
-         name={'categoryId' as Path<T>}
+        name={'categoryId' as Path<T>}
         control={control}
         render={({field}) => (
           <Select
             onOpenChange={open => !open && field.onBlur()}
-            onValueChange={val => field.onChange(Number(val))} 
-            value={(field.value !== null && field.value !== undefined) ? String(field.value) : ''}
+            onValueChange={val => field.onChange(Number(val))}
+            value={
+              field.value !== null && field.value !== undefined
+                ? String(field.value)
+                : ''
+            }
           >
             <SelectTrigger
               size="default"

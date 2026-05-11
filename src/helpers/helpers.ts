@@ -5,7 +5,7 @@ import {
     type LucideIcon,
 } from 'lucide-react';
 
-import type { DateRange, Filters, PeriodOption, TransactionType, TransactionUI } from '@/types/types';
+import { ALL_CATEGORIES_VALUE, type DateRange, type Filters, type PeriodOption, type TransactionType, type TransactionUI } from '@/types/types';
 import {
     startOfDay,
     endOfDay,
@@ -18,6 +18,7 @@ import {
     isWithinInterval,
     parseISO,
 } from 'date-fns';
+import z from 'zod'; 
 
 export const REPEAT_TYPES = ['once', 'yearly', 'monthly'];
 
@@ -31,7 +32,6 @@ export const toTransactionDtoType = (type: TransactionType) => type;
 
 
 // * format this: 15400 -> 15 400
-// export const formattedAmount = (amount: string | number) => new Intl.NumberFormat('uk-UA').format(Math.floor(Number(amount)))
 export const formattedAmount = (amount: string | number) => {
     const num = Number(amount) || 0;
     return new Intl.NumberFormat('uk-UA', {
@@ -83,14 +83,14 @@ export const getPeriodRange = (filters: Partial<Filters>): DateRange => {
             return null;
     }
 };
- 
+
 
 export const applyFilters = (
     items: TransactionUI[],
     filters: Filters,
     search: string
 ) => {
-    let result = [...items]; 
+    let result = [...items];
 
     // 🔍 SEARCH
     if (search) {
@@ -129,34 +129,43 @@ export const applyFilters = (
     return result;
 };
 
-// * get category by id, categories for income and expense
+// * get categories, categories for income and expense
 export interface CategoryOption {
     val: string;
     icon: LucideIcon;
     id: number;
 }
- 
-export const getColors = (length: number): string[] => {
-  // 1. Define the starting colors exactly as seen in your image
-  const baseColors = [
-    "hsl(24, 95%, 53%)",  // Vibrant Orange
-    "hsl(45, 95%, 50%)",  // Golden Yellow
-    "hsl(85, 75%, 50%)",  // Lime Green
-    "hsl(190, 80%, 50%)", // Cyan/Light Blue
-    "hsl(262, 70%, 65%)", // Soft Purple
-    "hsl(150, 70%, 45%)", // Sea Green
-    "hsl(330, 80%, 60%)", // Pink/Magenta
-  ];
 
-  return Array.from({ length }, (_, i) => {
-    // 2. If the index is within our base colors, use them
-    if (i < baseColors.length) {
-      return baseColors[i];
-    }
-
-    // 3. For any extra categories, generate distinct HSL colors
-    // We offset the index so it doesn't repeat the same hues as above immediately
-    const hue = ((i - baseColors.length) * 137.5 + 200) % 360;
-    return `hsl(${hue}, 65%, 55%)`;
+// * schema to filter by date
+export const filtersSchema = z.object({
+    period: z
+      .enum(['all', 'today', 'week', 'month', 'year', 'custom'])
+      .default('all'),
+    fromDate: z.date().optional(),
+    toDate: z.date().optional(),
+    category: z.array(z.string()).default([ALL_CATEGORIES_VALUE]),
+    search: z.string().default(''),
   });
+
+export const getColors = (length: number): string[] => {
+    // 1. Define the starting colors exactly as seen in your image
+    const baseColors = [
+        "hsl(48, 96%, 53%, 1)",  // Golden Yellow
+        "hsl(25, 95%, 53%, 1)",  // Vibrant Orange
+        "hsl(84, 81%, 44%, 1)",  // Lime Green
+        "hsl(189, 94%, 43%, 1)", // Cyan/Light Blue
+        "hsl(258, 90%, 66%, 1)", // Soft Purple 
+    ];
+
+    return Array.from({ length }, (_, i) => {
+        // 2. If the index is within our base colors, use them
+        if (i < baseColors.length) {
+            return baseColors[i];
+        }
+
+        // 3. For any extra categories, generate distinct HSL colors
+        // We offset the index so it doesn't repeat the same hues as above immediately
+        const hue = ((i - baseColors.length) * 137.5 + 200) % 360;
+        return `hsl(${hue}, 65%, 55%)`;
+    });
 };

@@ -2,7 +2,7 @@ import {ArrowDownToLine, X} from 'lucide-react';
 import {useTranslation} from 'react-i18next';
 
 import {Label} from '@/components/ui/label';
-import DisplayError from '@/components/ui/DisplayError';
+import DisplayError from '@/components/DisplayError';
 import {cn} from '@/lib/utils';
 
 const fileLabel = cn(
@@ -24,7 +24,6 @@ export const IncomeFileField = ({files, error, onChange, onRemove}: Props) => {
   const handleKeyDown = (e: React.KeyboardEvent<HTMLLabelElement>) => {
     if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
-      // Шукаємо інпут всередині лейбла і симулюємо клік
       const input = e.currentTarget.querySelector('input');
       input?.click();
     }
@@ -73,7 +72,6 @@ export const IncomeFileField = ({files, error, onChange, onRemove}: Props) => {
                 onClick={() => onRemove(file.name)}
                 className={cn(
                   'flex items-center gap-2 text-destructive hover:text-red-700 transition-colors cursor-pointer border-none bg-black/0 px-2 py-1 rounded-full',
-                  // Повертаємо видимість фокусу
                   'focus-visible:ring-2 focus-visible:ring-destructive focus-visible:ring-offset-2 outline-hidden',
                 )}
               >

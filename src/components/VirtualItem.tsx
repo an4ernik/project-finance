@@ -5,8 +5,10 @@ import {useTranslation} from 'react-i18next';
 import {cn} from '@/lib/utils';
 import {formattedAmount} from '@/helpers/helpers';
 import type {VirtualItemProps} from '@/types/types';
-import  {CURRENCY_SIGN} from '@/constances/constances';
-import { ICONS_BY_ID } from '@/pages/income/IconPicker';
+import {CURRENCY_SIGN} from '@/constances/constances';
+import {ICONS_BY_ID} from '@/pages/income/IconPicker'; 
+import { DocumentPreviewModal } from './DocumentPreviewModal';
+import { useState } from 'react';
 const THEMES = {
   INCOME: {
     container:
@@ -64,11 +66,16 @@ export const VirtualItem = ({
   const theme = THEMES[type];
   const dbItem = item.category;
   const category = item.type ?? dbItem.type ?? type;
-  const itemAmount = formattedAmount(item.amount); 
+  const itemAmount = formattedAmount(item.amount);
   const Icon = ICONS_BY_ID[dbItem.icon];
+  // const detailsPath = `/${type === 'INCOME' ? 'income' : 'expenses'}/${item.id}`;
+
+  const [open, setOpen] = useState(false);
 
   return (
     <div
+    onClick={() => setOpen(true)}
+      // to={detailsPath}
       className={cn(
         'group relative min-h-[112px] flex items-center rounded-xl p-5 gap-4 tracking-wider',
         'bg-white dark:bg-[#193432] border border-slate-100 dark:border-none text-slate-900 dark:text-white',
@@ -113,7 +120,7 @@ export const VirtualItem = ({
 
           <span
             className={cn(
-              'text-[14px] font-medium transition-colors duration-300',
+              'text-[14px] font-medium transition-colors duration-300 max-w-[140px] truncate lg:max-w-full',
               theme.subTitle,
             )}
           >
@@ -160,9 +167,13 @@ export const VirtualItem = ({
                 [@media(hover:hover)]:hidden [@media(hover:hover)]:group-hover:flex"
           >
             <button
-              onClick={() => onEdit(item)}
+              type="button"
+              onClick={event => {
+                event.preventDefault();
+                onEdit(item);
+              }}
               className={cn(
-                'flex justify-center items-center size-12 sm:size-10 rounded-lg shadow-inner cursor-pointer outline-none',
+                'flex justify-center items-center size-10  rounded-lg shadow-inner cursor-pointer outline-none',
                 theme.editIconBg,
               )}
             >
@@ -176,9 +187,13 @@ export const VirtualItem = ({
             </button>
 
             <button
-              onClick={() => onDelete(item)}
+              type="button"
+              onClick={event => {
+                event.preventDefault();
+                onDelete(item);
+              }}
               className={cn(
-                'flex justify-center items-center size-12 sm:size-10 rounded-lg shadow-md cursor-pointer transition-all',
+                'flex justify-center items-center size-10 rounded-lg shadow-md cursor-pointer transition-all',
                 theme.deleteIconBg,
               )}
             >
@@ -193,6 +208,11 @@ export const VirtualItem = ({
           </div>
         </div>
       </div>
+
+      {open && <DocumentPreviewModal 
+        onClose={() => setOpen(false)} 
+        urls={item?.receiptsUrls}
+      />}
     </div>
   );
 };

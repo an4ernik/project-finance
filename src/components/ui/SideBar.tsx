@@ -1,15 +1,7 @@
-import {type ReactNode} from 'react';
+import type {LucideIcon} from 'lucide-react';
 import {useTranslation} from 'react-i18next';
 import Logo from './Logo';
-import {
-  LayoutGridIcon,
-  TrendingUp,
-  TrendingDown,
-  Cog,
-  CircleQuestionMark,
-  LogOut,
-  X,
-} from 'lucide-react';
+import {CircleQuestionMark, LogOut, X} from 'lucide-react';
 import {ThemeToggle} from './ThemeToggle';
 import LangSelect from './LangSelect';
 import {cn} from '@/lib/utils';
@@ -17,20 +9,23 @@ import {NavLink, useNavigate} from 'react-router-dom';
 import {useAuthStore} from '@/shared/store/useAuthStore';
 import {useQueryClient} from '@tanstack/react-query';
 
+import {SIDEBAR_LINKS} from '@/constances/constances';
+
 type NavItemProps = {
   to: string;
-  icon: ReactNode;
+  Icon: LucideIcon;
   label: string;
 };
 
-export const NavItem = ({to, icon, label}: NavItemProps) => {
+export const NavItem = ({to, Icon, label}: NavItemProps) => {
+  const {t} = useTranslation();
   return (
     <NavLink
       to={to}
       className={({isActive}) =>
         `
-          flex items-center gap-[12px]
-          pl-[16px] py-[10px]
+          flex md:items-center items-start w-full md:w-fit lg:w-full justify-start md:justify-center lg:justify-start gap-[12px]  
+          p-3 lg:pl-[16px] lg:py-[10px]
           rounded-[10px]
           text-foreground
           ${
@@ -41,8 +36,8 @@ export const NavItem = ({to, icon, label}: NavItemProps) => {
           `
       }
     >
-      {icon}
-      {label}
+      <Icon size={20} />
+      <span className="sm:block md:hidden lg:block">{t(label)}</span>
     </NavLink>
   );
 };
@@ -68,19 +63,22 @@ function SideBar({variant = 'desktop', isOpen = false, onClose}: SideBarProps) {
   return (
     <aside
       className={cn(
-        'w-[305px] min-h-full flex-col shrink-0 rounded-[10px]',
+        'px-[15px] md:px-4 lg:px-[40px]',
+
+        'sm:w-full md:w-[120px] lg:w-[305px] min-h-full flex-col shrink-0 rounded-[10px] transition-all duration-300',
         variant === 'desktop' && 'hidden md:flex',
         variant === 'mobile' &&
-          'w-full fixed left-0 top-0 z-50 flex h-full -translate-x-full transition-transform duration-300 md:hidden',
+          'w-full fixed left-0 top-0 z-50 flex h-full -translate-x-full md:hidden',
         variant === 'mobile' && isOpen && 'translate-x-0',
         'border border-white/[0.14] backdrop-blur-lg',
         'bg-linear-to-b from-[rgba(11,21,20,0.03)] via-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)]',
         'shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)]',
-        '[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_0_rgba(0,0,0,0.2)]',
+        '[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_rgba(0,0,0,0.2)]',
       )}
     >
-      <div className="flex items-center justify-between px-[24px] pt-[24px] md:px-0 md:pt-0">
-        <Logo className="h-[45px] my-[19px] md:my-[43px] mx-auto md:mx-auto" />
+      {/* Logo container: hide on md, show on lg and sm */}
+      <div className="flex items-center justify-between px-1 pt-6 lg:px-[24px] lg:pt-[24px]">
+        <Logo className="w-full h-[45px] my-[19px] lg:my-[43px] mx-auto" />
         {variant === 'mobile' && (
           <button
             type="button"
@@ -92,50 +90,40 @@ function SideBar({variant = 'desktop', isOpen = false, onClose}: SideBarProps) {
         )}
       </div>
 
-      <div className="flex-1 flex flex-col justify-between">
-        <ul className="pl-[50px] space-y-[4px] pr-[24px]">
-          <NavItem
-            to="/dashboard"
-            icon={<LayoutGridIcon />}
-            label={t('sidebar.dashboard')}
-          />
-
-          <NavItem
-            to="/income"
-            icon={<TrendingUp />}
-            label={t('sidebar.income')}
-          />
-
-          <NavItem
-            to="/expenses"
-            icon={<TrendingDown />}
-            label={t('sidebar.expenses')}
-          />
-
-          <NavItem
-            to="/settings"
-            icon={<Cog />}
-            label={t('sidebar.settings')}
-          />
+      <div className="flex-1 flex flex-col justify-between overflow-hidden">
+   
+        <ul className="flex flex-col items-start md:items-center lg:items-start px-[70px] md:px-3  space-y-[4px]">
+          {SIDEBAR_LINKS.map(link => (
+            <NavItem
+              key={link.to}
+              to={link.to}
+              Icon={link.Icon}
+              label={link.label}
+            />
+          ))}
         </ul>
-
-        <div className="pl-[50px] pb-[40px] space-y-[20px]">
-          <ul className="space-y-[4px]">
-            <li className="flex items-center gap-[12px] pl-[16px] py-[10px] text-muted-foreground">
-              <CircleQuestionMark />
-              {t('sidebar.help')}
+ 
+        <div className="pb-[40px] flex flex-col gap-[20px] items-start md:items-center lg:items-start">
+          <ul className="space-y-[4px] w-full px-[70px] md:px-0">
+            <li className="flex items-center justify-start md:justify-center lg:justify-start gap-[12px] pl-[16px]md:pl-0 lg:pl-[16px] py-[10px] text-muted-foreground">
+              <CircleQuestionMark className="shrink-0" />
+              <span className="block md:hidden lg:block">
+                {t('sidebar.help')}
+              </span>
             </li>
 
             <li
               onClick={handleLogout}
-              className="flex items-center gap-[12px] pl-[16px] py-[10px] cursor-pointer text-muted-foreground hover:text-foreground"
+              className="flex items-center justify-start md:justify-center lg:justify-start gap-[12px] pl-[16px] md:pl-0 lg:pl-[16px] py-[10px] cursor-pointer text-muted-foreground hover:text-foreground"
             >
-              <LogOut />
-              {t('sidebar.logOut')}
+              <LogOut className="shrink-0" />
+              <span className="block md:hidden lg:block">
+                {t('sidebar.logOut')}
+              </span>
             </li>
           </ul>
-
-          <div className="flex gap-[16px]">
+ 
+          <div className="flex flex-row md:flex-col lg:flex-row items-center gap-[16px] px-[60px] md:px-3 lg:px-[30px]">
             <ThemeToggle />
             <LangSelect />
           </div>

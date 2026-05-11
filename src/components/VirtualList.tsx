@@ -11,9 +11,8 @@ import RemoveDialog from '@/pages/income/modal/RemoveDialog';
 import NotAvailableTransactions from './NotAvailableTransactions';
 import type {Item, Props, TransactionUI} from '@/types/types';
 
-const VirtualList = ({data, type}: Props) => {
+const VirtualList = ({data, type, isTransactionsLength}: Props) => {
   const parentRef = useRef<HTMLDivElement>(null);
-console.log(data);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<TransactionUI | null>(null);
   const [modalMode, setModalMode] = useState<'create' | 'update'>('update');
@@ -79,7 +78,7 @@ console.log(data);
 
   const todayRows = allRows?.filter(item => isToday(new Date(item.date)));
   const earlierRows = allRows?.filter(item => !isToday(new Date(item.date)));
- 
+
   const rowVirtualizer = useVirtualizer({
     count: earlierRows.length,
     getScrollElement: () => parentRef.current,
@@ -111,6 +110,7 @@ console.log(data);
         onConfirm={handleConfirmDelete}
         item={itemToDelete}
       />
+
       <main className="flex-1 flex flex-col min-h-0 rounded-xl pt-0.5 overflow-hidden">
         <div
           ref={parentRef}
@@ -186,7 +186,10 @@ console.log(data);
               </ul>
             )}
             {!hasEarlierRows && (!todayRows || todayRows.length === 0) && (
-              <NotAvailableTransactions type={type} />
+              <NotAvailableTransactions
+                isNotLength={isTransactionsLength}
+                type={type}
+              />
             )}
           </div>
         </div>

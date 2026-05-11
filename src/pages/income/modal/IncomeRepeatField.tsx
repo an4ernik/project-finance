@@ -34,7 +34,7 @@ export const IncomeRepeatField = ({value, onChange}: Props) => {
             type="button"
             onClick={() => onChange(type)}
             className={cn(
-              'h-[47px] sm:h-[52px] tracking-tight text-dark-background cursor-pointer text-[14px]',
+              'h-[47px] sm:h-[52px] tracking-tight text-dark-background cursor-pointer text-[12px] sm:text-[14px]',
               value === type && btnRepeatActive,
             )}
           >

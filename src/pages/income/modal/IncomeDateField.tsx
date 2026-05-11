@@ -5,7 +5,7 @@ import {useTranslation} from 'react-i18next';
 
 import {cn} from '@/lib/utils';
 import {Label} from '@/components/ui/label';
-import DisplayError from '@/components/ui/DisplayError';
+import DisplayError from '@/components/DisplayError';
 import {Popover, PopoverContent, PopoverTrigger} from '@/components/ui/popover';
 import {Calendar as ComponentCalendar} from '@/components/ui/calendar';
 import type {TransactionType} from '@/types/types';

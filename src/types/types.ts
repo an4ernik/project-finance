@@ -29,11 +29,13 @@ export type Transaction = {
 export type TransactionUI = Transaction & {
   Icon?: LucideIcon;
   isRepeat?: string;
+  isTransactionsLength?: number;
 };
 
-export type Props = { 
+export type Props = {
   type: 'INCOME' | 'EXPENSE';
   data?: TransactionUI[];
+  isTransactionsLength?: boolean;
 };
 
 // ==========================================================================
@@ -69,8 +71,6 @@ export interface VirtualItemProps {
 // ==========================================================================
 
 // * Modal types and props
-
-
 export interface IncomeFormData {
   id?: number;
   amount: number | string;
@@ -168,4 +168,11 @@ export type CustomTooltipProps = {
   }>;
   type?: string;
   className?: string;
+};
+
+// * dashboard 
+export type CardItem = {
+  type: 'INCOME' | 'EXPENSE' | 'BALANCE';
+  total: number;
+  date?: Date;
 };

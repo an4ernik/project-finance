@@ -20,6 +20,7 @@ const EMPTY_DISTRIBUTION_ITEM = {
 
 const ExpenseDonutChart = () => {
   const {data} = useGetTransactions();
+
   const [activePeriod, setActivePeriod] = useState<Period>('week');
   const [radii, setRadii] = useState({innerRadius: 100, outerRadius: 140});
 
@@ -36,11 +37,14 @@ const ExpenseDonutChart = () => {
       search: '',
     });
 
-    if (!range) return [];
+    if (!range)
+      return {
+        allItems: [EMPTY_DISTRIBUTION_ITEM],
+        chartData: [EMPTY_DISTRIBUTION_ITEM],
+      };
 
     const today = new Date();
     today.setHours(23, 59, 59, 999);
-
     const filtered = transactions.filter(item => {
       if (item.type !== 'EXPENSE') return false;
       if (!item.date) return false;
@@ -52,7 +56,10 @@ const ExpenseDonutChart = () => {
     });
 
     if (filtered.length === 0) {
-      return [EMPTY_DISTRIBUTION_ITEM];
+      return {
+        allItems: [EMPTY_DISTRIBUTION_ITEM],
+        chartData: [EMPTY_DISTRIBUTION_ITEM],
+      };
     }
 
     const groups = filtered.reduce<Record<string, number>>((acc, item) => {
@@ -67,7 +74,7 @@ const ExpenseDonutChart = () => {
     const total = Object.values(groups).reduce((sum, value) => sum + value, 0);
     const dynamicPalette = getColors(Object.keys(groups).length);
 
-    return Object.entries(groups)
+    const allItems = Object.entries(groups)
       .map(([name, value], index) => ({
         name,
         value,
@@ -75,9 +82,16 @@ const ExpenseDonutChart = () => {
         percentage: total > 0 ? Math.round((value / total) * 100) : 0,
       }))
       .sort((a, b) => b.value - a.value);
+
+    const chartData = allItems.filter(item => item.percentage > 0);
+
+    return {
+      allItems,
+      chartData,
+    };
   }, [activePeriod, transactions]);
 
-  const currentHighest = expenseDistributionData[0] || null;
+  const currentHighest = expenseDistributionData.allItems[0] || null;
 
   useEffect(() => {
     const handleResize = () => {
@@ -113,16 +127,16 @@ const ExpenseDonutChart = () => {
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
-                data={expenseDistributionData}
+                data={expenseDistributionData.chartData}
                 cx="50%"
                 cy="50%"
                 innerRadius={radii.innerRadius}
                 outerRadius={radii.outerRadius}
                 paddingAngle={5}
-                dataKey="value" 
+                dataKey="value"
                 stroke="none"
               >
-                {expenseDistributionData.map((entry, index) => (
+                {expenseDistributionData.chartData.map((entry, index) => (
                   <Cell key={`${entry.name}-${index}`} fill={entry.color} />
                 ))}
 
@@ -174,9 +188,9 @@ const ExpenseDonutChart = () => {
           </ResponsiveContainer>
         </div>
 
-        {expenseDistributionData.length > 0 && (
+        {expenseDistributionData.chartData.length > 0 && (
           <ExpenseDistributionList
-            expenseDistributionData={expenseDistributionData}
+            expenseDistributionData={expenseDistributionData.allItems}
           />
         )}
       </div>

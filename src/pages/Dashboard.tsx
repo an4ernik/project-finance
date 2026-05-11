@@ -8,13 +8,8 @@ import ExpenseDonutChart from './dashboard/ExpenseDistribution';
 import BalanceDynamicsChart from './dashboard/BalanceDynamicsChart';
 import {useGetTransactions} from '@/shared/api/generated/transaction-management/transaction-management';
 import {useMemo} from 'react';
-import type {Transaction} from '@/types/types';
-type CardItem = {
-  type: 'INCOME' | 'EXPENSE' | 'BALANCE';
-  total: number;
-  date?: Date;
-};
-
+import type {CardItem, Transaction} from '@/types/types';
+ 
 function Dashboard() {
   const {t} = useTranslation();
   const {data} = useGetTransactions();
@@ -59,7 +54,7 @@ function Dashboard() {
 
   return (
     <AppLayout title={t('dashboard.title')}>
-      <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch">
+      <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch pb-3 custom-scrollbar">
         {/* Finance Overview Section */}
         <FinanceOverview>
           {totals &&
@@ -78,6 +73,8 @@ function Dashboard() {
 
         {/* ExpenseDistribution */}
         <ExpenseDonutChart />
+
+         {/* BalanceDynamics */}
         <BalanceDynamicsChart />
       </div>
     </AppLayout>

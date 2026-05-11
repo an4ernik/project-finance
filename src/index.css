@@ -9,6 +9,7 @@ body,
   height: 100%;
   /* Don't disable page scrolling globally; layouts/components can opt-in to overflow control. */
   overflow-x: hidden;
+
 }
 
 @layer utilities {
