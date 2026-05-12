@@ -151,7 +151,7 @@ function Income() {
       }
     >
       {isManageOpen && (
-        <CategoriesManager onClose={() => setIsManageOpen(false)} />
+        <CategoriesManager type='INCOME' onClose={() => setIsManageOpen(false)} />
       )}
       {isAddOpen && (
         <IncomeModal
