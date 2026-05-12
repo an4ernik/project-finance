@@ -110,7 +110,10 @@
         "restoreTitle": "Restore category?",
         "restoreConfirm": "Restore",
         "deleteTitle": "Delete category?",
-        "deleteConfirm": "Delete"
+        "deleteConfirm": "Delete",
+        "deleteTransferDescription": "This category is used in transactions. Select a new category to move the transactions.",
+        "transferLabel": "Transfer to category",
+        "transferPlaceholder": "Select category"
       }
     },
     "addCategory": {
@@ -262,7 +265,8 @@
   },
   "common": {
     "error": "Something went wrong",
-    "loading": "Creating..."
+    "loading": "Creating...",
+    "success": "Done!"
   },
   "login": {
     "title": "Welcome back!",

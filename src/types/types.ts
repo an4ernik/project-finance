@@ -168,6 +168,7 @@ export type CustomTooltipProps = {
   }>;
   type?: string;
   className?: string;
+  theme?: string;
 };
 
 // * dashboard 

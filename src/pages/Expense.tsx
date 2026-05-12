@@ -23,7 +23,7 @@ import {
 } from '@/types/types';
 
 import TransactionModal from '@/pages/income/modal/TransactionModal';
-import {CURRENCY_SIGN} from '@/constances/constances';
+import {CURRENCY_SIGN} from '@/constances/constances'; 
 import FiltersWrapper from '@/components/FiltersWrapper';
 import {GetCategoriesTypeItem} from '@/shared/api/models';
 import {useGetTransactions} from '@/shared/api/generated/transaction-management/transaction-management';
@@ -154,7 +154,7 @@ function Expense() {
     >
       {isManageOpen && (
         <CategoriesManager
-          type={GetCategoriesTypeItem.EXPENSE}
+          type="EXPENSE"
           onClose={() => setIsManageOpen(false)}
         />
       )}

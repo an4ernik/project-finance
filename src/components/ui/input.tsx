@@ -1,6 +1,7 @@
 import * as React from 'react';
 import {Eye, EyeOff} from 'lucide-react';
 import {cn} from '@/lib/utils'; 
+import DisplayError from '../DisplayError';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   icon?: React.ReactNode;
@@ -106,13 +107,8 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
                 )}
               </button>
             )}
-          </div> 
-
-          {showErrorSlot && (
-            <p className="text-[10px] leading-[1.167] text-destructive min-h-3">
-              {errorMessage || ''}
-            </p>
-          )}
+          </div>
+          {showErrorSlot && <DisplayError errorText={errorMessage} />}
         </div>
       </div>
     );
