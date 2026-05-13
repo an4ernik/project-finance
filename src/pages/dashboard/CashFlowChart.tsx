@@ -194,7 +194,7 @@ const CashFlowChart = ({data = []}: Props) => {
               </defs>
 
               <Tooltip
-                content={<ChartTooltip />}
+                content={<ChartTooltip theme={theme} />}
                 cursor={{fill: 'transparent'}}
               />
 

@@ -8,13 +8,14 @@ import VirtualList from '@/components/VirtualList';
 import IncomeModal from '@/pages/income/modal/TransactionModal';
 import {CURRENCY_SIGN} from '@/constances/constances';
 
+import {Tooltip, TooltipContent, TooltipTrigger} from '@/components/ui/tooltip';
+
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
-import z from 'zod';
 import TransactionFilters from './TransactionFilters';
 
 import {cn} from '@/lib/utils';
-import {applyFilters} from '@/helpers/helpers';
+import {applyFilters, filtersSchema} from '@/helpers/helpers';
 import {
   ALL_CATEGORIES_VALUE,
   type Filters,
@@ -24,28 +25,33 @@ import {
 import {useGetTransactions} from '@/shared/api/generated/transaction-management/transaction-management';
 import {useGetCategories} from '@/shared/api/generated/category-management/category-management';
 import FiltersWrapper from '@/components/FiltersWrapper';
+import type {GetCategoriesTypeItem} from '@/shared/api/models';
+import CreateButtonsWrapper from '@/components/CreateButtonsWrapper'; 
 
 function Income() {
-  const {data} = useGetCategories();
-  const categories = Array.isArray(data) ? data : []; 
-  const transactionsResponse = useGetTransactions();
   const [isManageOpen, setIsManageOpen] = useState(false);
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [debouncedSearch, setDebouncedSearch] = useState('');
+
   const {t} = useTranslation();
 
-  const transactions = useMemo(() => {
-    return Array.isArray(transactionsResponse?.data) ? transactionsResponse.data : [];
-  }, [transactionsResponse]);
+  const {data: categoriesResponse} = useGetCategories();
+  const {data} = useGetTransactions({type: 'INCOME'});
 
-  const filtersSchema = z.object({
-    period: z
-      .enum(['all', 'today', 'week', 'month', 'year', 'custom'])
-      .default('all'),
-    fromDate: z.date().optional(),
-    toDate: z.date().optional(),
-    category: z.array(z.string()).default([ALL_CATEGORIES_VALUE]),
-    search: z.string().default(''),
-  });
+  const categories = useMemo(() => {
+    return Array.isArray(categoriesResponse) ? categoriesResponse : [];
+  }, [categoriesResponse]);
+
+  const categoriesList = useMemo(() => {
+    return categories.filter(
+      (category): category is GetCategoriesTypeItem & {name: string} =>
+        category.name !== undefined && category.type === 'INCOME',
+    );
+  }, [categories]);
+
+  const transactions = useMemo(() => {
+    return Array.isArray(data) ? data : [];
+  }, [data]);
 
   const form = useForm<TransactionFiltersFormValues>({
     resolver: zodResolver(filtersSchema),
@@ -77,8 +83,6 @@ function Income() {
     ],
   );
 
-  const [debouncedSearch, setDebouncedSearch] = useState('');
-
   useEffect(() => {
     const timeout = setTimeout(() => {
       setDebouncedSearch(normalizedFilters.search ?? '');
@@ -88,42 +92,66 @@ function Income() {
   }, [normalizedFilters.search]);
 
   const totalAmount: number = useMemo(() => {
-    return transactions.reduce((sum, item) => sum + (item.amount ?? 0), 0);
+    return transactions?.reduce((sum, item) => sum + (item.amount ?? 0), 0);
   }, [transactions]);
 
   const filteredData: TransactionUI[] = useMemo(() => {
     return applyFilters(transactions, normalizedFilters, debouncedSearch);
   }, [transactions, normalizedFilters, debouncedSearch]);
-
+ 
   return (
     <AppLayout
       title={t('income.title')}
       subtitle={t('income.subtitle')}
       action={
-        <div
-          className={`${isManageOpen && 'hidden md:flex'} flex flex-col md:flex-row gap-[36px] items-center w-full`}
-        >
+        <CreateButtonsWrapper>
           <Button
-            className="cursor-pointer flex flex-row w-full md:w-[224px]"
+            className="cursor-pointer flex flex-row w-full sm:w-[224px]"
             onClick={() => setIsManageOpen(true)}
             variant="secondary"
           >
             {t('income.actions.manageCategories')}
             <Cog />
           </Button>
-          <Button
-            disabled={categories.length === 0}
-            className="cursor-pointer w-full md:w-[224px]"
-            onClick={() => setIsAddOpen(true)}
-          >
-            {t('income.actions.addIncome')}
-            <Plus />
-          </Button>
-        </div>
+
+          {categoriesList.length === 0 ? (
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Button
+                  disabled={categoriesList.length === 0}
+                  onClick={() => setIsAddOpen(true)}
+                  className="cursor-pointer  w-[224px]"
+                >
+                  {t(`incomeModal.title.create.${'INCOME'}`)}
+                  <Plus />
+                </Button>
+              </TooltipTrigger>
+              <TooltipContent
+                sideOffset={8}
+                className={cn(
+                  'relative overflow-visible',
+                  'text-[#0B1514] dark:text-[#EAF6F3]',
+                  'bg-[#eef3f2] dark:bg-[#122421]',
+                  'p-3 rounded-lg shadow-sm',
+                )}
+              >
+                <p className="text-base">{t('tooltipInfo')}</p>
+              </TooltipContent>
+            </Tooltip>
+          ) : (
+            <Button
+              onClick={() => setIsAddOpen(true)}
+              className="cursor-pointer sm:w-[224px]"
+            >
+              {t(`incomeModal.title.create.${'INCOME'}`)}
+              <Plus />
+            </Button>
+          )}
+        </CreateButtonsWrapper>
       }
     >
       {isManageOpen && (
-        <CategoriesManager onClose={() => setIsManageOpen(false)} />
+        <CategoriesManager type='INCOME' onClose={() => setIsManageOpen(false)} />
       )}
       {isAddOpen && (
         <IncomeModal
@@ -134,7 +162,7 @@ function Income() {
       )}
       <FiltersWrapper>
         <TransactionFilters type="INCOME" form={form} />
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center gap-4">
           <span className="dark:text-[#BFD9D2]">
             {t('incomeModal.filters.total.INCOME')}
           </span>
@@ -148,7 +176,7 @@ function Income() {
           </div>
         </div>
       </FiltersWrapper>
-      <VirtualList data={filteredData} type="INCOME" />
+      <VirtualList data={filteredData} isTransactionsLength={transactions.length > 0}  type="INCOME" />
     </AppLayout>
   );
 }

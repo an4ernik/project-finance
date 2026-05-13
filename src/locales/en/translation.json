@@ -3,6 +3,9 @@
   "changeLang": "UA",
   "signUp": "Sign Up",
   "logIn": "Log In",
+
+  "tooltipInfo": "Create a category first",
+
   "sidebar": {
     "dashboard": "Dashboard",
     "income": "Income",
@@ -430,6 +433,8 @@
     "today": "Today",
     "earlier": "Earlier",
     "empty": {
+      "notFoundTitle":"Nothing not found",
+      "notFoundSubtitle":"Try to change the filters, or write new keyword in the search field.",
       "INCOME": {
         "title": "You don't have any incomes yet.",
         "description": "Create your first income to start tracking your finances."
@@ -619,5 +624,10 @@
         "to": "To"
       }
     }
+  },
+  "notFoundPage": {
+    "title": "Page not found.",
+    "description": "It looks like the link is broken or the page has been moved.",
+    "button": "Back to home"
   }
 }

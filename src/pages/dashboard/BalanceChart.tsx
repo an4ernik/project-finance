@@ -18,17 +18,32 @@ import type {TransactionResponseDTO} from '@/shared/api/models';
 import {useGetTransactions} from '@/shared/api/generated/transaction-management/transaction-management';
 import {endOfDay} from 'date-fns';
 
-const calculateYAxisWidth = (maxValue: number) => {
-  // 1. Format the max value exactly how it will appear in the YAxis
-  // Example: 1234567 -> "1234.6K"
+// const calculateYAxisWidth = (maxValue: number) => {
+//   // 1. Format the max value exactly how it will appear in the YAxis
+//   // Example: 1234567 -> "1234.6K"
+//   const formatted =
+//     maxValue >= 1000 ? `${(maxValue / 1000).toFixed(1)}K` : maxValue.toString();
+
+//   // 2. Estimate width: Base padding (20px) + ~9px per character (at 14px font size)
+//   const estimatedWidth = 10 + formatted.length ;
+
+//   // 3. Set a reasonable floor and ceiling
+//   return Math.min(Math.max(estimatedWidth, 40), 80);
+// };
+
+const calculateYAxisWidth = (min: number, max: number) => {
+  // Use the value with the most characters (either the lowest negative or highest positive)
+  const extremeValue = Math.abs(min) > Math.abs(max) ? min : max;
+
   const formatted =
-    maxValue >= 1000 ? `${(maxValue / 1000).toFixed(1)}K` : maxValue.toString();
+    Math.abs(extremeValue) >= 1000
+      ? `${(extremeValue / 1000).toFixed(1)}K`
+      : extremeValue.toString();
 
-  // 2. Estimate width: Base padding (20px) + ~9px per character (at 14px font size)
-  const estimatedWidth = 10 + formatted.length * 9;
+  // Increase multiplier: ~9px per character + base padding
+  const estimatedWidth = 15 + formatted.length * 3;
 
-  // 3. Set a reasonable floor and ceiling
-  return Math.min(Math.max(estimatedWidth, 40), 80);
+  return Math.min(Math.max(estimatedWidth, 50), 100);
 };
 
 const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
@@ -146,36 +161,45 @@ const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
   const diff = currentBalance - avgBalance;
   const diffColor = diff >= 0 ? 'text-[#00AA85]' : 'text-[#FF6422]';
   const diffSign = diff >= 0 ? '+' : '';
-
+ 
   const chartDomain = useMemo(() => {
-    if (chartData.length === 0) return 0;
+    if (chartData.length === 0) return [0, 1000];
 
-    // Filter out null values and then map to get only numbers
     const validValues = chartData
       .map(d => d.amount)
       .filter(
         (value): value is number => value !== null && value !== undefined,
       );
 
-    if (validValues.length === 0) return 0;
+    if (validValues.length === 0) return [0, 1000];
 
     const actualMax = Math.max(...validValues);
+    const actualMin = Math.min(...validValues);
 
-    return Math.max(1000, Math.floor(actualMax));
+    // If the min is negative, use it; otherwise, default to 0
+    const padding = 1; // Add 10% breathing room
+    const bottom = actualMin < 0 ? Math.floor(actualMin * padding) : 0;
+    const top = Math.max(1000, Math.ceil(actualMax * padding));
+
+    return [bottom, top];
   }, [chartData]);
-
+ 
   const chartTicks = useMemo(() => {
-    const numberOfTicks = 5;
-    const step = chartDomain / numberOfTicks;
-    return Array.from({length: numberOfTicks + 1}, (_, i) =>
-      Math.round(step * i),
-    );
-  }, [chartDomain]);
+  const [min, max] = chartDomain; // Assuming chartDomain is now [min, max]
+  const numberOfTicks = 5;
+  const range = max - min;
+  const step = range / numberOfTicks;
+
+  return Array.from({ length: numberOfTicks + 1 }, (_, i) => 
+    Math.round(min + (step * i))
+  );
+}, [chartDomain]);
+ 
 
   const dynamicYAxisWidth = useMemo(() => {
-    return calculateYAxisWidth(chartDomain);
-  }, [chartDomain]); 
-  
+    return calculateYAxisWidth(chartDomain[0], chartDomain[1]);
+  }, [chartDomain]);
+
   const hasData =
     chartData.length > 0 && chartData.some(item => item?.amount ?? 0 > 0);
 
@@ -227,13 +251,21 @@ const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
                 // 2. FORCE every tick to render (this is the key!)
                 interval={0}
                 // 3. Ensure the scale can actually reach 10k
-                domain={[0, chartDomain]}
+                domain={chartDomain}
                 // 4. Formatter for the 'k' look
-                tickFormatter={value =>
-                  value === 0
-                    ? '0'
-                    : `${formattedAmount((value / 1000).toFixed(1))}K`
-                }
+                // tickFormatter={value =>
+                //   value === 0
+                //     ? '0'
+                //     : `${formattedAmount((value / 1000).toFixed(1))}K`
+                // }
+                tickFormatter={value => {
+                  if (value === 0) return '0';
+                  // Handle negative formatting correctly
+                  const isNegative = value < 0;
+                  const absValue = Math.abs(value);
+                  const formatted = (absValue / 1000).toFixed(1);
+                  return `${isNegative ? '-' : ''}${formatted}K`;
+                }}
                 axisLine={false}
                 tickLine={false}
                 tick={{fill: '#7F9E97', fontSize: 14}}

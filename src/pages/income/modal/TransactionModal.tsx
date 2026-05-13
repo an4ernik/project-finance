@@ -10,7 +10,6 @@ import {Button} from '../../../components/ui/button';
 import {cn} from '@/lib/utils';
 
 import {useCreateTransaction} from '@/shared/api/generated/transaction-controller/transaction-controller';
-// import {useUpdateTransaction} from '@/shared/api/generated/transaction-controller/transaction-controller';
 
 import {IncomeAmountField} from './IncomeAmountField';
 import {IncomeCategoryField} from './IncomeCategoryField';
@@ -19,6 +18,7 @@ import {IncomeDescriptionField} from './IncomeDescriptionField';
 import {IncomeRepeatField} from './IncomeRepeatField';
 import {IncomeFileField} from './IncomeFileField';
 import {useUpdateTransaction} from '@/shared/api/generated/transaction-management/transaction-management';
+
 import Spinner from '@/components/Spinner';
 import InfoDialog, {type RecurringUpdateScope} from './InfoDialog';
 import type {IncomeModalProps} from '@/types/types';
@@ -150,10 +150,12 @@ const TransactionModal = ({
     const newFiles = Array.from(e.target.files || []);
     const currentFiles = watchedFile ?? [];
 
-    const updated = [...currentFiles, ...newFiles].filter(
-      (file, index, self) =>
-        index === self.findIndex(f => f.name === file.name),
-    );
+    const updated = [...currentFiles, ...newFiles]
+      .filter(
+        (file, index, self) =>
+          index === self.findIndex(f => f.name === file.name),
+      )
+      .slice(0, 6);
 
     setValue('file', updated, {shouldValidate: true, shouldDirty: true});
     await trigger('file');
@@ -266,6 +268,7 @@ const TransactionModal = ({
                 <X className="size-5" />
               </button>
             </div>
+
             {/* AMOUNT */}
             <IncomeAmountField
               name="amount"
@@ -273,12 +276,14 @@ const TransactionModal = ({
               register={register}
               error={errors.amount?.message}
             />
+
             {/* CATEGORY */}
             <IncomeCategoryField
               type={type}
               control={control}
               error={errors.categoryId?.message}
             />
+
             {/* DATE */}
             <IncomeDateField
               type={type}
@@ -292,8 +297,10 @@ const TransactionModal = ({
                 })
               }
             />
+
             {/* DESCRIPTION */}
             <IncomeDescriptionField register={register} />
+
             {/* REPEAT */}
             <IncomeRepeatField
               value={watchedRepeat}
@@ -304,6 +311,7 @@ const TransactionModal = ({
                 })
               }
             />
+
             {/* FILE */}
             <IncomeFileField
               files={watchedFile}

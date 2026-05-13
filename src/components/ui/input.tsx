@@ -1,7 +1,7 @@
 import * as React from 'react';
 import {Eye, EyeOff} from 'lucide-react';
-import {cn} from '@/lib/utils';
-import DisplayError from './DisplayError';
+import {cn} from '@/lib/utils'; 
+import DisplayError from '../DisplayError';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   icon?: React.ReactNode;

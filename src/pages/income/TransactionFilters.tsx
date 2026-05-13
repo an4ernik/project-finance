@@ -80,11 +80,11 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
   const [periodOpen, setPeriodOpen] = useState(false);
   const [categoryOpen, setCategoryOpen] = useState(false);
   const {period, fromDate, toDate, category = [ALL_CATEGORIES_VALUE]} = watch();
- 
+
   const selectedCategories = categories?.filter(cat =>
     category.includes(cat.name),
   );
-  
+
   const selectedCategoriesLabel = category.includes(ALL_CATEGORIES_VALUE)
     ? t(`incomeModal.filters.category.${ALL_CATEGORIES_VALUE}`)
     : selectedCategories.map(cat => cat.name).join(', ') || '';
@@ -105,7 +105,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
               disabled={categories?.length === 0}
               variant="tab"
               className={cn(
-                'flex h-10 w-full   text-[#6F7E7C] dark:text-[#A9C1BB] items-center justify-between px-4 truncate',
+                'flex h-10 w-full shadow-md border-black/10 dark:border-white/10 text-[#6F7E7C] dark:text-[#A9C1BB] items-center justify-between px-4 truncate',
               )}
             >
               <div className="flex justify-between items-center w-full gap-2">
@@ -159,7 +159,14 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
                               ? 'border dark:border-[#4B6560] dark:bg-[linear-gradient(180deg,rgba(27,52,47,0.95)_0%,rgba(19,37,34,0.98)_100%)] text-[#0B1514]! dark:text-[#EAF6F3] shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_0_0_1px_rgba(125,164,154,0.08),0_10px_24px_rgba(0,0,0,0.2)]'
                               : 'border border-transparent text-[#7F9E97] hover:bg-linear-to-b hover: hover:bg-[#0B151403] hover:via-[#315F551A] hover:shadow-md hover:to-[#90D0B60D] dark:hover:bg-[#17302c]',
                           )}
-                          onClick={() => field.onChange(item.val)}
+                          onClick={() => {
+                            field.onChange(item.val);
+                            if (item.val === 'custom') {
+                              setPeriodOpen(true);
+                            } else {
+                              setPeriodOpen(false);
+                            }
+                          }}
                         >
                           <FieldLabel
                             className={cn(
@@ -240,6 +247,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
                     <Popover>
                       <PopoverTrigger asChild>
                         <Button
+                          disabled={!fromDate}
                           variant="tab"
                           type="button"
                           className={cn(
@@ -261,8 +269,14 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
                           control={control}
                           name="toDate"
                           render={({field}) => (
-                            <ComponentCalendar
-                              disabled={(date: Date) => date > new Date()}
+                            <ComponentCalendar 
+                              disabled={(date: Date) => {
+                                const isFuture = date > new Date();
+                                const isBeforeFrom = fromDate
+                                  ? date < fromDate
+                                  : false;
+                                return isFuture || isBeforeFrom;
+                              }}
                               mode="single"
                               selected={
                                 field.value instanceof Date
@@ -295,6 +309,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
               variant="tab"
               type="button"
               className={cn(
+                'shadow-md border-black/10 dark:border-white/10',
                 'flex h-10 px-4 w-full items-center justify-between text-[#6F7E7C] dark:text-[#A9C1BB]',
               )}
             >
@@ -392,7 +407,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
         <h2>{t('incomeModal.filters.search.label')}</h2>
         <Input
           disabled={categories?.length === 0}
-          className="text-[#6F7E7C] dark:text-[#A9C1BB] placeholder:text-[#6F7E7C] dark:placeholder:text-[#A9C1BB]"
+          className="text-[#6F7E7C] shadow-md border-black/10 dark:border-white/10 dark:text-[#A9C1BB] placeholder:text-[#6F7E7C] dark:placeholder:text-[#A9C1BB]"
           icon={
             <Search className="size-5 text-[#0B1514] dark:text-[#EAF6F3]" />
           }
