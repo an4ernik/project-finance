@@ -207,13 +207,17 @@ body,
     inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 4px 4px rgba(75, 75, 75, 0.2);
   --btn-primary-bg:
     radial-gradient(
-      circle at 51% 31%,
-      rgba(255, 255, 255, 0.2) 0%,
-      rgba(153, 153, 153, 0.01) 100%
+      69.44% 69.44% at 50.72% 30.56%,
+      rgba(255, 255, 255, 0.04) 0%,
+      rgba(153, 153, 153, 0.002) 100%
     ),
-    linear-gradient(0deg, rgba(2, 98, 77, 0.6) 0%, rgba(4, 200, 158, 1) 50%);
+    linear-gradient(
+      360deg,
+      rgba(2, 98, 77, 0.18) 0%,
+      rgba(4, 200, 158, 0.3) 50%
+    );
   --btn-primary-hover: linear-gradient(
-    0deg,
+    360deg,
     rgba(2, 160, 120, 0.3) 0%,
     rgba(2, 160, 120, 0.5) 50%,
     rgba(2, 160, 120, 0.8) 100%
