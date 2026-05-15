@@ -26,10 +26,12 @@ import type {
 
 import type {
   CreateTransactionBody,
+  DeleteTransactionParams,
   GetTransactionsParams,
   ProblemDetail,
   TransactionCreateRequestDTO,
-  TransactionResponseDTO
+  TransactionResponseDTO,
+  UpdateTransactionParams
 } from '../../models';
 
 import { customInstance } from '../../axios';
@@ -41,297 +43,6 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 /**
- * Returns one transaction accessible to the authenticated user.
- * @summary Get transaction by id
- */
-export type getTransactionByIdResponse200 = {
-  data: TransactionResponseDTO
-  status: 200
-}
-
-export type getTransactionByIdResponse404 = {
-  data: ProblemDetail
-  status: 404
-}
-    
-export type getTransactionByIdResponseSuccess = (getTransactionByIdResponse200) & {
-  headers: Headers;
-};
-export type getTransactionByIdResponseError = (getTransactionByIdResponse404) & {
-  headers: Headers;
-};
-
-export type getTransactionByIdResponse = (getTransactionByIdResponseSuccess | getTransactionByIdResponseError)
-
-export const getGetTransactionByIdUrl = (transactionId: number,) => {
-
-
-  
-
-  return `/api/v1/transactions/${transactionId}`
-}
-
-export const getTransactionById = async (transactionId: number, options?: RequestInit): Promise<getTransactionByIdResponse> => {
-  
-  return customInstance<getTransactionByIdResponse>(getGetTransactionByIdUrl(transactionId),
-  {      
-    ...options,
-    method: 'GET'
-    
-    
-  }
-);}
-
-
-
-
-
-export const getGetTransactionByIdQueryKey = (transactionId: number,) => {
-    return [
-    `/api/v1/transactions/${transactionId}`
-    ] as const;
-    }
-
-    
-export const getGetTransactionByIdQueryOptions = <TData = Awaited<ReturnType<typeof getTransactionById>>, TError = ErrorType<ProblemDetail>>(transactionId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTransactionById>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
-) => {
-
-const {query: queryOptions, request: requestOptions} = options ?? {};
-
-  const queryKey =  queryOptions?.queryKey ?? getGetTransactionByIdQueryKey(transactionId);
-
-  
-
-    const queryFn: QueryFunction<Awaited<ReturnType<typeof getTransactionById>>> = ({ signal }) => getTransactionById(transactionId, { signal, ...requestOptions });
-
-      
-
-      
-
-   return  { queryKey, queryFn, enabled: !!(transactionId), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getTransactionById>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
-}
-
-export type GetTransactionByIdQueryResult = NonNullable<Awaited<ReturnType<typeof getTransactionById>>>
-export type GetTransactionByIdQueryError = ErrorType<ProblemDetail>
-
-
-export function useGetTransactionById<TData = Awaited<ReturnType<typeof getTransactionById>>, TError = ErrorType<ProblemDetail>>(
- transactionId: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTransactionById>>, TError, TData>> & Pick<
-        DefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getTransactionById>>,
-          TError,
-          Awaited<ReturnType<typeof getTransactionById>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetTransactionById<TData = Awaited<ReturnType<typeof getTransactionById>>, TError = ErrorType<ProblemDetail>>(
- transactionId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTransactionById>>, TError, TData>> & Pick<
-        UndefinedInitialDataOptions<
-          Awaited<ReturnType<typeof getTransactionById>>,
-          TError,
-          Awaited<ReturnType<typeof getTransactionById>>
-        > , 'initialData'
-      >, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetTransactionById<TData = Awaited<ReturnType<typeof getTransactionById>>, TError = ErrorType<ProblemDetail>>(
- transactionId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTransactionById>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient
-  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-/**
- * @summary Get transaction by id
- */
-
-export function useGetTransactionById<TData = Awaited<ReturnType<typeof getTransactionById>>, TError = ErrorType<ProblemDetail>>(
- transactionId: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTransactionById>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient 
- ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
-
-  const queryOptions = getGetTransactionByIdQueryOptions(transactionId,options)
-
-  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
-
-  return { ...query, queryKey: queryOptions.queryKey };
-}
-
-
-
-
-/**
- * Updates a one-time transaction and recalculates related balances. One-time transaction date can be in the past or today, but not in the future.
- * @summary Update transaction
- */
-export type updateTransactionResponse200 = {
-  data: TransactionResponseDTO
-  status: 200
-}
-
-export type updateTransactionResponse400 = {
-  data: ProblemDetail
-  status: 400
-}
-    
-export type updateTransactionResponseSuccess = (updateTransactionResponse200) & {
-  headers: Headers;
-};
-export type updateTransactionResponseError = (updateTransactionResponse400) & {
-  headers: Headers;
-};
-
-export type updateTransactionResponse = (updateTransactionResponseSuccess | updateTransactionResponseError)
-
-export const getUpdateTransactionUrl = (transactionId: number,) => {
-
-
-  
-
-  return `/api/v1/transactions/${transactionId}`
-}
-
-export const updateTransaction = async (transactionId: number,
-    transactionCreateRequestDTO: TransactionCreateRequestDTO, options?: RequestInit): Promise<updateTransactionResponse> => {
-  
-  return customInstance<updateTransactionResponse>(getUpdateTransactionUrl(transactionId),
-  {      
-    ...options,
-    method: 'PUT',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      transactionCreateRequestDTO,)
-  }
-);}
-
-
-
-
-export const getUpdateTransactionMutationOptions = <TError = ErrorType<ProblemDetail>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTransaction>>, TError,{transactionId: number;data: TransactionCreateRequestDTO}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof updateTransaction>>, TError,{transactionId: number;data: TransactionCreateRequestDTO}, TContext> => {
-
-const mutationKey = ['updateTransaction'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateTransaction>>, {transactionId: number;data: TransactionCreateRequestDTO}> = (props) => {
-          const {transactionId,data} = props ?? {};
-
-          return  updateTransaction(transactionId,data,requestOptions)
-        }
-
-
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type UpdateTransactionMutationResult = NonNullable<Awaited<ReturnType<typeof updateTransaction>>>
-    export type UpdateTransactionMutationBody = TransactionCreateRequestDTO
-    export type UpdateTransactionMutationError = ErrorType<ProblemDetail>
-
-    /**
- * @summary Update transaction
- */
-export const useUpdateTransaction = <TError = ErrorType<ProblemDetail>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTransaction>>, TError,{transactionId: number;data: TransactionCreateRequestDTO}, TContext>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof updateTransaction>>,
-        TError,
-        {transactionId: number;data: TransactionCreateRequestDTO},
-        TContext
-      > => {
-      return useMutation(getUpdateTransactionMutationOptions(options), queryClient);
-    }
-    /**
- * Soft-deletes a transaction and rolls back the account balance impact.
- * @summary Delete transaction
- */
-export type deleteTransactionResponse204 = {
-  data: void
-  status: 204
-}
-    
-export type deleteTransactionResponseSuccess = (deleteTransactionResponse204) & {
-  headers: Headers;
-};
-;
-
-export type deleteTransactionResponse = (deleteTransactionResponseSuccess)
-
-export const getDeleteTransactionUrl = (transactionId: number,) => {
-
-
-  
-
-  return `/api/v1/transactions/${transactionId}`
-}
-
-export const deleteTransaction = async (transactionId: number, options?: RequestInit): Promise<deleteTransactionResponse> => {
-  
-  return customInstance<deleteTransactionResponse>(getDeleteTransactionUrl(transactionId),
-  {      
-    ...options,
-    method: 'DELETE'
-    
-    
-  }
-);}
-
-
-
-
-export const getDeleteTransactionMutationOptions = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTransaction>>, TError,{transactionId: number}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof deleteTransaction>>, TError,{transactionId: number}, TContext> => {
-
-const mutationKey = ['deleteTransaction'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteTransaction>>, {transactionId: number}> = (props) => {
-          const {transactionId} = props ?? {};
-
-          return  deleteTransaction(transactionId,requestOptions)
-        }
-
-
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type DeleteTransactionMutationResult = NonNullable<Awaited<ReturnType<typeof deleteTransaction>>>
-    
-    export type DeleteTransactionMutationError = ErrorType<unknown>
-
-    /**
- * @summary Delete transaction
- */
-export const useDeleteTransaction = <TError = ErrorType<unknown>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTransaction>>, TError,{transactionId: number}, TContext>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof deleteTransaction>>,
-        TError,
-        {transactionId: number},
-        TContext
-      > => {
-      return useMutation(getDeleteTransactionMutationOptions(options), queryClient);
-    }
-    /**
  * Returns the authenticated user's transactions filtered by account, category, type, and date range. Category filters can reference both active and archived categories that still exist in historical transactions.
  * @summary Get transactions
  */
@@ -543,5 +254,314 @@ export const useCreateTransaction = <TError = ErrorType<ProblemDetail>,
         TContext
       > => {
       return useMutation(getCreateTransactionMutationOptions(options), queryClient);
+    }
+    /**
+ * Returns one transaction accessible to the authenticated user.
+ * @summary Get transaction by id
+ */
+export type getTransactionByIdResponse200 = {
+  data: TransactionResponseDTO
+  status: 200
+}
+
+export type getTransactionByIdResponse404 = {
+  data: ProblemDetail
+  status: 404
+}
+    
+export type getTransactionByIdResponseSuccess = (getTransactionByIdResponse200) & {
+  headers: Headers;
+};
+export type getTransactionByIdResponseError = (getTransactionByIdResponse404) & {
+  headers: Headers;
+};
+
+export type getTransactionByIdResponse = (getTransactionByIdResponseSuccess | getTransactionByIdResponseError)
+
+export const getGetTransactionByIdUrl = (id: number,) => {
+
+
+  
+
+  return `/api/v1/transactions/${id}`
+}
+
+export const getTransactionById = async (id: number, options?: RequestInit): Promise<getTransactionByIdResponse> => {
+  
+  return customInstance<getTransactionByIdResponse>(getGetTransactionByIdUrl(id),
+  {      
+    ...options,
+    method: 'GET'
+    
+    
+  }
+);}
+
+
+
+
+
+export const getGetTransactionByIdQueryKey = (id: number,) => {
+    return [
+    `/api/v1/transactions/${id}`
+    ] as const;
+    }
+
+    
+export const getGetTransactionByIdQueryOptions = <TData = Awaited<ReturnType<typeof getTransactionById>>, TError = ErrorType<ProblemDetail>>(id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTransactionById>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetTransactionByIdQueryKey(id);
+
+  
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getTransactionById>>> = ({ signal }) => getTransactionById(id, { signal, ...requestOptions });
+
+      
+
+      
+
+   return  { queryKey, queryFn, enabled: !!(id), ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getTransactionById>>, TError, TData> & { queryKey: DataTag<QueryKey, TData, TError> }
+}
+
+export type GetTransactionByIdQueryResult = NonNullable<Awaited<ReturnType<typeof getTransactionById>>>
+export type GetTransactionByIdQueryError = ErrorType<ProblemDetail>
+
+
+export function useGetTransactionById<TData = Awaited<ReturnType<typeof getTransactionById>>, TError = ErrorType<ProblemDetail>>(
+ id: number, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTransactionById>>, TError, TData>> & Pick<
+        DefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getTransactionById>>,
+          TError,
+          Awaited<ReturnType<typeof getTransactionById>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetTransactionById<TData = Awaited<ReturnType<typeof getTransactionById>>, TError = ErrorType<ProblemDetail>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTransactionById>>, TError, TData>> & Pick<
+        UndefinedInitialDataOptions<
+          Awaited<ReturnType<typeof getTransactionById>>,
+          TError,
+          Awaited<ReturnType<typeof getTransactionById>>
+        > , 'initialData'
+      >, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+export function useGetTransactionById<TData = Awaited<ReturnType<typeof getTransactionById>>, TError = ErrorType<ProblemDetail>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTransactionById>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient
+  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
+/**
+ * @summary Get transaction by id
+ */
+
+export function useGetTransactionById<TData = Awaited<ReturnType<typeof getTransactionById>>, TError = ErrorType<ProblemDetail>>(
+ id: number, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTransactionById>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient 
+ ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
+
+  const queryOptions = getGetTransactionByIdQueryOptions(id,options)
+
+  const query = useQuery(queryOptions, queryClient) as  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> };
+
+  return { ...query, queryKey: queryOptions.queryKey };
+}
+
+
+
+
+/**
+ * Deletes a transaction and rolls back the account balance impact. For transactions generated by a recurring rule, recurringScope=ONLY_THIS deletes only the selected occurrence, while recurringScope=THIS_AND_FUTURE deletes the selected occurrence, already-created future occurrences, and the recurring rule.
+ * @summary Delete transaction
+ */
+export type deleteTransactionResponse204 = {
+  data: void
+  status: 204
+}
+    
+export type deleteTransactionResponseSuccess = (deleteTransactionResponse204) & {
+  headers: Headers;
+};
+;
+
+export type deleteTransactionResponse = (deleteTransactionResponseSuccess)
+
+export const getDeleteTransactionUrl = (id: number,
+    params?: DeleteTransactionParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/v1/transactions/${id}?${stringifiedParams}` : `/api/v1/transactions/${id}`
+}
+
+export const deleteTransaction = async (id: number,
+    params?: DeleteTransactionParams, options?: RequestInit): Promise<deleteTransactionResponse> => {
+  
+  return customInstance<deleteTransactionResponse>(getDeleteTransactionUrl(id,params),
+  {      
+    ...options,
+    method: 'DELETE'
+    
+    
+  }
+);}
+
+
+
+
+export const getDeleteTransactionMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTransaction>>, TError,{id: number;params?: DeleteTransactionParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteTransaction>>, TError,{id: number;params?: DeleteTransactionParams}, TContext> => {
+
+const mutationKey = ['deleteTransaction'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteTransaction>>, {id: number;params?: DeleteTransactionParams}> = (props) => {
+          const {id,params} = props ?? {};
+
+          return  deleteTransaction(id,params,requestOptions)
+        }
+
+
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteTransactionMutationResult = NonNullable<Awaited<ReturnType<typeof deleteTransaction>>>
+    
+    export type DeleteTransactionMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Delete transaction
+ */
+export const useDeleteTransaction = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteTransaction>>, TError,{id: number;params?: DeleteTransactionParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteTransaction>>,
+        TError,
+        {id: number;params?: DeleteTransactionParams},
+        TContext
+      > => {
+      return useMutation(getDeleteTransactionMutationOptions(options), queryClient);
+    }
+    /**
+ * Updates a transaction and recalculates related balances. For transactions generated by a recurring rule, recurringScope=ONLY_THIS updates only the selected occurrence, while recurringScope=THIS_AND_FUTURE also updates the recurring rule and already-created future occurrences. Transaction date can be in the past or today, but not in the future.
+ * @summary Update transaction
+ */
+export type updateTransactionResponse200 = {
+  data: TransactionResponseDTO
+  status: 200
+}
+
+export type updateTransactionResponse400 = {
+  data: ProblemDetail
+  status: 400
+}
+    
+export type updateTransactionResponseSuccess = (updateTransactionResponse200) & {
+  headers: Headers;
+};
+export type updateTransactionResponseError = (updateTransactionResponse400) & {
+  headers: Headers;
+};
+
+export type updateTransactionResponse = (updateTransactionResponseSuccess | updateTransactionResponseError)
+
+export const getUpdateTransactionUrl = (id: number,
+    params?: UpdateTransactionParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+    
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : value.toString())
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/v1/transactions/${id}?${stringifiedParams}` : `/api/v1/transactions/${id}`
+}
+
+export const updateTransaction = async (id: number,
+    transactionCreateRequestDTO: TransactionCreateRequestDTO,
+    params?: UpdateTransactionParams, options?: RequestInit): Promise<updateTransactionResponse> => {
+  
+  return customInstance<updateTransactionResponse>(getUpdateTransactionUrl(id,params),
+  {      
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...options?.headers },
+    body: JSON.stringify(
+      transactionCreateRequestDTO,)
+  }
+);}
+
+
+
+
+export const getUpdateTransactionMutationOptions = <TError = ErrorType<ProblemDetail>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTransaction>>, TError,{id: number;data: TransactionCreateRequestDTO;params?: UpdateTransactionParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateTransaction>>, TError,{id: number;data: TransactionCreateRequestDTO;params?: UpdateTransactionParams}, TContext> => {
+
+const mutationKey = ['updateTransaction'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateTransaction>>, {id: number;data: TransactionCreateRequestDTO;params?: UpdateTransactionParams}> = (props) => {
+          const {id,data,params} = props ?? {};
+
+          return  updateTransaction(id,data,params,requestOptions)
+        }
+
+
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateTransactionMutationResult = NonNullable<Awaited<ReturnType<typeof updateTransaction>>>
+    export type UpdateTransactionMutationBody = TransactionCreateRequestDTO
+    export type UpdateTransactionMutationError = ErrorType<ProblemDetail>
+
+    /**
+ * @summary Update transaction
+ */
+export const useUpdateTransaction = <TError = ErrorType<ProblemDetail>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTransaction>>, TError,{id: number;data: TransactionCreateRequestDTO;params?: UpdateTransactionParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateTransaction>>,
+        TError,
+        {id: number;data: TransactionCreateRequestDTO;params?: UpdateTransactionParams},
+        TContext
+      > => {
+      return useMutation(getUpdateTransactionMutationOptions(options), queryClient);
     }
     

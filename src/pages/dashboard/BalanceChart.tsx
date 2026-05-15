@@ -10,7 +10,7 @@ import {
 } from 'recharts';
 import ChartTooltip from './ChartTooltip';
 import {CURRENCY_SIGN, DAY_KEYS, MONTH_KEYS} from '@/constances/constances';
-import {useMemo} from 'react';
+import React, {useMemo} from 'react';
 import type {Period} from '@/types/types';
 import {cn} from '@/lib/utils';
 import {formattedAmount, getPeriodRange} from '@/helpers/helpers';
@@ -161,7 +161,7 @@ const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
   const diff = currentBalance - avgBalance;
   const diffColor = diff >= 0 ? 'text-[#00AA85]' : 'text-[#FF6422]';
   const diffSign = diff >= 0 ? '+' : '';
- 
+
   const chartDomain = useMemo(() => {
     if (chartData.length === 0) return [0, 1000];
 
@@ -183,18 +183,17 @@ const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
 
     return [bottom, top];
   }, [chartData]);
- 
-  const chartTicks = useMemo(() => {
-  const [min, max] = chartDomain; // Assuming chartDomain is now [min, max]
-  const numberOfTicks = 5;
-  const range = max - min;
-  const step = range / numberOfTicks;
 
-  return Array.from({ length: numberOfTicks + 1 }, (_, i) => 
-    Math.round(min + (step * i))
-  );
-}, [chartDomain]);
- 
+  const chartTicks = useMemo(() => {
+    const [min, max] = chartDomain; // Assuming chartDomain is now [min, max]
+    const numberOfTicks = 5;
+    const range = max - min;
+    const step = range / numberOfTicks;
+
+    return Array.from({length: numberOfTicks + 1}, (_, i) =>
+      Math.round(min + step * i),
+    );
+  }, [chartDomain]);
 
   const dynamicYAxisWidth = useMemo(() => {
     return calculateYAxisWidth(chartDomain[0], chartDomain[1]);
@@ -252,12 +251,6 @@ const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
                 interval={0}
                 // 3. Ensure the scale can actually reach 10k
                 domain={chartDomain}
-                // 4. Formatter for the 'k' look
-                // tickFormatter={value =>
-                //   value === 0
-                //     ? '0'
-                //     : `${formattedAmount((value / 1000).toFixed(1))}K`
-                // }
                 tickFormatter={value => {
                   if (value === 0) return '0';
                   // Handle negative formatting correctly
@@ -338,4 +331,4 @@ const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
     </>
   );
 };
-export default BalanceChart;
+export default React.memo(BalanceChart)

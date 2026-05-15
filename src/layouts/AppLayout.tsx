@@ -9,6 +9,7 @@ import {Suspense, useState} from 'react';
 import SmallLogo from '@/assets/icons/small-logo.svg';
 import {PageSkeleton} from '@/components/PageSkeleton';
 import {paths} from '@/constances/constances';
+import {cn} from '@/lib/utils';
 
 type AppLayoutProps = {
   title?: React.ReactNode;
@@ -65,26 +66,57 @@ function AppLayout({title, subtitle, action, children}: AppLayoutProps) {
         onClose={() => setMenuOpen(false)}
       />
 
-      <div className="flex h-full min-h-0 flex-1 flex-col overflow-y-auto custom-scrollbar py-[33.5px] px-[25px] md:pr-[50px] pt-16.25 md:pt-0">
+      <div className="flex h-auto sm:h-full min-h-0 flex-1 flex-col overflow-y-auto custom-scrollbar py-[33.5px] px-[25px] md:pr-[50px] pt-16.25 md:pt-0">
+       
         <div
-          className={`flex flex-col gap-[30px] md:flex-row ${!isNotExistingRoute ? 'justify-end' : 'justify-between'}  w-full mt-[35px] wrap`}
+          className={cn(
+            'mt-[35px] w-full',
+            // Base/Mobile: Vertical Stack
+            'flex flex-col gap-[30px]',
+            // MD: Grid (2 rows, 2 columns)
+            'md:grid md:grid-cols-2 md:gap-y-4 md:items-center',
+            // LG: Single Row Flex
+            'lg:flex lg:flex-row lg:justify-between lg:gap-6',
+          )}
         >
+          {/* TITLE SECTION */}
           {isNotExistingRoute && (
-            <div className="flex flex-col">
-              <h2 className="text-2xl font-semibold">{resolvedTitle}</h2>
-              <p className="text-muted-foreground">{resolvedSubtitle}</p>
+            <div className="md:col-start-1 md:row-start-1 lg:flex-none">
+              <h2 className="text-xl sm:text-2xl font-semibold">
+                {resolvedTitle}
+              </h2>
+              <p className="text-sm text-muted-foreground">
+                {resolvedSubtitle}
+              </p>
             </div>
           )}
-          <div className={!action ? 'hidden' : 'flex'}>{action}</div>
-          <div className="hidden md:flex flex-row gap-[4.5px] items-center">
+
+          {/* AVATAR SECTION */}
+          <div className="hidden md:flex items-center gap-2 md:col-start-2 md:row-start-1 md:justify-self-end lg:order-3">
             <img
-              src={userData?.avatarUrl ? userData.avatarUrl : defaultAvatar}
+              src={userData?.avatarUrl || defaultAvatar}
               alt="avatar"
-              className="h-[29px] rounded-2xl"
+              className="h-[29px] w-[29px] rounded-full object-cover"
             />
-            <p>{userData?.fullName ?? t('layout.userName')}</p>
+            <p className="whitespace-nowrap">
+              {userData?.fullName ?? t('layout.userName')}
+            </p>
+          </div>
+
+          {/* BUTTONS (ACTION) SECTION */}
+          <div
+            className={cn( 
+              !action ? 'hidden' : 'flex',
+              // MD: Moves to bottom row, stays right
+              'md:col-span-2 md:row-start-2 md:justify-end',
+              // LG: In the middle, pushed to right
+              'lg:col-span-1 lg:row-start-1 lg:flex-1 lg:order-2 lg:justify-end',
+            )}
+          >
+            {action}
           </div>
         </div>
+
         <main className="mt-[15px] min-h-0 flex-1 custom-scrollbar">
           <Suspense fallback={<PageSkeleton />}>
             {children ?? <Outlet />}

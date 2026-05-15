@@ -10,7 +10,7 @@ const btnRepeatActive = cn(
   'shadow-[inset_0px_1px_0px_rgba(255,255,255,0.3),0px_4px_10px_rgba(0,0,0,0.3)]',
 );
 
-const REPEAT_INCOME_TYPES = ['once', 'monthly', 'yearly'] as const;
+const REPEAT_INCOME_TYPES = ['ONCE', 'MONTHLY', 'YEARLY'] as const;
 
 type Props = {
   value?: string;
@@ -37,7 +37,7 @@ export const IncomeRepeatField = ({value, onChange}: Props) => {
               'h-[47px] sm:h-[52px] tracking-tight text-dark-background cursor-pointer text-[12px] sm:text-[14px]',
               value === type && btnRepeatActive,
             )}
-          >
+          > 
             {t(`incomeModal.repeat.${type}`)}
           </Button>
         ))}

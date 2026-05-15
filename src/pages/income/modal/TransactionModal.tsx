@@ -3,7 +3,7 @@ import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {useTranslation} from 'react-i18next';
 import z from 'zod';
-import {X} from 'lucide-react';
+import {OctagonAlert, X} from 'lucide-react';
 import {toast} from 'sonner';
 
 import {Button} from '../../../components/ui/button';
@@ -24,6 +24,8 @@ import InfoDialog, {type RecurringUpdateScope} from './InfoDialog';
 import type {IncomeModalProps} from '@/types/types';
 import {toTransactionDtoType} from '@/helpers/helpers';
 import {format} from 'date-fns';
+import {useCreateRecurringTransaction} from '@/shared/api/generated/recurring-transaction-management/recurring-transaction-management';
+import type {RecurringTransactionCreateRequestDTOIntervalUnit} from '@/shared/api/models';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ACCEPTED_FILE_TYPES = [
@@ -49,6 +51,9 @@ const TransactionModal = ({
     useCreateTransaction();
   const {mutateAsync: updateIncome, isPending: isUpdating} =
     useUpdateTransaction();
+
+  const {mutateAsync: createWithRepeat, isPending: isCreatingRepeat} =
+    useCreateRecurringTransaction();
 
   // SCHEMA
   const modalSchema = useMemo(
@@ -83,7 +88,7 @@ const TransactionModal = ({
             t('incomeModal.errors.futureDate'),
           ),
         description: z.string().optional(),
-        isRepeat: z.string().optional(),
+        intervalUnit: z.string().optional(),
         file: z
           .array(z.instanceof(File))
           .refine(
@@ -111,14 +116,16 @@ const TransactionModal = ({
 
   const [showInfoDialog, setShowInfoDialog] = useState(false);
   const [pendingData, setPendingData] = useState<FormOutput | null>(null);
-  const [scope, setScope] = useState<'this_only' | 'all_future'>('this_only');
+  const [scope, setScope] = useState<'ONLY_THIS' | 'THIS_AND_FUTURE'>(
+    'ONLY_THIS',
+  );
 
   const getDefaultValues = (): FormValues => ({
     amount: initialData?.amount !== undefined ? String(initialData.amount) : '',
     categoryId: initialData?.categoryId ?? initialData?.category?.id,
     date: initialData?.date ? new Date(initialData.date) : new Date(),
-    isRepeat: initialData?.isRepeat ?? 'once',
-    description: initialData?.description ?? '',
+    intervalUnit: initialData?.intervalUnit ?? 'ONCE',
+    description: initialData?.description?.slice(0, 256) ?? '',
     file: initialData?.files ?? [],
   });
 
@@ -143,8 +150,9 @@ const TransactionModal = ({
   }, [initialData, mode, reset]);
 
   const watchedDate = watch('date');
-  const watchedRepeat = watch('isRepeat');
+  const watchedRepeat = watch('intervalUnit');
   const watchedFile = watch('file') as File[] | undefined;
+  const watchedDescription = watch('description');
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = Array.from(e.target.files || []);
@@ -169,44 +177,70 @@ const TransactionModal = ({
 
   const displayTitle = t(`incomeModal.title.${mode}.${type}`);
 
-  const executeMutation = async (
-    data: FormOutput,
-    // updateScope?: 'this_only' | 'all_future',
-  ) => {
+  const executeMutation = async (data: FormOutput) => {
     try {
+      const isRecurring = data.intervalUnit && data.intervalUnit !== 'ONCE';
+
       if (mode === 'create') {
-        await createIncome({
-          data: {
-            dto: {
+        if (isRecurring) {
+          // Handle Recurring Creation
+          await createWithRepeat({
+            data: {
               amount: data.amount,
               type: toTransactionDtoType(type),
               categoryId: data.categoryId,
               date: format(data.date, 'yyyy-MM-dd'),
               description: data.description || '',
-              // isRepeat: data.repeat ,
+              intervalUnit:
+                data.intervalUnit as RecurringTransactionCreateRequestDTOIntervalUnit,
             },
-            receipts: data.file ?? undefined,
-          },
-        });
+          });
+        } else {
+          // Handle Single Creation
+          await createIncome({
+            data: {
+              dto: {
+                amount: data.amount,
+                type: toTransactionDtoType(type),
+                categoryId: data.categoryId,
+                date: format(data.date, 'yyyy-MM-dd'),
+                description: data.description || '',
+              },
+              receipts: data.file ?? undefined,
+            },
+          });
+        }
         toast.success(t(`incomeModal.transaction.success.create.${type}`), {
           id: 'success-create',
         });
-      } else {
+      } else if (mode === 'update') {
         if (!initialData?.id) return;
 
-        await updateIncome({
-          transactionId: initialData.id,
-          // params: { scope: updateScope },
-          data: {
-            amount: data.amount,
-            categoryId: data.categoryId,
-            date: format(data.date, 'yyyy-MM-dd'),
-            description: data.description || '',
-            // isRepeat: data.repeat ,
-            // receipts: data.file ?? undefined,
-            type: toTransactionDtoType(type),
-          },
-        });
+        if (isRecurring) {
+          await createWithRepeat({
+            data: {
+              amount: data.amount,
+              type: toTransactionDtoType(type),
+              categoryId: data.categoryId,
+              date: format(data.date, 'yyyy-MM-dd'),
+              description: data.description || '',
+              intervalUnit:
+                data.intervalUnit as RecurringTransactionCreateRequestDTOIntervalUnit,
+            },
+          });
+        } else {
+          await updateIncome({
+            id: initialData.id,
+            data: {
+              amount: data.amount,
+              categoryId: data.categoryId,
+              date: format(data.date, 'yyyy-MM-dd'),
+              description: data.description || '',
+              type: toTransactionDtoType(type),
+            },
+            params: {recurringScope: scope},
+          });
+        }
         toast.success(t(`incomeModal.transaction.success.update.${type}`), {
           id: 'success',
         });
@@ -235,7 +269,7 @@ const TransactionModal = ({
   };
 
   const onSubmit = async (data: FormOutput) => {
-    if (mode === 'update' && data.isRepeat !== 'once') {
+    if (mode === 'update' && data.intervalUnit !== 'ONCE') {
       setPendingData(data);
       setShowInfoDialog(true);
       return;
@@ -244,8 +278,34 @@ const TransactionModal = ({
     await executeMutation(data);
   };
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  useEffect(() => {
+    if (!watchedDate) return;
+
+    const selectedDate = new Date(watchedDate);
+    selectedDate.setHours(0, 0, 0, 0);
+
+    // REPEAT mode: today or future only
+    if (watchedRepeat !== 'ONCE' && selectedDate < today) {
+      setValue('date', today, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+
+    // ONCE mode: past or today only
+    if (watchedRepeat === 'ONCE' && selectedDate > today) {
+      setValue('date', today, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+  }, [watchedRepeat, watchedDate, setValue]);
+
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto backdrop-blur-sm">
+    <div className="fixed inset-0 z-50 overflow-y-auto backdrop-blur-sm custom-scrollbar">
       <div className="min-h-full flex items-center justify-center p-3">
         <InfoDialog
           isOpen={showInfoDialog}
@@ -289,7 +349,16 @@ const TransactionModal = ({
               type={type}
               value={watchedDate}
               error={errors.date?.message}
-              disabledDate={(date: Date) => date > new Date()}
+              disabledDate={(date: Date) => {
+                const d = new Date(date);
+                d.setHours(0, 0, 0, 0);
+                if (watchedRepeat === 'ONCE') {
+                  // disable future dates
+                  return d > today;
+                }
+                // disable past dates
+                return d < today;
+              }}
               onChange={(date: Date) =>
                 setValue('date', date, {
                   shouldValidate: true,
@@ -299,18 +368,43 @@ const TransactionModal = ({
             />
 
             {/* DESCRIPTION */}
-            <IncomeDescriptionField register={register} />
+            <IncomeDescriptionField register={register} inputValue={watchedDescription}/>
 
             {/* REPEAT */}
             <IncomeRepeatField
               value={watchedRepeat}
               onChange={(repeat: string) =>
-                setValue('isRepeat', repeat, {
+                setValue('intervalUnit', repeat, {
                   shouldValidate: true,
                   shouldDirty: true,
                 })
               }
             />
+
+            <div
+              className={cn(
+                'overflow-hidden transition-all duration-400 ease-in-out',
+                watchedRepeat !== 'ONCE' && mode !== 'update'
+                  ? 'max-h-40 opacity-100 translate-y-0 my-2'
+                  : 'max-h-0 opacity-0 -translate-y-2 my-2',
+              )}
+            >
+              <div
+                className={cn(
+                  'flex items-center gap-8 text-dark-background w-full p-3 shadow-sm border dark:border-slate-100/90 rounded-lg',
+                )}
+              >
+                <OctagonAlert className="size-8 shrink-0" />
+
+                <div>
+                  <p>{t('incomeModal.intervalUnitAlert.title')}</p>
+
+                  <p className="text-[12px] dark:text-[#BFD9D2]">
+                    {t('incomeModal.intervalUnitAlert.subtitle')}
+                  </p>
+                </div>
+              </div>
+            </div> 
 
             {/* FILE */}
             <IncomeFileField
@@ -318,6 +412,7 @@ const TransactionModal = ({
               error={errors.file?.message}
               onChange={handleFileChange}
               onRemove={removeFile}
+              disabled={watchedRepeat !== 'ONCE' && mode !== 'update'}
             />
           </div>
 
@@ -340,7 +435,7 @@ const TransactionModal = ({
               disabled={!isValid || !isDirty || isCreating || isUpdating}
               className="w-[120px] h-[50px] sm:h-[36px] px-6 py-2 text-[14px] tracking-tight"
             >
-              {isCreating || isUpdating ? (
+              {isCreating || isUpdating || isCreatingRepeat ? (
                 <Spinner />
               ) : (
                 t('incomeModal.actions.save')

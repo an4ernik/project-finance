@@ -8,11 +8,12 @@ import ExpenseDonutChart from './dashboard/ExpenseDistribution';
 import BalanceDynamicsChart from './dashboard/BalanceDynamicsChart';
 import {useGetTransactions} from '@/shared/api/generated/transaction-management/transaction-management';
 import {useMemo} from 'react';
-import type {CardItem, Transaction} from '@/types/types';
- 
+import type {CardItem, Transaction} from '@/types/types'; 
+import {DashboardSkeleton} from '@/components/skeletons/DashboardSkeleton';
+
 function Dashboard() {
   const {t} = useTranslation();
-  const {data} = useGetTransactions();
+  const {data, isPending} = useGetTransactions();
 
   const transactions = useMemo(() => {
     return (Array.isArray(data) ? data : (data?.data ?? [])) as Transaction[];
@@ -51,32 +52,36 @@ function Dashboard() {
       },
     ];
   }, [transactions]);
-
+ 
   return (
     <AppLayout title={t('dashboard.title')}>
-      <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch pb-3 custom-scrollbar">
-        {/* Finance Overview Section */}
-        <FinanceOverview>
-          {totals &&
-            totals.map(item => (
-              <FinanceCard
-                key={item.type}
-                type={item.type}
-                total={item.total}
-              />
-            ))}
-        </FinanceOverview>
+      {isPending ? (
+        <DashboardSkeleton />
+      ) : (
+        <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch pb-3 custom-scrollbar">
+          {/* Finance Overview Section */}
+          <FinanceOverview>
+            {totals &&
+              totals.map(item => (
+                <FinanceCard
+                  key={item.type}
+                  type={item.type}
+                  total={item.total}
+                />
+              ))}
+          </FinanceOverview>
 
-        <div className="w-full min-h-[300px]">
-          <CashFlowChart data={transactions} />
+          <div className="w-full min-h-[300px]">
+            <CashFlowChart data={transactions} />
+          </div>
+
+          {/* ExpenseDistribution */}
+          <ExpenseDonutChart />
+
+          {/* BalanceDynamics */}
+          <BalanceDynamicsChart />
         </div>
-
-        {/* ExpenseDistribution */}
-        <ExpenseDonutChart />
-
-         {/* BalanceDynamics */}
-        <BalanceDynamicsChart />
-      </div>
+      )}
     </AppLayout>
   );
 }

@@ -1,5 +1,5 @@
 import AppLayout from '@/layouts/AppLayout';
-import cashPig from '../assets/404.png';
+import cashPig from '../assets/404_dark.png';
 import cashPigWhite from '../assets/404_white.png';
 import {Button} from '@/components/ui/button';
 import {Link} from 'react-router-dom';
@@ -15,19 +15,19 @@ export default function NotFound() {
   return (
     <AppLayout>
       <div className="flex h-full w-full flex-col items-center justify-center">
-        <div className="relative flex items-center justify-center w-full max-w-2xl mx-auto h-[300px] sm:h-[400px] md:h-[500px]">
+        <div className="relative w-full max-w-2xl mx-auto aspect-[9/4] overflow-hidden">
           <img
             src={currentImage}
             alt="Pig"
-            className="w-full h-auto object-contain"
+            className="w-full h-full object-cover"
           />
         </div>
 
-        <div className="flex items-center justify-center flex-col gap-5">
-          <h2 className="text-2xl sm:text-4xl text-[#BFD9D2] text-center">
+        <div className="flex items-center justify-center flex-col gap-5 mt-10">
+          <h2 className="text-2xl sm:text-3xl dark:text-[#BFD9D2] text-center">
             {t('notFoundPage.title')}
           </h2>
-          <p className="text-xl sm:text-2xl text-[#7F9E97] text-center">
+          <p className="text-xl sm:text-2xl dark:text-[#7F9E97] text-center">
             {t('notFoundPage.description')}
           </p>
           <Link

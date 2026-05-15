@@ -6,7 +6,7 @@ import {useTranslation} from 'react-i18next';
 import InfoDialogButton from './InfoDialogButton';
 import type {TransactionType} from '@/types/types';
 
-export type RecurringUpdateScope = 'this_only' | 'all_future';
+export type RecurringUpdateScope = 'ONLY_THIS' | 'THIS_AND_FUTURE';
 
 type Props = {
   isOpen: boolean;
@@ -74,14 +74,14 @@ const InfoDialog = ({
         {/* Options */}
         <div className="space-y-3 mb-8">
           <InfoDialogButton
-            scope={'this_only'}
+            scope={'ONLY_THIS'}
             setSelectedScope={setSelectedScope}
             selectedScope={selectedScope}
             title={t(`incomeModal.infoDialog.options.thisOnly.label.${type}`)}
             subtitle={t('incomeModal.infoDialog.options.thisOnly.subtext')}
           />
           <InfoDialogButton
-            scope={'all_future'}
+            scope={'THIS_AND_FUTURE'}
             setSelectedScope={setSelectedScope}
             selectedScope={selectedScope}
             title={t(`incomeModal.infoDialog.options.allFuture.label.${type}`)}
