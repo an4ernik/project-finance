@@ -10,8 +10,9 @@ import {useDeleteTransaction} from '@/shared/api/generated/transaction-managemen
 import RemoveDialog from '@/pages/income/modal/RemoveDialog';
 import NotAvailableTransactions from './NotAvailableTransactions';
 import type {Item, Props, TransactionUI} from '@/types/types';
+import VirtualItemSkeleton from './skeletons/VIrtualListSkeleton';
 
-const VirtualList = ({data, type, isTransactionsLength}: Props) => {
+const VirtualList = ({data, type, isTransactionsLength, isLoading}: Props) => {
   const parentRef = useRef<HTMLDivElement>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<TransactionUI | null>(null);
@@ -20,11 +21,12 @@ const VirtualList = ({data, type, isTransactionsLength}: Props) => {
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<Item | null>(null);
 
-  const {mutateAsync: deleteIncome} = useDeleteTransaction();
+  const {mutateAsync: deleteIncome} = useDeleteTransaction(); 
 
   const handleConfirmDelete = async (id: number) => {
+    console.log(itemToDelete, 'to delete');
     try {
-      await deleteIncome({transactionId: id});
+      await deleteIncome({id: id, params:{recurringScope: 'THIS_AND_FUTURE'}});
 
       toast.success(t(`incomeModal.transaction.success.delete.${type}`));
     } catch (error) {
@@ -53,7 +55,7 @@ const VirtualList = ({data, type, isTransactionsLength}: Props) => {
       },
       date: item.date,
       description: item.description,
-      isRepeat: item.isRepeat,
+      intervalUnit: item.intervalUnit,
       Icon: undefined,
     });
     setModalMode('update');
@@ -64,7 +66,7 @@ const VirtualList = ({data, type, isTransactionsLength}: Props) => {
     setIsModalOpen(false);
     setSelectedItem(null);
   };
-
+  console.log(data, 'data');
   const allRows = data ?? [];
 
   const isToday = (date: Date) => {
@@ -88,6 +90,8 @@ const VirtualList = ({data, type, isTransactionsLength}: Props) => {
 
   const virtualItems = rowVirtualizer.getVirtualItems();
   const hasEarlierRows = (earlierRows?.length ?? 0) > 0;
+
+  if (isLoading) return <VirtualItemSkeleton />;
 
   return (
     <div className="flex flex-col h-full sm:h-4/6 w-full pt-8 overflow-hidden">
@@ -177,6 +181,7 @@ const VirtualList = ({data, type, isTransactionsLength}: Props) => {
                             item={item}
                             onEdit={handleEdit}
                             type={type}
+                            key={item.id}
                           />
                         )
                       )}

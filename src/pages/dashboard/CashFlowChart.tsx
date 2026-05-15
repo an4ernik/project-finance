@@ -7,7 +7,7 @@ import {
   ResponsiveContainer,
   Cell,
   Tooltip,
-  LabelList,
+  LabelList, 
 } from 'recharts';
 
 import {useTranslation} from 'react-i18next';
@@ -231,7 +231,7 @@ const CashFlowChart = ({data = []}: Props) => {
                 dataKey="amount"
                 radius={[4, 4, 4, 4]}
                 barSize={isMobile ? 30 : 45}
-                style={{filter: 'url(#blackShadow)'}}
+                style={{filter: 'url(#blackShadow)'}} 
               >
                 {isMobile && (
                   <LabelList
@@ -290,7 +290,8 @@ const CashFlowChart = ({data = []}: Props) => {
         </span>
         <span
           className={cn(
-            'text-[#00AA85] dark:text-[#00AA85] font-bold text-[14px] sm:text-[20px]',
+            'font-bold text-[14px] sm:text-[20px]',
+            netFlow && netFlow < 0 ? 'text-[#FF6422]' : 'text-[#00AA85]',
           )}
         >
           {netFlow && formattedAmount(netFlow)} {CURRENCY_SIGN}

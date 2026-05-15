@@ -6,6 +6,7 @@
  * OpenAPI spec version: 1.0
  */
 import type { CategoryResponseDTO } from './categoryResponseDTO';
+import type { TransactionResponseDTOIntervalUnit } from './transactionResponseDTOIntervalUnit';
 import type { TransactionResponseDTOType } from './transactionResponseDTOType';
 
 /**
@@ -16,6 +17,8 @@ export interface TransactionResponseDTO {
   id?: number;
   /** Account ID */
   accountId?: number;
+  /** Recurring transaction interval unit */
+  intervalUnit?: TransactionResponseDTOIntervalUnit;
   /** Transaction amount */
   amount?: number;
   /** Category */

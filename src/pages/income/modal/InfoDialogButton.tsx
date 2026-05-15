@@ -16,7 +16,7 @@ const activeGradient = cn(
   'dark:bg-linear-to-b dark:from-[#02624D99] dark:to-[#04C89E] dark:border-[#04C89E]',
 );
 
-type RecurringUpdateScope = 'this_only' | 'all_future';
+type RecurringUpdateScope = 'ONLY_THIS' | 'THIS_AND_FUTURE';
 
 interface InfoDialogButtonProps {
   scope: RecurringUpdateScope;

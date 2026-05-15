@@ -1,9 +1,9 @@
-import {useEffect, useRef} from 'react';
+import {useEffect, useRef, useState} from 'react';
 import {TriangleAlert} from 'lucide-react';
 import {cn} from '@/lib/utils';
 import {Button} from '@/components/ui/button';
 import {useTranslation} from 'react-i18next';
-import {formattedAmount } from '@/helpers/helpers';
+import {formattedAmount} from '@/helpers/helpers';
 import type {ModalProps} from '@/types/types';
 import {CURRENCY_SIGN} from '@/constances/constances';
 
@@ -46,7 +46,8 @@ const RemoveDialog = ({
   const modalRef = useRef<HTMLDivElement>(null);
   const {t} = useTranslation();
   const theme = DIALOG_THEMES[type];
-  const category = item?.category  
+  const category = item?.category;
+  const [deleteAllFuture, setDeleteAllFuture] = useState(false);
 
   useEffect(() => {
     const handleEsc = (e: KeyboardEvent) => {
@@ -59,6 +60,9 @@ const RemoveDialog = ({
   if (!isOpen || !item) return null;
 
   const amount = formattedAmount(item.amount) || item.amount;
+
+  // Update your onConfirm call in the button:
+  // onClick={() => onConfirm(item.id, deleteAllFuture ? 'THIS_AND_FUTURE' : 'ONLY_THIS')}
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -108,9 +112,7 @@ const RemoveDialog = ({
                 theme.previewTitle,
               )}
             >
-              {category
-                ?  category.name 
-                : item?.description}
+              {category ? category.name : item?.description}
             </span>
             <span className={cn('text-xl font-bold', theme.previewAmount)}>
               {amount} {CURRENCY_SIGN}
@@ -128,11 +130,48 @@ const RemoveDialog = ({
           </div>
         </div>
 
-        {item?.isRepeat && item?.isRepeat !== 'once' && (
-          <div className="bg-linear-to-b from-[#C7000033] to-[#C700004D] p-3.5 mb-9 rounded-xl border border-[#CE0000] text-sm text-[#0B1514] dark:text-[#BFD9D2] leading-relaxed">
+        {item?.intervalUnit && item?.intervalUnit !== 'ONCE' && (
+          <div className="bg-linear-to-b from-[#C7000033] to-[#C700004D] p-3.5 mb-3 rounded-xl border border-[#CE0000] text-sm text-[#0B1514] dark:text-[#BFD9D2] leading-relaxed">
             {t(
-              `incomeModal.deleteDialog.${type}.warning.${item.isRepeat as 'monthly' | 'yearly'}`,
+              `incomeModal.deleteDialog.${type}.warning.${item.intervalUnit as 'MONTHLY' | 'YEARLY'}`,
             )}
+          </div>
+        )}
+
+        {item?.intervalUnit && item?.intervalUnit !== 'ONCE' && (
+          <div
+            className="flex items-center gap-3 mb-8 p-1 cursor-pointer group w-fit"
+            onClick={() => setDeleteAllFuture(!deleteAllFuture)}
+          >
+            <div className="relative flex items-center justify-center">
+              <input
+                type="checkbox"
+                checked={deleteAllFuture}
+                onChange={e => setDeleteAllFuture(e.target.checked)}
+                className={cn(
+                  'peer appearance-none size-6 rounded-lg border transition-all cursor-pointer',
+                  'border-[#6F7E7C] dark:border-[#7F9E97] checked:bg-[#9c0505] checked:border-[#CE0000]',
+                  'hover:border-[#CE0000] dark:hover:border-[#CE0000] dark:checked:border-[#700808]',
+                )}
+              />
+              {/* Checkmark Icon */}
+              <svg
+                className="absolute size-4 text-[#0B1514] dark:text-[#BFD9D2] pointer-events-none hidden peer-checked:block transition-opacity"
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="4"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              >
+                <polyline points="20 6 9 17 4 12" />
+              </svg>
+            </div>
+
+            <label className="text-sm font-medium cursor-pointer select-none text-[#0B1514] dark:text-[#BFD9D2] group-hover:text-[#CE0000] transition-colors">
+              {t('incomeModal.deleteDialog.actions.deleteFuture')}
+            </label>
           </div>
         )}
 

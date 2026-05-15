@@ -458,9 +458,9 @@
     },
     "repeat": {
       "label": "Repeat Type",
-      "once": "One-time",
-      "monthly": "Monthly",
-      "yearly": "Yearly"
+      "ONCE": "One-time",
+      "MONTHLY": "Monthly",
+      "YEARLY": "Yearly"
     },
     "upload": {
       "label": "Upload file (photo or PDF)",
@@ -561,21 +561,22 @@
         "title": "Delete income?",
         "description": "Are you sure you want to delete this income?",
         "warning": {
-          "monthly": "This is a recurring monthly income. Only the current entry will be deleted.",
-          "yearly": "This is a recurring yearly income. Only the current entry will be deleted."
+          "MONTHLY": "This is a recurring monthly income. Only the current entry will be deleted.",
+          "YEARLY": "This is a recurring yearly income. Only the current entry will be deleted."
         }
       },
       "EXPENSE": {
         "title": "Delete expense?",
         "description": "Are you sure you want to delete this expense?",
         "warning": {
-          "monthly": "This is a recurring monthly expense. Only the current entry will be deleted.",
-          "yearly": "This is a recurring yearly expense. Only the current entry will be deleted."
+          "MONTHLY": "This is a recurring monthly expense. Only the current entry will be deleted.",
+          "YEARLY": "This is a recurring yearly expense. Only the current entry will be deleted."
         }
       },
       "actions": {
         "cancel": "Cancel",
-        "delete": "Delete"
+        "delete": "Delete",
+        "deleteFuture": "And delete all future"
       }
     },
     "filters": {
@@ -623,11 +624,23 @@
         "from": "From",
         "to": "To"
       }
+    },
+    "intervalUnitAlert":{
+      "title":"This is a recurring income.",
+      "subtitle":"Photo and documents can be added after saving the record through its editing."
     }
   },
   "notFoundPage": {
     "title": "Page not found.",
     "description": "It looks like the link is broken or the page has been moved.",
     "button": "Back to home"
+  },
+  "documentsModal": {
+    "document":"Document",
+    "documents":"Documents", 
+    "actions": {
+      "newTab": "Open in a new tab",
+      "save": "Download"
+    }
   }
 }

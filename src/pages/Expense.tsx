@@ -38,7 +38,7 @@ function Expense() {
   const {t} = useTranslation();
 
   const {data: categoriesResponse} = useGetCategories();
-  const {data} = useGetTransactions({type: 'EXPENSE'});
+  const {data, isPending:isTransactionsLoading} = useGetTransactions({type: 'EXPENSE'});
 
   const categories = useMemo(() => {
     return Array.isArray(categoriesResponse) ? categoriesResponse : [];
@@ -182,7 +182,7 @@ function Expense() {
           </div>
         </div>
       </FiltersWrapper>
-      <VirtualList type="EXPENSE" data={filteredData} />
+      <VirtualList type="EXPENSE" data={filteredData} isTransactionsLength={transactions.length > 0} isLoading={isTransactionsLoading} />
     </AppLayout>
   );
 }

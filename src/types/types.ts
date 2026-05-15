@@ -3,7 +3,7 @@ import type { CategoryResponseDTO, TransactionResponseDTO } from '@/shared/api/m
 
 export type ModalMode = 'create' | 'update';
 export type ModalType = 'INCOME' | 'EXPENSE';
-export type RepeatType = 'this_only' | 'all_future';
+export type RepeatType = 'ONLY_THIS' | 'THIS_AND_FUTURE';
 export type TransactionType = 'INCOME' | 'EXPENSE';
 export const ALL_CATEGORIES_VALUE = 'allCategories';
 
@@ -19,7 +19,7 @@ export type Transaction = {
     type: 'INCOME' | 'EXPENSE';
     status?: 'ACTIVE' | 'ARCHIVED';
   };
-  isRepeat?: string;
+  intervalUnit?: string;
   date: Date | string;
   files?: File[];
   type?: 'INCOME' | 'EXPENSE';
@@ -28,7 +28,7 @@ export type Transaction = {
 
 export type TransactionUI = Transaction & {
   Icon?: LucideIcon;
-  isRepeat?: string;
+  intervalUnit?: string;
   isTransactionsLength?: number;
 };
 
@@ -36,6 +36,7 @@ export type Props = {
   type: 'INCOME' | 'EXPENSE';
   data?: TransactionUI[];
   isTransactionsLength?: boolean;
+  isLoading?: boolean;
 };
 
 // ==========================================================================
@@ -55,7 +56,7 @@ export interface Item {
   amount: number | string;
   description?: string;
   category: Category;
-  isRepeat?: string;
+  intervalUnit?: string;
   type?: 'INCOME' | 'EXPENSE';
   date: Date | string;
   createdAt?: Date | string;
@@ -81,7 +82,7 @@ export interface IncomeFormData {
     type: 'INCOME' | 'EXPENSE';
   };
   date: string | Date;
-  isRepeat?: string;
+  intervalUnit?: string;
   description?: string;
 }
 
@@ -101,7 +102,7 @@ export interface MainModalData {
   category: { id: number; name: string; icon: string; type: 'INCOME' | 'EXPENSE' };
   date: string | Date;
   description?: string;
-  isRepeat?: string;
+  intervalUnit?: string;
   repeatType?: RepeatType;
   files?: File[];
 }

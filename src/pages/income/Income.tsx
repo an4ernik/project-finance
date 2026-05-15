@@ -36,7 +36,7 @@ function Income() {
   const {t} = useTranslation();
 
   const {data: categoriesResponse} = useGetCategories();
-  const {data} = useGetTransactions({type: 'INCOME'});
+  const {data, isPending:isTransactionsLoading} = useGetTransactions({type: 'INCOME'});
 
   const categories = useMemo(() => {
     return Array.isArray(categoriesResponse) ? categoriesResponse : [];
@@ -176,7 +176,7 @@ function Income() {
           </div>
         </div>
       </FiltersWrapper>
-      <VirtualList data={filteredData} isTransactionsLength={transactions.length > 0}  type="INCOME" />
+      <VirtualList data={filteredData} isTransactionsLength={transactions.length > 0} type="INCOME" isLoading={isTransactionsLoading} />
     </AppLayout>
   );
 }

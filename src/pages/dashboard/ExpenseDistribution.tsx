@@ -10,6 +10,7 @@ import {CURRENCY_SIGN} from '@/constances/constances';
 import ExpenseDistributionList from './ExpenseDistributionList';
 import {useGetTransactions} from '@/shared/api/generated/transaction-management/transaction-management';
 import type {TransactionResponseDTO} from '@/shared/api/models';
+import {t} from 'i18next';
 
 const EMPTY_DISTRIBUTION_ITEM = {
   name: '',
@@ -134,7 +135,7 @@ const ExpenseDonutChart = () => {
                 outerRadius={radii.outerRadius}
                 paddingAngle={5}
                 dataKey="value"
-                stroke="none"
+                stroke="none" 
               >
                 {expenseDistributionData.chartData.map((entry, index) => (
                   <Cell key={`${entry.name}-${index}`} fill={entry.color} />
@@ -177,7 +178,7 @@ const ExpenseDonutChart = () => {
                         >
                           {currentHighest && currentHighest.value !== 0.01
                             ? `${currentHighest.percentage}%`
-                            : '0%'}
+                            : ''}
                         </tspan>
                       </text>
                     );
@@ -188,10 +189,15 @@ const ExpenseDonutChart = () => {
           </ResponsiveContainer>
         </div>
 
-        {expenseDistributionData.chartData.length > 0 && (
+        {expenseDistributionData.chartData[0].value > 0.01 && (
           <ExpenseDistributionList
             expenseDistributionData={expenseDistributionData.allItems}
           />
+        )}
+        {expenseDistributionData.chartData[0].value === 0.01 && (
+          <div className="w-full text-center text-[14px] text-[#7F9E97]">
+            {t('dashboard.noExpenses')}
+          </div>
         )}
       </div>
     </ChartWrapper>
