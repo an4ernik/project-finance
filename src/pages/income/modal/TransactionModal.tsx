@@ -26,6 +26,7 @@ import {toTransactionDtoType} from '@/helpers/helpers';
 import {format} from 'date-fns';
 import {useCreateRecurringTransaction} from '@/shared/api/generated/recurring-transaction-management/recurring-transaction-management';
 import type {RecurringTransactionCreateRequestDTOIntervalUnit} from '@/shared/api/models';
+import { useQueryClient } from '@tanstack/react-query';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ACCEPTED_FILE_TYPES = [
@@ -47,13 +48,36 @@ const TransactionModal = ({
 }: IncomeModalProps) => {
   const {t} = useTranslation();
 
+  const queryClient = useQueryClient()
+  const mutationConfig = {
+    mutation: {
+      onSuccess: () => { 
+        queryClient.invalidateQueries({
+          queryKey: ['/api/v1/transactions'],
+          exact: false,
+        });
+
+        queryClient.refetchQueries({
+        predicate: (query) => {
+          // Перевіряємо, чи є перший елемент ключа нашим ендпоінтом
+          return (
+            Array.isArray(query.queryKey) &&
+            query.queryKey[0] === '/api/v1/transactions'
+          );
+        },
+      });
+
+      },
+    },
+  };
+
   const {mutateAsync: createIncome, isPending: isCreating} =
-    useCreateTransaction();
+    useCreateTransaction(mutationConfig);
   const {mutateAsync: updateIncome, isPending: isUpdating} =
-    useUpdateTransaction();
+    useUpdateTransaction(mutationConfig);
 
   const {mutateAsync: createWithRepeat, isPending: isCreatingRepeat} =
-    useCreateRecurringTransaction();
+    useCreateRecurringTransaction(mutationConfig);
 
   // SCHEMA
   const modalSchema = useMemo(
@@ -287,10 +311,7 @@ const TransactionModal = ({
     if (!watchedDate) return;
 
     const selectedDate = new Date(watchedDate);
-    selectedDate.setHours(0, 0, 0, 0);
-
-    const todayDate = new Date();
-    todayDate.setHours(0, 0, 0, 0);
+    selectedDate.setHours(0, 0, 0, 0); 
 
     // 1. If we are in UPDATE mode and the repeat setting hasn't changed,
     // do absolutely nothing. Leave the saved date alone.
@@ -301,16 +322,16 @@ const TransactionModal = ({
     // 2. Only run adjustments if the user actively changed the repeat setting
     if (watchedRepeat !== prevRepeat) {
       // REPEAT mode: today or future only
-      if (watchedRepeat !== 'ONCE' && selectedDate < todayDate) {
-        setValue('date', todayDate, {
+      if (watchedRepeat !== 'ONCE' && selectedDate < today) {
+        setValue('date', today, {
           shouldValidate: true,
           shouldDirty: true,
         });
       }
 
       // ONCE mode: past or today only
-      if (watchedRepeat === 'ONCE' && selectedDate > todayDate) {
-        setValue('date', todayDate, {
+      if (watchedRepeat === 'ONCE' && selectedDate > today) {
+        setValue('date', today, {
           shouldValidate: true,
           shouldDirty: true,
         });
