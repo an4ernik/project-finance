@@ -1,5 +1,5 @@
 import {useEffect, useMemo, useState} from 'react';
-import {Controller, useForm} from 'react-hook-form';
+import {Controller, useForm, useWatch} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
 import {Camera, Mail, PenLine, User} from 'lucide-react';
@@ -35,6 +35,7 @@ import type {ResponseUserDTO} from '@/shared/api/models';
 import {parseISO, format} from 'date-fns';
 import {useAuthStore} from '@/shared/store/useAuthStore';
 import ConfirmDeleteAccountModal from '@/components/ConfirmDeleteAccountModal';
+import axios from 'axios';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 const ACCEPTED_IMAGE_TYPES = [
@@ -74,7 +75,6 @@ function AccountSettings() {
               .regex(/^[A-Za-zА-Яа-яЁёІіЇїЄє\s'’ʼ]+$/, {
                 message: t('auth.errors.fullNameLength'),
               }),
-            z.literal(''),
           ])
           .optional(),
         email: z
@@ -85,7 +85,8 @@ function AccountSettings() {
           .optional(),
         currencyCode: z.string().optional(),
         avatar: z
-          .any()
+          .instanceof(FileList)
+          .optional()
           .refine(
             files =>
               !files || files.length === 0 || files[0].size <= MAX_FILE_SIZE,
@@ -110,26 +111,16 @@ function AccountSettings() {
     control,
     handleSubmit,
     reset,
-    watch,
-    formState: {errors, isValid},
+    formState: {errors, isValid, isDirty},
   } = useForm<FormFields>({
     resolver: zodResolver(schema),
     mode: 'onBlur',
-    defaultValues: {
-      fullName: '',
-      email: '',
-      currencyCode: '',
+    values: {
+      fullName: userData?.fullName ?? '',
+      email: userData?.email ?? '',
+      currencyCode: userData?.currencyCode ?? '',
     },
   });
-
-  useEffect(() => {
-    reset({
-      fullName: '',
-      email: '',
-      currencyCode: '',
-      avatar: undefined,
-    });
-  }, [userData, reset]);
 
   useEffect(() => {
     if (!userData && !isLoading) {
@@ -137,7 +128,10 @@ function AccountSettings() {
     }
   }, [userData, isLoading, refetch]);
 
-  const avatarFile = watch('avatar');
+  const avatarFile = useWatch({
+    control,
+    name: 'avatar',
+  });
   const previewUrl = useMemo(() => {
     if (avatarFile instanceof FileList && avatarFile.length > 0) {
       return URL.createObjectURL(avatarFile[0]);
@@ -159,13 +153,9 @@ function AccountSettings() {
     const nextCurrency = values.currencyCode || '';
     const nextAvatar = values.avatar?.[0];
 
-    const fullNameChanged =
-      nextFullName.length > 0 && nextFullName !== (userData.fullName ?? '');
-    const emailChanged =
-      nextEmail.length > 0 && nextEmail !== (userData.email ?? '');
-    const currencyChanged =
-      nextCurrency.length > 0 &&
-      nextCurrency !== (userData.currencyCode ?? 'UAH');
+    const fullNameChanged = nextFullName !== (userData.fullName ?? '');
+    const emailChanged = nextEmail !== (userData.email ?? '');
+    const currencyChanged = nextCurrency !== (userData.currencyCode ?? 'UAH');
     const avatarChanged = !!nextAvatar;
 
     if (
@@ -189,8 +179,12 @@ function AccountSettings() {
         : (userData.currencyCode ?? 'UAH')) as UpdateUserProfileDTOCurrencyCode,
     };
 
-    const handleError = (error: any) => {
-      if (error?.response?.status === 409 && emailChanged) {
+    const handleError = (error: unknown) => {
+      if (
+        axios.isAxiosError(error) &&
+        error?.response?.status === 409 &&
+        emailChanged
+      ) {
         toast.error(t('auth.emailExists'));
         return;
       }
@@ -336,11 +330,9 @@ function AccountSettings() {
                     errorMessage={errors.fullName?.message}
                   />
                   <PenLine
-                    onClick={() =>
-                      fullNameInput
-                        ? setFullNameInput(false)
-                        : setFullNameInput(true)
-                    }
+                    onClick={() => {
+                      setFullNameInput(prev => !prev);
+                    }}
                     className="absolute right-3 top-3 size-5 cursor-pointer text-muted-foreground"
                   />
                 </div>
@@ -364,9 +356,9 @@ function AccountSettings() {
                     errorMessage={errors.email?.message}
                   />
                   <PenLine
-                    onClick={() =>
-                      emailInput ? setEmailInput(false) : setEmailInput(true)
-                    }
+                    onClick={() => {
+                      setEmailInput(prev => !prev);
+                    }}
                     className="absolute right-3 top-3 size-5 cursor-pointer text-muted-foreground"
                   />
                 </div>
@@ -417,7 +409,7 @@ function AccountSettings() {
             <Button
               type="submit"
               className="w-full py-6 text-lg"
-              disabled={!isValid}
+              disabled={!isValid || !isDirty}
             >
               {isPending ? t('common.loading') : t('settings.account.save')}
             </Button>
