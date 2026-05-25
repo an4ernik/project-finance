@@ -8,7 +8,6 @@ import {Input} from '@/components/ui/input';
 import {Button} from '@/components/ui/button';
 import {createSecuritySchema} from './schemas/securitySettingsSchema.ts';
 import {useUpdatePassword} from '@/shared/api/generated/user-identity/user-identity.ts';
- 
 
 type SecurityFormData = {
   currentPassword: string;
@@ -29,7 +28,7 @@ function SecuritySettings() {
     reset,
     setError,
     trigger,
-    formState: {errors, isSubmitting},
+    formState: {errors, isSubmitting, isValid},
   } = useForm<SecurityFormData>({
     resolver: zodResolver(schema),
     mode: 'onBlur',
@@ -145,7 +144,7 @@ function SecuritySettings() {
           <Button
             type="submit"
             className="mt-2 h-12 text-base tracking-normal"
-            disabled={!hasAllFields || isSubmitting}
+            disabled={!hasAllFields || isSubmitting || !isValid}
           >
             {isSubmitting
               ? t('settings.security.loading')
