@@ -1,10 +1,9 @@
 import {FileText, Pencil, Trash} from 'lucide-react';
-import {format} from 'date-fns';
-import {uk} from 'date-fns/locale';
+import {format} from 'date-fns'; 
 import {useTranslation} from 'react-i18next';
 import {cn} from '@/lib/utils';
 import {formattedAmount} from '@/helpers/helpers';
-import type {VirtualItemProps} from '@/types/types';
+import {type VirtualItemProps} from '@/types/types';
 import {CURRENCY_SIGN} from '@/constances/constances';
 import {ICONS_BY_ID} from '@/pages/income/IconPicker';
 import DocumentModal from './DocumentModal';
@@ -78,6 +77,8 @@ export const VirtualItem = ({
     }
   };
 
+  console.log(item, 'item');
+
   return (
     <>
       <div
@@ -142,7 +143,7 @@ export const VirtualItem = ({
             </div>
             <span
               className={cn(
-                'text-[14px] font-medium transition-colors duration-100 max-w-[140px] truncate lg:max-w-full',
+                'text-[14px] font-medium transition-colors duration-100 max-w-[140px] truncate whitespace-pre-wrap lg:max-w-full',
                 theme.subTitle,
               )}
             >
@@ -154,10 +155,7 @@ export const VirtualItem = ({
                 theme.dateText,
               )}
             >
-              {format(new Date(item.date), 'MMM d, yyyy', {locale: uk}).replace(
-                '.',
-                '',
-              )}
+            {t(`months.${format(new Date(item.date), 'MMM').toLowerCase()}`)} {format(new Date(item.date), 'dd, yyyy')}
             </span>
           </div>
 

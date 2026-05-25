@@ -5,6 +5,7 @@ export type ModalMode = 'create' | 'update';
 export type ModalType = 'INCOME' | 'EXPENSE';
 export type RepeatType = 'ONLY_THIS' | 'THIS_AND_FUTURE';
 export type TransactionType = 'INCOME' | 'EXPENSE';
+export type IntervalUnitType = 'ONCE' | 'MONTHLY' | 'YEARLY';
 export const ALL_CATEGORIES_VALUE = 'allCategories';
 
 //* transaction types
@@ -19,7 +20,7 @@ export type Transaction = {
     type: 'INCOME' | 'EXPENSE';
     status?: 'ACTIVE' | 'ARCHIVED';
   };
-  intervalUnit?: string;
+  intervalUnit?: IntervalUnitType
   date: Date | string;
   files?: File[];
   type?: 'INCOME' | 'EXPENSE';
@@ -28,7 +29,7 @@ export type Transaction = {
 
 export type TransactionUI = Transaction & {
   Icon?: LucideIcon;
-  intervalUnit?: string;
+  intervalUnit?: IntervalUnitType
   isTransactionsLength?: number;
 };
 
@@ -90,7 +91,7 @@ export interface IncomeFormData {
 export type ModalProps = {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: (id: number) => void;
+  onConfirm: (id: number, scope?: "ONLY_THIS" | "THIS_AND_FUTURE") => void;
   item: IncomeFormData | Item | null;
   type?: 'INCOME' | 'EXPENSE';
 };
@@ -102,7 +103,7 @@ export interface MainModalData {
   category: { id: number; name: string; icon: string; type: 'INCOME' | 'EXPENSE' };
   date: string | Date;
   description?: string;
-  intervalUnit?: string;
+  intervalUnit?: "ONCE" | "MONTHLY" | "YEARLY";
   repeatType?: RepeatType;
   files?: File[];
 }

@@ -1,10 +1,10 @@
 import AppLayout from '@/layouts/AppLayout';
-import TransactionOverview from '@/components/TransactionOverview';
-import {PageSkeleton} from '@/components/PageSkeleton';
+import TransactionOverview from '@/components/TransactionOverview'; 
 import NotFound from '@/pages/NotFound';
 import {useGetTransactionById} from '@/shared/api/generated/transaction-management/transaction-management';
 import type {TransactionResponseDTO} from '@/shared/api/models';
 import {useParams} from 'react-router-dom';
+import MainDashboardSkeleton from '@/components/skeletons/MainDashboardSkeleton';
 
 const TransactionOverviewPage = () => {
   const {id, transactionType} = useParams();
@@ -28,7 +28,7 @@ const TransactionOverviewPage = () => {
   if (isLoading) {
     return (
       <AppLayout>
-        <PageSkeleton />
+        <MainDashboardSkeleton />
       </AppLayout>
     );
   }

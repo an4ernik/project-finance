@@ -84,6 +84,15 @@ export const getPeriodRange = (filters: Partial<Filters>): DateRange => {
     }
 };
 
+// * check if date is today
+ export const isToday = (date: Date) => {
+    const today = new Date();
+    return (
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
+    );
+  };
 
 export const applyFilters = (
     items: TransactionUI[],

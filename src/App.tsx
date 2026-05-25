@@ -4,8 +4,8 @@ import {Toaster} from 'sonner';
 import PublicRoute from './components/PublicRoute';
 import ProtectedRoute from './components/ProtectedRoute';
 import ThemeProvider from '@/shared/providers/ThemeProvider';
-import {PageSkeleton} from './components/PageSkeleton';
 import TransactionOverviewPage from './pages/TransactionOverviewPage';
+import MainDashboardSkeleton from './components/skeletons/MainDashboardSkeleton'; 
 
 // Lazy load all page components
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
@@ -30,10 +30,17 @@ function App() {
   return (
     <ThemeProvider>
       <Toaster />
-      <Suspense fallback={<PageSkeleton />}>
+      {/* <Suspense fallback={<MainDashboardSkeleton />}> */}
         <Routes>
           <Route element={<ProtectedRoute />}>
-            <Route path="/dashboard" element={<Dashboard />} />
+            <Route
+              path="/dashboard"
+              element={
+                <Suspense fallback={<MainDashboardSkeleton />}>
+                  <Dashboard />
+                </Suspense>
+              }
+            />
             <Route path="/income" element={<Income />} />
             <Route path="/expenses" element={<Expense />} />
             <Route
@@ -59,7 +66,7 @@ function App() {
           <Route path="/verify" element={<VerifyEmailPage />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
-      </Suspense>
+      {/* </Suspense> */}
     </ThemeProvider>
   );
 }

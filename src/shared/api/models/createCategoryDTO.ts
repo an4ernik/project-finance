@@ -18,6 +18,9 @@ export interface CreateCategoryDTO {
   name: string;
   /** Type */
   type: CreateCategoryDTOType;
-  /** Icon */
-  icon?: string;
+  /**
+   * Icon
+   * @minLength 1
+   */
+  icon: string;
 }

@@ -81,12 +81,7 @@ const TransactionModal = ({
           .refine(val => !isNaN(val) && val >= 1, {
             message: t(`incomeModal.errors.categoryRequired.${type}`),
           }),
-        date: z
-          .date()
-          .refine(
-            date => date <= new Date(),
-            t('incomeModal.errors.futureDate'),
-          ),
+        date: z.date(),
         description: z.string().optional(),
         intervalUnit: z.string().optional(),
         file: z
@@ -226,7 +221,7 @@ const TransactionModal = ({
               description: data.description || '',
               intervalUnit:
                 data.intervalUnit as RecurringTransactionCreateRequestDTOIntervalUnit,
-            },
+            }, 
           });
         } else {
           await updateIncome({
@@ -247,6 +242,7 @@ const TransactionModal = ({
       }
 
       reset(getDefaultValues());
+
       onClose();
     } catch (error) {
       console.error(error);
@@ -269,6 +265,9 @@ const TransactionModal = ({
   };
 
   const onSubmit = async (data: FormOutput) => {
+    if (mode === 'update' && !isDirty) {
+      return;
+    }
     if (mode === 'update' && data.intervalUnit !== 'ONCE') {
       setPendingData(data);
       setShowInfoDialog(true);
@@ -281,28 +280,46 @@ const TransactionModal = ({
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
+  // Keep track of the previous repeat mode to see if it actually changed
+  const [prevRepeat, setPrevRepeat] = useState(watchedRepeat);
+
   useEffect(() => {
     if (!watchedDate) return;
 
     const selectedDate = new Date(watchedDate);
     selectedDate.setHours(0, 0, 0, 0);
 
-    // REPEAT mode: today or future only
-    if (watchedRepeat !== 'ONCE' && selectedDate < today) {
-      setValue('date', today, {
-        shouldValidate: true,
-        shouldDirty: true,
-      });
+    const todayDate = new Date();
+    todayDate.setHours(0, 0, 0, 0);
+
+    // 1. If we are in UPDATE mode and the repeat setting hasn't changed,
+    // do absolutely nothing. Leave the saved date alone.
+    if (mode === 'update' && watchedRepeat === initialData?.intervalUnit) {
+      return;
     }
 
-    // ONCE mode: past or today only
-    if (watchedRepeat === 'ONCE' && selectedDate > today) {
-      setValue('date', today, {
-        shouldValidate: true,
-        shouldDirty: true,
-      });
+    // 2. Only run adjustments if the user actively changed the repeat setting
+    if (watchedRepeat !== prevRepeat) {
+      // REPEAT mode: today or future only
+      if (watchedRepeat !== 'ONCE' && selectedDate < todayDate) {
+        setValue('date', todayDate, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+      }
+
+      // ONCE mode: past or today only
+      if (watchedRepeat === 'ONCE' && selectedDate > todayDate) {
+        setValue('date', todayDate, {
+          shouldValidate: true,
+          shouldDirty: true,
+        });
+      }
+
+      // Update our tracker
+      setPrevRepeat(watchedRepeat);
     }
-  }, [watchedRepeat, watchedDate, setValue]);
+  }, [watchedRepeat, watchedDate, setValue, mode, initialData, prevRepeat]);
 
   return (
     <div className="fixed inset-0 z-50 overflow-y-auto backdrop-blur-sm custom-scrollbar">
@@ -323,7 +340,7 @@ const TransactionModal = ({
               <button
                 type="button"
                 onClick={onClose}
-                className="opacity-70 hover:opacity-100 p-1 transition-opacity"
+                className="opacity-70 hover:opacity-100 p-1 transition-opacity cursor-pointer"
               >
                 <X className="size-5" />
               </button>
@@ -352,12 +369,33 @@ const TransactionModal = ({
               disabledDate={(date: Date) => {
                 const d = new Date(date);
                 d.setHours(0, 0, 0, 0);
+
+                const currentToday = new Date(today);
+                currentToday.setHours(0, 0, 0, 0);
+
+                // (UPDATE logic)
+                if (mode === 'update') {
+                  const startOfMonth = new Date(
+                    currentToday.getFullYear(),
+                    currentToday.getMonth(),
+                    1,
+                  );
+
+                  const endOfMonth = new Date(
+                    currentToday.getFullYear(),
+                    currentToday.getMonth() + 1,
+                    0,
+                  );
+
+                  return d < startOfMonth || d > endOfMonth;
+                }
+
                 if (watchedRepeat === 'ONCE') {
                   // disable future dates
-                  return d > today;
+                  return d > currentToday;
                 }
                 // disable past dates
-                return d < today;
+                return d < currentToday;
               }}
               onChange={(date: Date) =>
                 setValue('date', date, {
@@ -368,17 +406,22 @@ const TransactionModal = ({
             />
 
             {/* DESCRIPTION */}
-            <IncomeDescriptionField register={register} inputValue={watchedDescription}/>
+            <IncomeDescriptionField
+              register={register}
+              inputValue={watchedDescription}
+            />
 
             {/* REPEAT */}
             <IncomeRepeatField
               value={watchedRepeat}
-              onChange={(repeat: string) =>
-                setValue('intervalUnit', repeat, {
-                  shouldValidate: true,
-                  shouldDirty: true,
-                })
-              }
+              mode={mode}
+              onChange={(repeat: string) => {
+                if (mode !== 'update')
+                  setValue('intervalUnit', repeat, {
+                    shouldValidate: true,
+                    shouldDirty: true,
+                  });
+              }}
             />
 
             <div
@@ -404,7 +447,7 @@ const TransactionModal = ({
                   </p>
                 </div>
               </div>
-            </div> 
+            </div>
 
             {/* FILE */}
             <IncomeFileField
@@ -412,6 +455,8 @@ const TransactionModal = ({
               error={errors.file?.message}
               onChange={handleFileChange}
               onRemove={removeFile}
+              repeat={watchedRepeat as 'ONCE' | 'MONTHLY' | 'YEARLY'}
+              mode={mode}
               disabled={watchedRepeat !== 'ONCE' && mode !== 'update'}
             />
           </div>
@@ -432,7 +477,14 @@ const TransactionModal = ({
             <Button
               variant="primary"
               type="submit"
-              disabled={!isValid || !isDirty || isCreating || isUpdating}
+              disabled={
+                !isValid ||
+                !isDirty ||
+                isCreating ||
+                isUpdating ||
+                isCreatingRepeat ||
+                (mode === 'update' && !isDirty)
+              }
               className="w-[120px] h-[50px] sm:h-[36px] px-6 py-2 text-[14px] tracking-tight"
             >
               {isCreating || isUpdating || isCreatingRepeat ? (

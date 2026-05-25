@@ -5,11 +5,10 @@ import {useMe} from '@/shared/api/users/useMe';
 import defaultAvatar from '@/assets/default-photo.png';
 import type {UserResponseDTO} from '@/shared/api/models';
 import {Menu} from 'lucide-react';
-import {Suspense, useState} from 'react';
+import {useState} from 'react';
 import SmallLogo from '@/assets/icons/small-logo.svg';
-import {PageSkeleton} from '@/components/PageSkeleton';
 import {paths} from '@/constances/constances';
-import {cn} from '@/lib/utils';
+import {cn} from '@/lib/utils'; 
 
 type AppLayoutProps = {
   title?: React.ReactNode;
@@ -32,7 +31,7 @@ function AppLayout({title, subtitle, action, children}: AppLayoutProps) {
   return (
     <div
       className={`relative flex h-screen bg-background text-foreground scrollbar-hide ${
-        menuOpen ? 'overflow-hidden' : ''
+        menuOpen ? 'overflow-hidden' : 'overflow-y-auto'
       }`}
     >
       <header className="absolute top-0 left-0 right-0 flex md:hidden items-center justify-between z-30 px-6 h-16.25 bg-[--light-background] dark:bg-[#0b1514] [box-shadow:0px_4px_4px_0px_rgba(75,75,75,0.2),inset_0px_1px_0px_0px_rgba(255,255,255,0.25)]">
@@ -67,7 +66,6 @@ function AppLayout({title, subtitle, action, children}: AppLayoutProps) {
       />
 
       <div className="flex h-auto sm:h-full min-h-0 flex-1 flex-col overflow-y-auto custom-scrollbar py-[33.5px] px-[25px] md:pr-[50px] pt-16.25 md:pt-0">
-       
         <div
           className={cn(
             'mt-[35px] w-full',
@@ -76,12 +74,12 @@ function AppLayout({title, subtitle, action, children}: AppLayoutProps) {
             // MD: Grid (2 rows, 2 columns)
             'md:grid md:grid-cols-2 md:gap-y-4 md:items-center',
             // LG: Single Row Flex
-            'lg:flex lg:flex-row lg:justify-between lg:gap-6',
+            'xl:flex xl:flex-row xl:justify-between xl:gap-6',
           )}
         >
           {/* TITLE SECTION */}
           {isNotExistingRoute && (
-            <div className="md:col-start-1 md:row-start-1 lg:flex-none">
+            <div className="lg:col-start-1 lg:row-start-1 xl:flex-none">
               <h2 className="text-xl sm:text-2xl font-semibold">
                 {resolvedTitle}
               </h2>
@@ -105,22 +103,20 @@ function AppLayout({title, subtitle, action, children}: AppLayoutProps) {
 
           {/* BUTTONS (ACTION) SECTION */}
           <div
-            className={cn( 
+            className={cn(
               !action ? 'hidden' : 'flex',
               // MD: Moves to bottom row, stays right
               'md:col-span-2 md:row-start-2 md:justify-end',
               // LG: In the middle, pushed to right
-              'lg:col-span-1 lg:row-start-1 lg:flex-1 lg:order-2 lg:justify-end',
+              'xl:col-span-1 xl:row-start-1 xl:flex-1 xl:order-2 xl:justify-end',
             )}
           >
             {action}
           </div>
         </div>
 
-        <main className="mt-[15px] min-h-0 flex-1 custom-scrollbar">
-          <Suspense fallback={<PageSkeleton />}>
-            {children ?? <Outlet />}
-          </Suspense>
+        <main className="mt-[15px] min-h-0 flex-1 custom-scrollbar"> 
+            {children ?? <Outlet />} 
         </main>
       </div>
     </div>

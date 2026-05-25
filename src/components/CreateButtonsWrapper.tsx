@@ -10,7 +10,7 @@ const CreateButtonsWrapper = ({
   return (
     <div
       className={cn(
-        'flex flex-col sm:flex-row gap-[16px] justify-center items-center w-full flex-wrap',
+        'flex flex-col sm:flex-row gap-[16px] justify-center items-center w-full',
         className,
       )}
     >

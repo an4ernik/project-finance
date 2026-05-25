@@ -60,10 +60,8 @@ const RemoveDialog = ({
   if (!isOpen || !item) return null;
 
   const amount = formattedAmount(item.amount) || item.amount;
-
-  // Update your onConfirm call in the button:
-  // onClick={() => onConfirm(item.id, deleteAllFuture ? 'THIS_AND_FUTURE' : 'ONLY_THIS')}
-
+  const scope = deleteAllFuture ? 'THIS_AND_FUTURE' : 'ONLY_THIS'; 
+  
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
@@ -189,7 +187,7 @@ const RemoveDialog = ({
           <Button
             type="button"
             variant="destructive"
-            onClick={() => onConfirm(item.id as number)}
+            onClick={() => onConfirm(item.id as number, scope)}
             className={cn(
               'max-w-30 w-full py-2.5 rounded-xl cursor-pointer border-none',
               theme.confirmBtn,
