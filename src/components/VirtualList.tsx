@@ -20,7 +20,8 @@ import {
 } from '@/types/types';
 import VirtualItemSkeleton from './skeletons/VIrtualListSkeleton';
 import {applyFilters, isToday} from '@/helpers/helpers';
-import TransactionModal from '@/pages/income/modal/TransactionModal'; 
+import TransactionModal from '@/pages/income/modal/TransactionModal';
+import {useQueryClient} from '@tanstack/react-query';
 
 interface VirtualListProps {
   type: 'INCOME' | 'EXPENSE';
@@ -29,8 +30,30 @@ interface VirtualListProps {
 }
 
 const VirtualList = ({type, formFilters, setTotalAmount}: VirtualListProps) => {
+  const queryClient = useQueryClient();
+  const mutationConfig = {
+    mutation: {
+      onSuccess: () => {
+        queryClient.invalidateQueries({
+          queryKey: ['/api/v1/transactions'],
+          exact: false,
+        });
+
+        queryClient.refetchQueries({
+        predicate: (query) => { 
+          return (
+            Array.isArray(query.queryKey) &&
+            query.queryKey[0] === '/api/v1/transactions'
+          );
+        },
+      });
+
+      },
+    },
+  };
+
   const {data, isPending: isLoading} = useGetTransactions({type});
-  const {mutateAsync: deleteIncome} = useDeleteTransaction();
+  const {mutateAsync: deleteIncome} = useDeleteTransaction(mutationConfig);
 
   const parentRef = useRef<HTMLDivElement>(null);
   const [debouncedSearch, setDebouncedSearch] = useState('');
@@ -41,14 +64,17 @@ const VirtualList = ({type, formFilters, setTotalAmount}: VirtualListProps) => {
 
   const [isRemoveDialogOpen, setIsRemoveDialogOpen] = useState(false);
   const [itemToDelete, setItemToDelete] = useState<Item | null>(null);
- 
-  const handleConfirmDelete = async (id: number, scope='"ONLY_THIS"' as "ONLY_THIS" | "THIS_AND_FUTURE") => {
+
+  const handleConfirmDelete = async (
+    id: number,
+    scope = '"ONLY_THIS"' as 'ONLY_THIS' | 'THIS_AND_FUTURE',
+  ) => {
     const options = {
       id,
       params: {
-        recurringScope: scope
-      } 
-    }
+        recurringScope: scope,
+      },
+    };
     try {
       await deleteIncome(options);
       toast.success(t(`incomeModal.transaction.success.delete.${type}`));
@@ -89,9 +115,6 @@ const VirtualList = ({type, formFilters, setTotalAmount}: VirtualListProps) => {
     setIsModalOpen(false);
     setSelectedItem(null);
   };
-
-  // 1. Fetching logic lives internally now
-  // Note: Once you add pagination, you will change this hook to your infinite query handler!
  
   // 2. Localized debounce cycle
   useEffect(() => {
@@ -135,8 +158,7 @@ const VirtualList = ({type, formFilters, setTotalAmount}: VirtualListProps) => {
   const earlierRows = filteredData.filter(
     item => !isToday(new Date(item.date)),
   );
-
-  // Setup your container and window virtualizers as usual...
+ 
   const containerVirtualizer = useVirtualizer({
     count: earlierRows.length,
     getScrollElement: () => parentRef.current,
@@ -278,13 +300,13 @@ const VirtualList = ({type, formFilters, setTotalAmount}: VirtualListProps) => {
                   );
                 })}
               </ul>
-            )} 
-          {isFilteredListEmpty && (
-            <NotAvailableTransactions
-              isNotLength={transactions.length > 0} 
-              type={type}
-            />
-          )}
+            )}
+            {isFilteredListEmpty && (
+              <NotAvailableTransactions
+                isNotLength={transactions.length > 0}
+                type={type}
+              />
+            )}
           </div>
         </div>
       </main>
