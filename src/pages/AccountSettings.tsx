@@ -33,6 +33,8 @@ import {useQueryClient} from '@tanstack/react-query';
 import {UpdateUserProfileDTOCurrencyCode} from '@/shared/api/models/updateUserProfileDTOCurrencyCode';
 import type {ResponseUserDTO} from '@/shared/api/models';
 import {parseISO, format} from 'date-fns';
+import {useAuthStore} from '@/shared/store/useAuthStore';
+import ConfirmDeleteAccountModal from '@/components/ConfirmDeleteAccountModal';
 import axios from 'axios';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
@@ -45,6 +47,7 @@ const ACCEPTED_IMAGE_TYPES = [
 
 function AccountSettings() {
   const {t} = useTranslation();
+  const {logout} = useAuthStore();
   const {user, isLoading, refetch} = useMe();
   const userData = user as ResponseUserDTO | undefined;
   const queryClient = useQueryClient();
@@ -54,6 +57,8 @@ function AccountSettings() {
   const [emailInput, setEmailInput] = useState<boolean>(false);
   const regDate = userData?.createdAt ? parseISO(userData.createdAt) : null;
   const isPending = isUpdatingProfile || isUpdatingEmail;
+  const [isOpenDeleteAccountModal, setIsOpenDeleteAccountModal] =
+    useState<boolean>(false);
 
   const date = regDate && format(regDate, 'dd.MM.yyyy');
 
@@ -249,8 +254,19 @@ function AccountSettings() {
     );
   };
 
+  const handleDeleteAccount = () => {
+    logout();
+    setIsOpenDeleteAccountModal(false);
+  };
+
   return (
-    <section className="h-full min-h-0 overflow-y-auto px-6 py-6 text-foreground">
+    <section className="h-full min-h-0 px-6 py-6 text-foreground custom-scrollbar">
+      <ConfirmDeleteAccountModal
+        isOpen={isOpenDeleteAccountModal}
+        onClose={() => setIsOpenDeleteAccountModal(false)}
+        onConfirmDelete={handleDeleteAccount}
+        userEmail={userData?.email ?? ''}
+      />
       <div className="max-w-[540px]">
         <div className="mb-6">
           <h2 className="text-[20px] font-semibold tracking-[-0.5px]">
@@ -399,6 +415,23 @@ function AccountSettings() {
             </Button>
           </FieldGroup>
         </form>
+      </div>
+      <div className="w-full md:max-w-3/5 border-t sm:p-4 mt-6 flex gap-6 flex-col sm:flex-row items-center justify-between">
+        <div className="flex flex-col gap-3">
+          <span className="text-base text-[#0B1514] dark:text-[#EAF6F3]">
+            {t('settings.account.unsafeChanges.unsafeTitle')}
+          </span>
+          <span className="text-[#6F7E7C] dark:text-[#7F9E97] text-[14px]">
+            {t('settings.account.unsafeChanges.unsafeSubTitle')}
+          </span>
+        </div>
+        <Button
+          variant="destructive"
+          className="w-full sm:max-w-[300px] h-fit py-2 px-5 text-lg"
+          onClick={() => setIsOpenDeleteAccountModal(true)}
+        >
+          {t('settings.account.unsafeChanges.deleteProfileBtn')}
+        </Button>
       </div>
     </section>
   );

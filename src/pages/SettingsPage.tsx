@@ -16,7 +16,7 @@ function SettingsPage() {
       title={t('settings.welcomeBack')}
       subtitle={t('settings.welcomeSubtitle')}
     >
-      <div className="flex h-full min-h-0 min-w-0 flex-col gap-4 bg-background text-foreground">
+      <div className="flex min-w-0 flex-col gap-4 bg-background text-foreground pb-5">
         <div className="flex flex-wrap gap-2 rounded-[10px] border border-border bg-card sm:flex-nowrap sm:gap-[50px] sm:min-h-[63.5px]">
           <NavLink
             to="/settings"
@@ -50,7 +50,7 @@ function SettingsPage() {
           </NavLink>
         </div>
 
-        <div className="min-h-0 flex-1 rounded-[10px] border border-border bg-card overflow-hidden">
+        <div className="min-h-0 flex-1 rounded-[10px] border border-border bg-card">
           <Outlet />
         </div>
       </div>

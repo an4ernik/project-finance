@@ -15,9 +15,10 @@ const REPEAT_INCOME_TYPES = ['ONCE', 'MONTHLY', 'YEARLY'] as const;
 type Props = {
   value?: string;
   onChange: (value: string) => void;
+  mode: 'create' | 'update';
 };
 
-export const IncomeRepeatField = ({value, onChange}: Props) => {
+export const IncomeRepeatField = ({value, onChange, mode}: Props) => {
   const {t} = useTranslation();
 
   return (
@@ -31,6 +32,7 @@ export const IncomeRepeatField = ({value, onChange}: Props) => {
           <Button
             variant="secondary"
             key={type}
+            disabled={mode === 'update' && value !== type}
             type="button"
             onClick={() => onChange(type)}
             className={cn(

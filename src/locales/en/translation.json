@@ -14,13 +14,26 @@
     "help": "Help",
     "logOut": "Log out"
   },
+  "months": {
+      "jan": "Jan",
+      "feb": "Feb",
+      "mar": "Mar",
+      "apr": "Apr",
+      "may": "May",
+      "jun": "Jun",
+      "jul": "Jul",
+      "aug": "Aug",
+      "sep": "Sep",
+      "oct": "Oct",
+      "nov": "Nov",
+      "dec": "Dec"
+    },
   "dashboard": {
     "title": "Dashboard",
     "noExpenses": "No expenses for this period",
     "noExpensesCashFlow": "No cash flow for this period",
     "noBalance": "Balance empty for this period",
     "thisMonth": "This month",
-
     "periods": {
       "week": "Week",
       "month": "Month",
@@ -149,6 +162,14 @@
       }
     }
   },
+  "expense": {
+    "title": "Expenses",
+    "subtitle": "Manage your expense data",
+    "actions": {
+      "manageCategories": "Manage categories",
+      "addExpense": "Add expense"
+    }
+  },
   "settings": {
     "welcomeBack": "Welcome back!",
     "welcomeSubtitle": "A great time to manage your finances.",
@@ -175,6 +196,29 @@
       "save": "Save changes",
       "saveSuccess": "Profile changes saved",
       "nothingToUpdate": "No changes to save",
+
+      "unsafeChanges": {
+        "unsafeTitle": "Danger Zone",
+        "unsafeSubTitle": "Permanently delete your account and all data",
+        "deleteProfileBtn": "Delete account",
+        "modal": {
+          "title": "Delete account",
+          "subTitle": "This action cannot be undone",
+          "subTitleTwo": "Deleting your account will permanently remove all of your data, including:",
+          "subtextOne": "all income and expense records",
+          "subtextTwo": "categories and budgets",
+          "subtextThree": "account settings",
+          "inputLabelStart": "To confirm deletion, enter ",
+          "inputLabelMiddle": "your email ",
+          "inputLabelEnd": "in the field below:",
+          "inputPlaceholder": "Enter your email",
+          "important": "Important:",
+          "inputHint": "After deletion, you will lose access to your account and your data cannot be recovered.",
+          "cancel": "Cancel",
+          "confirm": "Delete account"
+        }
+      },
+
       "errors": {
         "fullNameRequired": "Full name is required",
         "invalidEmail": "Invalid email address",
@@ -433,8 +477,8 @@
     "today": "Today",
     "earlier": "Earlier",
     "empty": {
-      "notFoundTitle":"Nothing not found",
-      "notFoundSubtitle":"Try to change the filters, or write new keyword in the search field.",
+      "notFoundTitle": "Nothing not found",
+      "notFoundSubtitle": "Try to change the filters, or write new keyword in the search field.",
       "INCOME": {
         "title": "You don't have any incomes yet.",
         "description": "Create your first income to start tracking your finances."
@@ -625,9 +669,9 @@
         "to": "To"
       }
     },
-    "intervalUnitAlert":{
-      "title":"This is a recurring income.",
-      "subtitle":"Photo and documents can be added after saving the record through its editing."
+    "intervalUnitAlert": {
+      "title": "This is a recurring income.",
+      "subtitle": "Photo and documents can be added after saving the record through its editing."
     }
   },
   "notFoundPage": {
@@ -636,8 +680,8 @@
     "button": "Back to home"
   },
   "documentsModal": {
-    "document":"Document",
-    "documents":"Documents", 
+    "document": "Document",
+    "documents": "Documents",
     "actions": {
       "newTab": "Open in a new tab",
       "save": "Download"

@@ -20,7 +20,7 @@ type Props = {
   value: Date;
   error?: string;
   onChange: (date: Date) => void;
-  disabledDate?: (date: Date) => boolean;
+  disabledDate?: (date: Date) => boolean; 
   type?: TransactionType;
 };
 
@@ -28,7 +28,7 @@ export const IncomeDateField = ({
   value,
   error,
   onChange,
-  disabledDate,
+  disabledDate, 
   type = 'INCOME',
 }: Props) => {
   const {t} = useTranslation();
@@ -42,10 +42,10 @@ export const IncomeDateField = ({
       <Popover>
         <PopoverTrigger asChild>
           <button
-            type="button"
+            type="button" 
             className={cn(
               dateInput,
-              'h-10 sm:h-12 cursor-pointer gap-1 hover:border-muted-foreground',
+              'h-10 sm:h-12 cursor-pointer gap-1 hover:border-muted-foreground', 
             )}
           >
             <CalendarIcon className="size-5 text-dark-background" />

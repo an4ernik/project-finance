@@ -1,19 +1,61 @@
-import {cn} from '@/lib/utils';
+import { cn } from '@/lib/utils'; 
 
-const SkeletonBox = ({className}: {className?: string}) => (
-  <div
-    className={cn(
-      'rounded bg-gray-200 dark:bg-[#142624] animate-pulse transition-all duration-300 [animation-duration:1.3s]',
-      className,
-    )}
-  />
-);
-
-export const DashboardSkeleton = () => {
+const MainDashboardSkeleton = () => {
   return (
-    <div className="w-full space-y-10 p-6">
-      {/* MAIN GRID */}
-      <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch">
+    <div className="flex h-screen w-full bg-[#EEF3F2] dark:bg-[#0C1412] font-sans antialiased text-slate-800 dark:text-slate-200 transition-colors duration-300">
+      
+      {/* SIDEBAR SKELETON */}
+      <aside className="w-64 border-r border-slate-200 dark:border-emerald-900/30 bg-white dark:bg-[#091816] flex flex-col justify-between p-6 h-full shrink-0">
+        <div>
+          {/* Logo Brand */} 
+          <div className="flex items-center gap-3 mb-12 animate-pulse">
+            <div className="h-7 w-28 bg-slate-200 dark:bg-emerald-950/50 rounded-md" />
+            <div className="size-6 bg-slate-300 dark:bg-emerald-800/60 rounded-full" />
+          </div>
+
+          {/* Nav Items */}
+          <nav className="space-y-6">
+            {[1, 2, 3, 4].map((i) => (
+              <div key={i} className="flex items-center gap-4 animate-pulse">
+                <div className="size-5 rounded bg-slate-200 dark:bg-emerald-950/40" />
+                <div className={`h-4 bg-slate-200 dark:bg-emerald-950/40 rounded-md ${i === 1 ? 'w-24' : 'w-20'}`} />
+              </div>
+            ))}
+          </nav>
+        </div>
+
+        {/* Footer actions */}
+        <div className="space-y-6">
+          <div className="flex items-center gap-4 animate-pulse pt-4 border-t border-slate-100 dark:border-emerald-950/20">
+            <div className="size-5 rounded bg-slate-200 dark:bg-emerald-950/40" />
+            <div className="h-4 w-16 bg-slate-200 dark:bg-emerald-950/40 rounded-md" />
+          </div>
+          
+          <div className="flex gap-3 pt-2">
+            <div className="size-10 rounded-xl bg-slate-100 dark:bg-emerald-950/30 animate-pulse border dark:border-emerald-950/40" />
+            <div className="w-20 h-10 rounded-xl bg-slate-100 dark:bg-emerald-950/30 animate-pulse border dark:border-emerald-950/40" />
+          </div>
+        </div>
+      </aside>
+
+      {/* MAIN CONTAINER */}
+      <main className="h-full flex flex-col overflow-y-auto p-8 max-w-7xl mx-auto w-full">
+        
+        {/* TOP BAR ACTION STRIP */}
+        <header className="flex justify-between items-center mb-8">
+          <div>
+            <div className="h-7 w-20 bg-slate-300 dark:bg-emerald-900/40 rounded-md mb-2 animate-pulse" />
+            <div className="h-5 w-48 bg-slate-200 dark:bg-emerald-950/40 rounded-md animate-pulse" />
+          </div>
+          
+          <div className="flex items-center gap-4 animate-pulse">
+            <div className="w-36 h-10 rounded-xl bg-slate-200 dark:bg-emerald-950/40 border dark:border-emerald-950/30" />
+            <div className="w-32 h-10 rounded-xl bg-slate-300 dark:bg-emerald-800/40" />
+            <div className="size-8 rounded-full bg-slate-200 dark:bg-emerald-950/40 ml-2" />
+          </div>
+        </header>
+
+        <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch">
         {/* BLOCK 1:*/}
         <div className="rounded-2xl border border-slate-100 dark:border-none bg-white dark:bg-[#315F551A] p-6 space-y-6 w-full">
           <SkeletonBox className="h-6 w-40" /> {/* Section Title */}
@@ -85,6 +127,19 @@ export const DashboardSkeleton = () => {
           </div>
         </div>
       </div>
+ 
+      </main>
     </div>
   );
 };
+
+export default MainDashboardSkeleton;
+
+const SkeletonBox = ({className}: {className?: string}) => (
+  <div
+    className={cn(
+      'rounded bg-gray-200 dark:bg-[#142624] animate-pulse transition-all duration-300 [animation-duration:1.3s]',
+      className,
+    )}
+  />
+);

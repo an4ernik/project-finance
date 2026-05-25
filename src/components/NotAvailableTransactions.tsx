@@ -12,7 +12,7 @@ const NotAvailableTransactions = ({type, isNotLength}: Props) => {
   const {t} = useTranslation();
 
   return (
-    <div className="flex flex-col gap-4 mt-20 w-full h-full justify-center items-center mb-20">
+    <div className="flex flex-col gap-4 mt-10 w-full h-full justify-center items-center mb-20">
       {/* Icon Container */}
       <div
         className={cn(
