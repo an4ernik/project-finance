@@ -1,8 +1,9 @@
 import {formattedAmount} from '@/helpers/helpers';
 import {cn} from '@/lib/utils';
 import {useTranslation} from 'react-i18next';
-import {CURRENCY_SIGN, MONTH_KEYS} from '@/constances/constances';
-import type {CustomTooltipProps} from '@/types/types';
+import {MONTH_KEYS} from '@/constances/constances';
+import type {CustomTooltipProps} from '@/types/types'; 
+import { useGetCurrencySign } from '@/shared/store/useCurrencySign';
 
 const tooltipBg = {
   dark: {
@@ -26,7 +27,7 @@ const tooltipBg = {
     },
   },
 };
- 
+
 const CustomTooltip = ({
   active,
   payload,
@@ -35,6 +36,8 @@ const CustomTooltip = ({
   theme = 'light',
 }: CustomTooltipProps) => {
   const {t} = useTranslation();
+  const CURRENCY_SIGN = useGetCurrencySign();
+
 
   if (active && payload && payload.length) {
     const {amount, day, fullDate, name} = payload[0].payload;

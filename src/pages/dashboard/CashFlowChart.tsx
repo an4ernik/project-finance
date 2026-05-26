@@ -7,7 +7,7 @@ import {
   ResponsiveContainer,
   Cell,
   Tooltip,
-  LabelList, 
+  LabelList,
 } from 'recharts';
 
 import {useTranslation} from 'react-i18next';
@@ -50,7 +50,6 @@ import {useMemo, useState} from 'react';
 import type {Period} from '@/types/types';
 import ChartsTitle from './ChartsTitle';
 import ChartWrapper from './ChartWrapper';
-import {CURRENCY_SIGN} from '@/constances/constances';
 import {useMediaQuery} from '@/hooks/useMediaQuery';
 export type Filters = {
   period: Period;
@@ -60,7 +59,8 @@ export type Filters = {
   search: string;
 };
 
-import type {Transaction} from '@/types/types';
+import type {Transaction} from '@/types/types'; 
+import { useGetCurrencySign } from '@/shared/store/useCurrencySign';
 interface Props {
   data: Transaction[];
 }
@@ -69,6 +69,8 @@ const CashFlowChart = ({data = []}: Props) => {
   const isMobile = useMediaQuery('(max-width: 768px)');
   const {t} = useTranslation();
   const {theme} = useTheme();
+   const CURRENCY_SIGN = useGetCurrencySign();
+ 
 
   const totals = useMemo(() => {
     const range = getPeriodRange({
@@ -231,7 +233,7 @@ const CashFlowChart = ({data = []}: Props) => {
                 dataKey="amount"
                 radius={[4, 4, 4, 4]}
                 barSize={isMobile ? 30 : 45}
-                style={{filter: 'url(#blackShadow)'}} 
+                style={{filter: 'url(#blackShadow)'}}
               >
                 {isMobile && (
                   <LabelList

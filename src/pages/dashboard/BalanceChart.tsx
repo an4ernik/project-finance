@@ -9,7 +9,7 @@ import {
   YAxis,
 } from 'recharts';
 import ChartTooltip from './ChartTooltip';
-import {CURRENCY_SIGN, DAY_KEYS, MONTH_KEYS} from '@/constances/constances';
+import {DAY_KEYS, MONTH_KEYS} from '@/constances/constances';
 import React, {useMemo} from 'react';
 import type {Period} from '@/types/types';
 import {cn} from '@/lib/utils';
@@ -17,19 +17,7 @@ import {formattedAmount, getPeriodRange} from '@/helpers/helpers';
 import type {TransactionResponseDTO} from '@/shared/api/models';
 import {useGetTransactions} from '@/shared/api/generated/transaction-management/transaction-management';
 import {endOfDay} from 'date-fns';
-
-// const calculateYAxisWidth = (maxValue: number) => {
-//   // 1. Format the max value exactly how it will appear in the YAxis
-//   // Example: 1234567 -> "1234.6K"
-//   const formatted =
-//     maxValue >= 1000 ? `${(maxValue / 1000).toFixed(1)}K` : maxValue.toString();
-
-//   // 2. Estimate width: Base padding (20px) + ~9px per character (at 14px font size)
-//   const estimatedWidth = 10 + formatted.length ;
-
-//   // 3. Set a reasonable floor and ceiling
-//   return Math.min(Math.max(estimatedWidth, 40), 80);
-// };
+import {useGetCurrencySign} from '@/shared/store/useCurrencySign';
 
 const calculateYAxisWidth = (min: number, max: number) => {
   // Use the value with the most characters (either the lowest negative or highest positive)
@@ -49,6 +37,7 @@ const calculateYAxisWidth = (min: number, max: number) => {
 const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
   const {t} = useTranslation();
   const {data} = useGetTransactions();
+  const CURRENCY_SIGN = useGetCurrencySign();
 
   const transactions = useMemo(() => {
     return (
@@ -331,4 +320,4 @@ const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
     </>
   );
 };
-export default React.memo(BalanceChart)
+export default React.memo(BalanceChart);

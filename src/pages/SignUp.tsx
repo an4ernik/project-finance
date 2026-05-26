@@ -31,6 +31,7 @@ import {AuthRequestDTOCurrencyCode} from '@/shared/api/models/authRequestDTOCurr
 import {type SignUpBody} from '@/shared/api/models';
 import {cn} from '@/lib/utils';
 import i18n from '@/i18n';
+import { useSetCurrencySign, type CurrencyCode } from '@/shared/store/useCurrencySign';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 const ACCEPTED_IMAGE_TYPES = [
@@ -42,6 +43,7 @@ const ACCEPTED_IMAGE_TYPES = [
 
 function SignUp() {
   const {theme} = useTheme();
+  const setCurrencySign = useSetCurrencySign();
   const {t} = useTranslation();
   const navigate = useNavigate();
   const {mutate, isPending} = useSignUp();
@@ -159,6 +161,7 @@ function SignUp() {
       {data: payload},
       {
         onSuccess: () => {
+          setCurrencySign(values.currencyCode as CurrencyCode);
           toast.success(t('auth.signUpSuccess'));
           setTimeout(() => setIsModal(true), 2000);
         },

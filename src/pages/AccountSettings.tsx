@@ -35,7 +35,9 @@ import type {ResponseUserDTO} from '@/shared/api/models';
 import {parseISO, format} from 'date-fns';
 import {useAuthStore} from '@/shared/store/useAuthStore';
 import ConfirmDeleteAccountModal from '@/components/ConfirmDeleteAccountModal';
-import axios from 'axios';
+import axios from 'axios'; 
+import {useSetCurrencySign} from '@/shared/store/useCurrencySign';
+import { useGetTransactions } from '@/shared/api/generated/transaction-management/transaction-management';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 const ACCEPTED_IMAGE_TYPES = [
@@ -47,6 +49,16 @@ const ACCEPTED_IMAGE_TYPES = [
 
 function AccountSettings() {
   const {t} = useTranslation();
+
+  const {data} = useGetTransactions();
+  const transactions = useMemo(() => {
+    if (Array.isArray(data)) return data;
+    if (data && 'data' in data && Array.isArray(data.data)) return data.data;
+    return [];
+  }, [data]);
+
+  const disabled = transactions.length > 0;
+  const setCurrencySign = useSetCurrencySign();
   const {logout} = useAuthStore();
   const {user, isLoading, refetch} = useMe();
   const userData = user as ResponseUserDTO | undefined;
@@ -59,6 +71,14 @@ function AccountSettings() {
   const isPending = isUpdatingProfile || isUpdatingEmail;
   const [isOpenDeleteAccountModal, setIsOpenDeleteAccountModal] =
     useState<boolean>(false);
+
+  useEffect(() => {
+    if (userData) {
+      setCurrencySign(
+        userData.currencyCode as UpdateUserProfileDTOCurrencyCode,
+      );
+    }
+  }, [userData, setCurrencySign]);
 
   const date = regDate && format(regDate, 'dd.MM.yyyy');
 
@@ -196,6 +216,7 @@ function AccountSettings() {
         queryKey: getGetUserProfileQueryKey(),
       });
       void refetch();
+      setCurrencySign(dto.currencyCode);
       toast.success(t('settings.account.saveSuccess'));
       reset({
         fullName: '',
@@ -374,11 +395,17 @@ function AccountSettings() {
               </FieldLabel>
               <FieldContent>
                 <Controller
+                  disabled={disabled}
                   name="currencyCode"
-                  control={control}
+                  control={control} 
                   render={({field}) => (
-                    <Select onValueChange={field.onChange} value={field.value}>
-                      <SelectTrigger className="w-full">
+                    <Select
+                      disabled={disabled}
+                      onValueChange={field.onChange}
+                      value={field.value}
+                    >
+                       
+                      <SelectTrigger className="w-full  data-disabled:cursor-default" disabled={disabled}>
                         <SelectValue
                           placeholder={
                             userData?.currencyCode ||

@@ -5,12 +5,12 @@ import ChartsTitle from './ChartsTitle';
 import {useEffect, useMemo, useState} from 'react';
 import {isWithinInterval} from 'date-fns';
 import ChartWrapper from './ChartWrapper';
-import type {Period} from '@/types/types';
-import {CURRENCY_SIGN} from '@/constances/constances';
+import type {Period} from '@/types/types'; 
 import ExpenseDistributionList from './ExpenseDistributionList';
 import {useGetTransactions} from '@/shared/api/generated/transaction-management/transaction-management';
 import type {TransactionResponseDTO} from '@/shared/api/models';
-import {t} from 'i18next';
+import {t} from 'i18next'; 
+import { useGetCurrencySign } from '@/shared/store/useCurrencySign';
 
 const EMPTY_DISTRIBUTION_ITEM = {
   name: '',
@@ -21,6 +21,8 @@ const EMPTY_DISTRIBUTION_ITEM = {
 
 const ExpenseDonutChart = () => {
   const {data} = useGetTransactions();
+  const CURRENCY_SIGN = useGetCurrencySign();
+
 
   const [activePeriod, setActivePeriod] = useState<Period>('week');
   const [radii, setRadii] = useState({innerRadius: 100, outerRadius: 140});
@@ -135,7 +137,7 @@ const ExpenseDonutChart = () => {
                 outerRadius={radii.outerRadius}
                 paddingAngle={5}
                 dataKey="value"
-                stroke="none" 
+                stroke="none"
               >
                 {expenseDistributionData.chartData.map((entry, index) => (
                   <Cell key={`${entry.name}-${index}`} fill={entry.color} />

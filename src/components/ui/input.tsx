@@ -108,7 +108,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               </button>
             )}
           </div>
-          {showErrorSlot && <DisplayError errorText={errorMessage} />}
+          {showErrorSlot || error ? <DisplayError errorText={errorMessage} /> : null}
         </div>
       </div>
     );

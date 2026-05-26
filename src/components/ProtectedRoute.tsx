@@ -1,11 +1,24 @@
 import {Navigate, Outlet, useLocation} from 'react-router-dom';
 import {useAuthStore} from '@/shared/store/useAuthStore';
 import {useMe} from '@/shared/api/users/useMe';
+import {
+  useSetCurrencySign,
+  type CurrencyCode,
+} from '@/shared/store/useCurrencySign';
+import {useEffect} from 'react';
 
 const ProtectedRoute = () => {
+  const setCurrency = useSetCurrencySign();
   const isAuth = useAuthStore(state => state.isAuth);
-  const {isLoading} = useMe();
+  const {isLoading, user} = useMe();
+
   const location = useLocation();
+
+  useEffect(() => {
+    if (user?.currencyCode) {
+      setCurrency(user.currencyCode as CurrencyCode);
+    }
+  }, [user, setCurrency]);
 
   if (!isAuth) {
     return <Navigate to="/login" state={{from: location}} replace />;

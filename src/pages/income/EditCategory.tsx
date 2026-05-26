@@ -101,11 +101,11 @@ function EditCategory({open, onOpenChange, category, type}: EditCategoryProps) {
     >
       <DialogContent
         showCloseButton={false}
-        className="w-full max-w-[342px] rounded-[10px] border border-white/[0.14] p-5 bg-[var(--glass-bg)] [box-shadow:var(--glass-shadow)] backdrop-blur-[24px] md:max-w-[520px]"
+        className="w-[calc(100%-32px)] sm:w-full max-w-[440px] rounded-[10px] border border-white/[0.14] p-5 bg-[#FAFAFA] dark:bg-[#142624] [box-shadow:var(--glass-shadow)] backdrop-blur-[24px] md:max-w-[520px]"
       >
         <DialogHeader className="text-left">
           <div className="flex items-center justify-between">
-            <DialogTitle className="text-[24px] font-medium leading-[1.167]">
+            <DialogTitle className="text-[20px] font-medium leading-[1.167]">
               {editT('title')}
             </DialogTitle>
             <button
@@ -154,7 +154,7 @@ function EditCategory({open, onOpenChange, category, type}: EditCategoryProps) {
           <Button
             type="button"
             onClick={() => onOpenChange(false)}
-            className="h-9 w-[140px]"
+            className="h-9 max-w-[140px]"
             variant="secondary"
           >
             {editT('cancel')}
@@ -163,7 +163,7 @@ function EditCategory({open, onOpenChange, category, type}: EditCategoryProps) {
             type="button"
             onClick={handleSave}
             disabled={isPending}
-            className="h-9 w-[140px]"
+            className="h-9 max-w-[140px]"
           >
             {isPending ? editT('saving') : editT('save')}
           </Button>

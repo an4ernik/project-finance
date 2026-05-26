@@ -106,7 +106,7 @@
       "searchPlaceholder": "Пошук категорії..",
       "createNew": "Створити нову категорію",
       "loading": "Завантаження...",
-      "incomeTitle": "Категорії доходів",
+      "categoryType": "Категорії доходів",
       "archivedTitle": "Категорії в архіві",
       "typeIncome": "Доходи",
       "typeExpense": "Витрати",
@@ -168,6 +168,39 @@
   "expense": {
     "title": "Витрати",
     "subtitle": "Керуйте даними ваших витрат",
+    "categories": {
+      "managerTitle": "Керування категоріями",
+      "active": "Активні",
+      "archived": "В архіві",
+      "searchPlaceholder": "Пошук категорії..",
+      "createNew": "Створити нову категорію",
+      "loading": "Завантаження...",
+      "categoryType": "Категорії витрат",
+      "archivedTitle": "Категорії в архіві", 
+      "typeExpense": "Витрати",
+      "categoryExpense": "Витрати",
+      "emptyTitle": "У вас ще немає категорій.",
+      "emptySubtitle": "Створіть свою першу категорію, щоб розпочати облік.",
+      "emptyArchivedTitle": "У вас ще немає архівованих категорій.",
+      "emptyArchivedSubtitle": "Ви можете архівувати категорію зі списку активних.",
+      "save": "Зберегти",
+      "saving": "Збереження...",
+      "saveSuccess": "Категорії оновлено",
+      "saveFailed": "Не вдалося оновити категорії",
+      "cancel": "Скасувати",
+      "modals": {
+        "cancel": "Скасувати",
+        "archiveTitle": "Заархівувати категорію?",
+        "archiveConfirm": "В архів",
+        "restoreTitle": "Відновити категорію?",
+        "restoreConfirm": "Відновити",
+        "deleteTitle": "Видалити категорію?",
+        "deleteConfirm": "Видалити",
+        "deleteTransferDescription": "Ця категорія використовується. Виберіть нову категорію для перенесення транзакцій.",
+        "transferLabel": "Перенести до категорії",
+        "transferPlaceholder": "Виберіть категорію"
+      }
+    },
     "actions": {
       "manageCategories": "Керувати категоріями",
       "addExpense": "Додати витрату"

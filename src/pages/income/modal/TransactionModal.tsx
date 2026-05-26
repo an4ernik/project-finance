@@ -26,7 +26,7 @@ import {toTransactionDtoType} from '@/helpers/helpers';
 import {format} from 'date-fns';
 import {useCreateRecurringTransaction} from '@/shared/api/generated/recurring-transaction-management/recurring-transaction-management';
 import type {RecurringTransactionCreateRequestDTOIntervalUnit} from '@/shared/api/models';
-import { useQueryClient } from '@tanstack/react-query';
+import {useQueryClient} from '@tanstack/react-query';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ACCEPTED_FILE_TYPES = [
@@ -48,25 +48,23 @@ const TransactionModal = ({
 }: IncomeModalProps) => {
   const {t} = useTranslation();
 
-  const queryClient = useQueryClient()
+  const queryClient = useQueryClient();
   const mutationConfig = {
     mutation: {
-      onSuccess: () => { 
+      onSuccess: () => {
         queryClient.invalidateQueries({
           queryKey: ['/api/v1/transactions'],
           exact: false,
         });
 
         queryClient.refetchQueries({
-        predicate: (query) => {
-          // Перевіряємо, чи є перший елемент ключа нашим ендпоінтом
-          return (
-            Array.isArray(query.queryKey) &&
-            query.queryKey[0] === '/api/v1/transactions'
-          );
-        },
-      });
-
+          predicate: query => {
+            return (
+              Array.isArray(query.queryKey) &&
+              query.queryKey[0] === '/api/v1/transactions'
+            );
+          },
+        });
       },
     },
   };
@@ -106,7 +104,16 @@ const TransactionModal = ({
             message: t(`incomeModal.errors.categoryRequired.${type}`),
           }),
         date: z.date(),
-        description: z.string().optional(),
+        description: z
+          .string()
+          .optional()
+          .transform(val => {
+            if (!val) return val;
+            return val
+              .replace(/\r?\n|\r/g, ' ')
+              .replace(/\s+/g, ' ')
+              .trim();
+          }),
         intervalUnit: z.string().optional(),
         file: z
           .array(z.instanceof(File))
@@ -172,6 +179,26 @@ const TransactionModal = ({
   const watchedRepeat = watch('intervalUnit');
   const watchedFile = watch('file') as File[] | undefined;
   const watchedDescription = watch('description');
+
+  useEffect(() => {
+  if (!watchedDescription) return;
+
+  // Перевіряємо, чи є в тексті переноси рядків або подвійні пробіли
+  const hasLineBreaks = /\r?\n|\r/.test(watchedDescription);
+  const hasDoubleSpaces = /\s{2,}/.test(watchedDescription);
+
+  if (hasLineBreaks || hasDoubleSpaces) {
+    const normalizedDescription = watchedDescription
+      .replace(/\r?\n|\r/g, ' ') // заміняємо переноси на пробіли
+      .replace(/\s+/g, ' ');      // видаляємо дублі пробілів
+
+    // Оновлюємо значення у формі з прапорцем touch, але без тригеру зайвих рендерів
+    setValue('description', normalizedDescription, {
+      shouldValidate: true,
+      shouldDirty: true,
+    });
+  }
+}, [watchedDescription, setValue]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = Array.from(e.target.files || []);
@@ -245,7 +272,7 @@ const TransactionModal = ({
               description: data.description || '',
               intervalUnit:
                 data.intervalUnit as RecurringTransactionCreateRequestDTOIntervalUnit,
-            }, 
+            },
           });
         } else {
           await updateIncome({
@@ -311,7 +338,7 @@ const TransactionModal = ({
     if (!watchedDate) return;
 
     const selectedDate = new Date(watchedDate);
-    selectedDate.setHours(0, 0, 0, 0); 
+    selectedDate.setHours(0, 0, 0, 0);
 
     // 1. If we are in UPDATE mode and the repeat setting hasn't changed,
     // do absolutely nothing. Leave the saved date alone.

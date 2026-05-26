@@ -18,13 +18,13 @@ import TransactionModal from '@/pages/income/modal/TransactionModal';
 
 import {cn} from '@/lib/utils';
 import {filtersSchema, formattedAmount} from '@/helpers/helpers';
-import {CURRENCY_SIGN} from '@/constances/constances';
 import {useGetCategories} from '@/shared/api/generated/category-management/category-management';
 import {GetCategoriesTypeItem} from '@/shared/api/models';
 import {
   ALL_CATEGORIES_VALUE,
   type TransactionFiltersFormValues,
 } from '@/types/types';
+import {useGetCurrencySign} from '@/shared/store/useCurrencySign';
 
 interface TransactionsPageTemplateProps {
   type: 'INCOME' | 'EXPENSE';
@@ -37,11 +37,14 @@ export function TransactionsPageTemplate({
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [totalAmount, setTotalAmount] = useState<number>(0);
 
+  const CURRENCY_SIGN = useGetCurrencySign();
+
+
   const {t} = useTranslation();
   const {data: categoriesResponse} = useGetCategories();
 
   const lowercaseType = type.toLowerCase();
- 
+
   const categoriesList = useMemo(() => {
     const categories = Array.isArray(categoriesResponse)
       ? categoriesResponse

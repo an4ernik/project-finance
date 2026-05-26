@@ -35,6 +35,7 @@ function SelectTrigger({
   children,
   error,
   hasValue,
+  disabled,
 }: SelectTriggerProps &
   React.ComponentProps<typeof SelectPrimitive.Trigger> & {
     size?: 'sm' | 'default';
@@ -50,6 +51,7 @@ function SelectTrigger({
           ? 'bg-linear-to-b from-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)]'
           : 'bg-linear-to-b from-[rgba(144,208,182,0.05)] from-[49%] to-[rgba(49,95,85,0.1)]',
         !error &&
+          !disabled &&
           'hover:border-muted-foreground focus-within:border-[#02A078] focus-within:bg-linear-to-b focus-within:from-[rgba(255,255,255,0.1)] focus-within:to-[rgba(153,153,153,0.1)]',
         error &&
           'border-[#CE0000] border-[0.5px] bg-linear-to-b from-[rgba(199,0,0,0.2)] to-[rgba(199,0,0,0.3)]',
