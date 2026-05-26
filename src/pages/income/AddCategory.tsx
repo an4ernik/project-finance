@@ -29,6 +29,13 @@ type AddCategoryProps = {
   type?: GetCategoriesTypeItem;
 };
 
+type ErrorState =
+  | {
+      name: string | undefined;
+      icon: string | undefined;
+    }
+  | undefined;
+
 function AddCategory({
   open,
   onOpenChange,
@@ -48,19 +55,29 @@ function AddCategory({
 
   const [name, setName] = useState('');
   const [icon, setIcon] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ErrorState>({
+    name: undefined,
+    icon: undefined,
+  });
 
+  const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value.length <= 25) {
+      setName(event.target.value);
+      setError(undefined);
+    }
+  };
   const handleSave = () => {
-    const trimmed = name.trim();
+    const trimmed = name.trim().slice(0, 25);
+
     if (!trimmed) {
-      setError(addT('errors.nameRequired'));
+      setError({...error, name: addT('errors.nameRequired')} as ErrorState);
       return;
     }
     if (!icon) {
-      setError(addT('errors.iconRequired'));
+      setError({...error, icon: addT('errors.iconRequired')} as ErrorState);
       return;
     }
-    setError(null);
+    setError({name: undefined, icon: undefined});
 
     createCategory(
       {
@@ -81,7 +98,7 @@ function AddCategory({
         onError: (err: unknown) => {
           const status = isAxiosError(err) ? err.response?.status : undefined;
           if (status === 409) {
-            setError(addT('errors.duplicate'));
+            setError({...error, name: addT('errors.duplicate')} as ErrorState);
             return;
           }
           toast.error(addT('errors.createFailed'));
@@ -94,23 +111,23 @@ function AddCategory({
     <Dialog
       open={open}
       onOpenChange={next => {
-        if (!next) setError(null);
+        if (!next) setError(undefined);
         onOpenChange(next);
       }}
     >
       <DialogContent
         showCloseButton={false}
-        className="w-full max-w-[342px] rounded-[10px] border border-white/[0.14] p-5 bg-[var(--glass-bg)] [box-shadow:var(--glass-shadow)] backdrop-blur-[24px]"
+        className="w-[calc(100%-40px)] min-w-0 max-h-[90vh] overflow-y-auto sm:w-full rounded-[10px] border border-white/[0.14] p-5 bg-[#FAFAFA] dark:bg-[#142624] [box-shadow:var(--glass-shadow)] backdrop-blur-[24px] custom-scrollbar"
       >
         <DialogHeader className="text-left">
           <div className="flex items-center justify-between">
-            <DialogTitle className="text-[24px] font-medium leading-[1.167]">
+            <DialogTitle className="text-[20px] font-medium leading-[1.167]">
               {addT('title')}
             </DialogTitle>
             <button
               type="button"
               onClick={() => onOpenChange(false)}
-              className="flex size-9 items-center justify-center text-muted-foreground transition-colors hover:text-foreground"
+              className="flex size-9 items-center justify-center text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
             >
               ✕
             </button>
@@ -119,19 +136,31 @@ function AddCategory({
 
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-3">
-            <label className="text-[16px] leading-[1.167] text-muted-foreground">
+            <label className="text-[16px] leading-[1.167] text-muted-foreground flex items-center justify-between">
               {addT('nameLabel')}
+              <span className="text-[12px] text-muted-foreground/40">
+                {name.length}/25
+              </span>
             </label>
             <Input
               placeholder={addT('namePlaceholder')}
               value={name}
-              onChange={event => setName(event.target.value)}
+              onChange={handleChangeName}
+              error={!!error?.name}
+              errorMessage={error?.name}
+              className="w-full min-w-0"
             />
           </div>
 
           <div className="flex flex-col gap-3">
-            <label className="text-[16px] leading-[1.167] text-muted-foreground">
+            <label className="text-[16px] leading-[1.167] text-muted-foreground flex items-center justify-between">
               {addT('iconLabel')}
+
+              {!icon && (
+                <p className="text-[10px] leading-[1.167] text-destructive">
+                  {error?.icon}
+                </p>
+              )}
             </label>
             <IconPicker
               value={icon}
@@ -141,19 +170,13 @@ function AddCategory({
               iconClassName="size-5"
             />
           </div>
-
-          {error && (
-            <p className="text-[10px] leading-[1.167] text-destructive">
-              {error}
-            </p>
-          )}
         </div>
 
         <DialogFooter className="mt-2 flex-row justify-end gap-3 sm:flex-row">
           <Button
             type="button"
             onClick={() => onOpenChange(false)}
-            className="h-9 w-[140px]"
+            className="h-9 sm:w-[140px] cursor-pointer shrink cursor-pointer"
             variant="secondary"
           >
             {addT('cancel')}
@@ -162,7 +185,7 @@ function AddCategory({
             type="button"
             onClick={handleSave}
             disabled={isPending}
-            className="h-9 w-[140px]"
+            className="h-9 sm:w-[140px] disabled:cursor-pointer cursor-pointer shrink"
           >
             {isPending ? addT('saving') : addT('save')}
           </Button>

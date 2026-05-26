@@ -1,17 +1,18 @@
 import {formattedAmount} from '@/helpers/helpers';
 import {cn} from '@/lib/utils';
-import {CURRENCY_SIGN} from '@/constances/constances';
 
 import {TrendingUp, TrendingDown, Wallet} from 'lucide-react';
 import {useTranslation} from 'react-i18next'; 
+import {useGetCurrencySign} from '@/shared/store/useCurrencySign';
 
 interface CardProps {
   type: 'INCOME' | 'EXPENSE' | 'BALANCE';
-  total: number; 
+  total: number;
 }
 
 export function FinanceCard({type, total}: CardProps) {
   const {t} = useTranslation();
+  const CURRENCY_SIGN = useGetCurrencySign();
 
   const variant =
     type === 'INCOME' ? 'green' : type === 'EXPENSE' ? 'yellow' : 'teal';
@@ -77,13 +78,16 @@ export function FinanceCard({type, total}: CardProps) {
 
       <div>
         <div
-          className={cn('text-2xl font-bold tracking-tight break-words', theme.amountColor)}
+          className={cn(
+            'text-2xl font-bold tracking-tight break-words',
+            theme.amountColor,
+          )}
         >
           {total ? formattedAmount(total) : '0'} {CURRENCY_SIGN}
         </div>
 
         <div className={cn('text-xs mt-1 font-medium', theme.subTitleColor)}>
-            <span>{t(`dashboard.thisMonth`)}</span>
+          <span>{t(`dashboard.thisMonth`)}</span>
         </div>
       </div>
     </div>

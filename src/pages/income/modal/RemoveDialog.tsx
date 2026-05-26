@@ -4,8 +4,8 @@ import {cn} from '@/lib/utils';
 import {Button} from '@/components/ui/button';
 import {useTranslation} from 'react-i18next';
 import {formattedAmount} from '@/helpers/helpers';
-import type {ModalProps} from '@/types/types';
-import {CURRENCY_SIGN} from '@/constances/constances';
+import type {ModalProps} from '@/types/types'; 
+import { useGetCurrencySign } from '@/shared/store/useCurrencySign';
 
 const DIALOG_THEMES = {
   INCOME: {
@@ -45,6 +45,7 @@ const RemoveDialog = ({
 }: ModalProps) => {
   const modalRef = useRef<HTMLDivElement>(null);
   const {t} = useTranslation();
+  const CURRENCY_SIGN = useGetCurrencySign();
   const theme = DIALOG_THEMES[type];
   const category = item?.category;
   const [deleteAllFuture, setDeleteAllFuture] = useState(false);
@@ -60,8 +61,8 @@ const RemoveDialog = ({
   if (!isOpen || !item) return null;
 
   const amount = formattedAmount(item.amount) || item.amount;
-  const scope = deleteAllFuture ? 'THIS_AND_FUTURE' : 'ONLY_THIS'; 
-  
+  const scope = deleteAllFuture ? 'THIS_AND_FUTURE' : 'ONLY_THIS';
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div

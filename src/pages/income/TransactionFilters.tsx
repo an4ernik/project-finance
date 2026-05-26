@@ -111,7 +111,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
               <div className="flex justify-between items-center w-full gap-2">
                 <div className="flex items-center gap-2.5">
                   <SelectedPeriodIcon className="size-4 text-[#6F7E7C] dark:text-[#A9C1BB]" />
-                  <span>
+                  <span className="tracking-tight">
                     {period === 'custom' && fromDate && toDate
                       ? `${format(fromDate, 'dd.MM.yy')} - ${format(toDate, 'dd.MM.yy')}`
                       : t(`incomeModal.filters.period.${period}`)}
@@ -314,7 +314,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
               )}
             >
               <div className="flex items-center gap-2 truncate">
-                <span className="truncate">{selectedCategoriesLabel}</span>
+                <span className="truncate tracking-tight">{selectedCategoriesLabel}</span>
               </div>
               <ChevronDown
                 className={cn(
@@ -407,7 +407,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
         <h2>{t('incomeModal.filters.search.label')}</h2>
         <Input
           disabled={categories?.length === 0}
-          className="text-[#6F7E7C] shadow-md border-black/10 dark:border-white/10 dark:text-[#A9C1BB] placeholder:text-[#6F7E7C] dark:placeholder:text-[#A9C1BB]"
+          className="text-[#6F7E7C] shadow-md border-black/10 dark:border-white/10 dark:text-[#A9C1BB] placeholder:text-[#6F7E7C] dark:placeholder:text-[#A9C1BB] tracking-normal"
           icon={
             <Search className="size-5 text-[#0B1514] dark:text-[#EAF6F3]" />
           }

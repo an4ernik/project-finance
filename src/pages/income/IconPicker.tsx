@@ -76,30 +76,32 @@ function IconPicker({
     <div
       role="radiogroup"
       className={cn(
-        'grid gap-3',
-        columnsClass,
-        className,
-        'md:flex md:justify-between md:gap-[20px] md:flex-wrap',
+        ' grid sm:grid-cols-7 gap-3 sm:gap-5', 
+        className, 
+        columnsClass
       )}
     >
-      {ICON_OPTIONS.map(({id, Icon}) => {
+      {ICON_OPTIONS.map(({id, Icon}) => { 
         const isActive = value === id;
         return (
           <button
             key={id}
             type="button"
-            role="radio"
+            role="radio" 
             aria-checked={isActive}
             onClick={() => onChange(id)}
-            className={cn(
-              'flex size-12 items-center justify-center rounded-xl border transition-colors',
-              isActive
+            className={cn( 
+                  'sm:justify-self-center flex-1 flex justify-center items-center rounded-lg border p-3 sm:size-12 transition-all shadow-md cursor-pointer',
+                  'bg-linear-to-b from-[#0B151403] via-[#315F551A] to-[#90D0B60D] backdrop-blur-sm',
+                  'border-[#9AA7A5] shadow-[#4B4B4B40]',
+                  'dark:border-[#183f35] dark:shadow-[#1d2f1c]',
+                      isActive
                 ? 'border-emerald-400 bg-emerald-500/20'
-                : 'border-white/30 bg-white/5 hover:bg-white/10',
-              buttonClassName,
-            )}
+                : 'border-white/30 bg-white/5 hover:bg-white/10', 
+                buttonClassName,
+                )} 
           >
-            <Icon className={cn('size-6 text-foreground', iconClassName)} />
+            <Icon className={cn('size-10 text-foreground', iconClassName)} />
           </button>
         );
       })}

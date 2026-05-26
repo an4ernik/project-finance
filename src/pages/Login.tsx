@@ -15,7 +15,7 @@ import {Input} from '@/components/ui/input';
 import {Button} from '@/components/ui/button';
 import {useTheme} from '@/shared/providers/ThemeProvider';
 import {useAuthStore} from '@/shared/store/useAuthStore';
-import {type JwtResponseDTO} from '@/shared/api/models';
+import {type JwtResponseDTO} from '@/shared/api/models'; 
 
 type LoginFormData = {
   email: string;
@@ -23,7 +23,7 @@ type LoginFormData = {
 };
 
 function Login() {
-  const {setAuth} = useAuthStore();
+  const {setAuth} = useAuthStore(); 
   const {theme} = useTheme();
   const {t, i18n} = useTranslation();
   const navigate = useNavigate();
@@ -70,6 +70,7 @@ function Login() {
       {
         onSuccess: response => {
           const data = response as JwtResponseDTO;
+          console.log('Login successful, received data:', data);
           if (data && 'accessToken' in data && data.accessToken) {
             setAuth(
               data.accessToken,
@@ -81,7 +82,7 @@ function Login() {
             localStorage.setItem('rememberMe', 'true');
           } else {
             localStorage.removeItem('rememberMe');
-          }
+          }  
 
           toast.success(t('login.success'));
 

@@ -11,7 +11,8 @@ import {
   ArchiveRestore,
   X,
 } from 'lucide-react';
-import {useState} from 'react';
+
+import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {toast} from 'sonner';
 import {isAxiosError} from 'axios';
@@ -30,6 +31,7 @@ import AddCategory from './AddCategory';
 import CategoryActionDialog from './CategoryActionDialog';
 import EditCategory from './EditCategory';
 import {ICONS_BY_ID} from './IconPicker';
+import {TRANSACTION_THEMES} from '@/constances/constances';
 
 type Props = {
   onClose: () => void;
@@ -43,8 +45,11 @@ function CategoriesManager({
   const {t, i18n} = useTranslation();
   const queryClient = useQueryClient();
 
+  const theme = TRANSACTION_THEMES[type];
+
   const [isArchive, setIsArchive] = useState(false);
   const [search, setSearch] = useState('');
+  const [searchInput, setSearchInput] = useState('');
   const [isAddOpen, setIsAddOpen] = useState(false);
   const [editingCategory, setEditingCategory] =
     useState<CategoryResponseDTO | null>(null);
@@ -67,7 +72,7 @@ function CategoriesManager({
   const catT = (suffix: string, fallbackSuffix?: string) => {
     const primaryKey = `${trPrefix}.categories.${suffix}`;
     if (i18n.exists(primaryKey)) return t(primaryKey);
-    return t(`income.categories.${fallbackSuffix ?? suffix}`);
+    return t(`${trPrefix}.categories.${fallbackSuffix ?? suffix}`);
   };
 
   const trimmedSearch = search.trim();
@@ -97,7 +102,7 @@ function CategoriesManager({
 
   const visibleCategories = categories;
 
-  const listTitle = isArchive ? catT('archivedTitle') : catT('incomeTitle');
+  const listTitle = isArchive ? catT('archivedTitle') : catT('categoryType');
 
   const invalidateCategories = async () => {
     await queryClient.invalidateQueries({queryKey: getGetCategoriesQueryKey()});
@@ -152,13 +157,259 @@ function CategoriesManager({
     category => category.id && category.id !== confirm?.category.id,
   );
 
+  function isAction<T>(item: T | false): item is T {
+  return Boolean(item);
+}
+
+  const actions = [
+    !isArchive && {
+      key: 'edit',
+      icon: Edit,
+      onClick: (category: CategoryResponseDTO) => setEditingCategory(category),
+      className:
+        'flex p-2 sm:p-3 items-center justify-center rounded-[10px] border border-white/30',
+    },
+
+    {
+      key: 'archive',
+      icon: isArchive ? ArchiveRestore : Archive,
+      onClick: (category: CategoryResponseDTO) =>
+        setConfirm({
+          action: isArchive ? 'restore' : 'archive',
+          category,
+        }),
+      className:
+        'flex p-2 sm:p-3 items-center justify-center rounded-[10px] border border-white/30',
+    },
+
+    {
+      key: 'delete',
+      icon: Trash,
+      onClick: (category: CategoryResponseDTO) => {
+        setNeedsTransfer(false);
+        setTransferId(undefined);
+        setConfirm({action: 'delete', category});
+      },
+      className:
+        'flex p-2.5 sm:p-3.5 items-center justify-center rounded-[10px] bg-red-700 text-white',
+    },
+  ].filter(isAction);
+
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setSearch(searchInput.trim());
+    }, 800);
+
+    return () => clearTimeout(timeout);
+  }, [searchInput]);
+
   return (
-    <div className="md:fixed inset-0 flex items-center md:justify-center md:z-50 md:bg-black/40 md:backdrop-blur-[6.2px] md:p-4">
-      <div className="flex h-[781px] w-full max-w-[342px] flex-col overflow-hidden rounded-2xl bg-card dark:bg-[#142624] [box-shadow:0px_4px_4px_0px_rgba(75,75,75,0.2),inset_0px_1px_0px_0px_rgba(255,255,255,0.25)] backdrop-blur-[32px] md:h-[766px] md:max-w-[900px]">
-        {isAddOpen ? (
+    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 backdrop-blur-[6.2px] p-4 overflow-y-auto custom-scrollbar">
+      {/* MODAL CONTAINER */}
+      <div
+        className={cn(
+          'relative flex w-full min-h-[95dvh] max-w-[900px] flex-col rounded-2xl bg-[#EEF3F2] dark:bg-[#142624]',
+          '[box-shadow:0px_4px_4px_0px_rgba(75,75,75,0.2),inset_0px_1px_0px_0px_rgba(255,255,255,0.25)] px-3 sm:px-6 py-7',
+        )}
+      >
+        {/* HEADER */}
+        <div className="flex w-full items-center justify-between shrink-0 mb-14">
+          <h2 className="text-[20px] font-medium leading-[1.167]">
+            {catT('managerTitle')}
+          </h2>
+
+          <button
+            type="button"
+            onClick={onClose}
+            className="flex items-center justify-center rounded-[10px] text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
+          >
+            <X className="size-5" />
+          </button>
+        </div>
+
+        {/* CONTROLS */}
+        <div className="flex shrink-0 flex-col md:flex-row w-full items-center justify-between gap-4">
+          <div className="flex w-full justify-between gap-[42px] md:gap-[8px] md:justify-start">
+            <Button
+              type="button"
+              variant={!isArchive ? 'primary' : 'secondary'}
+              size="sm"
+              onClick={() => setIsArchive(false)}
+              className="h-[40px] w-full md:w-[88px]"
+            >
+              {t('income.categories.active')}
+            </Button>
+
+            <Button
+              type="button"
+              variant={isArchive ? 'primary' : 'secondary'}
+              size="sm"
+              onClick={() => setIsArchive(true)}
+              className="h-[40px] w-full md:w-[88px]"
+            >
+              {t('income.categories.archived')}
+            </Button>
+          </div>
+
+          <div className="w-full md:max-w-[360px]">
+            <Input
+              type="search"
+              icon={<Search className="size-4" />}
+              placeholder={catT('searchPlaceholder')}
+              value={searchInput}
+              onChange={e => setSearchInput(e.target.value)}
+              showErrorSlot={false}
+            />
+          </div>
+        </div>
+
+        {/* ADD BUTTON */}
+        {!isArchive && (
+          <div className="pt-4 shrink-0">
+            <Button
+              onClick={() => setIsAddOpen(true)}
+              className="h-12.5 w-full gap-2"
+              variant="primary"
+            >
+              <Plus className="size-4" />
+              {catT('createNew')}
+            </Button>
+          </div>
+        )}
+        <p className="text-[16px] text-foreground mt-10 mb-3">
+          {listTitle} ({visibleCategories.length})
+        </p>
+
+        {/* LIST */}
+        <div className="flex-1 custom-scrollbar">
+          {isLoading ? (
+            <div className="text-muted-foreground">{catT('loading')}</div>
+          ) : visibleCategories.length > 0 ? (
+            <>
+              <div className="flex flex-col gap-3">
+                {visibleCategories.map(category => {
+                  const Icon = category.icon
+                    ? ICONS_BY_ID[category.icon]
+                    : null; 
+                  return (
+                    <div
+                      key={category.id ?? `${category.type}-${category.name}`}
+                      className={cn(
+                        'group flex items-center justify-between rounded-[12px] border border-white/10 px-4 py-4 transition-all duration-500',
+                        'bg-white dark:bg-[#193432]',
+                        theme.container,
+                      )}
+                    >
+                      {/* LEFT SECTION */}
+                      <div className="flex items-center flex-1 min-w-0 gap-3">
+                        {/* ICON WRAPPER */}
+                        <div
+                          className={cn(
+                            'flex p-2 sm:p-3 items-center justify-center rounded-[10px] shrink-0 transition-colors',
+                            theme.bgIcon,
+                          )}
+                        >
+                          {Icon && (
+                            <Icon
+                              className={cn(
+                                'size-5 sm:size-6',
+                                theme.textIcon,
+                              )}
+                            />
+                          )}
+                        </div>
+
+                        {/* TEXT CONTENT - Forced truncation with min-w-0 */}
+                        <div className="flex flex-col flex-1 min-w-0">
+                          <span
+                            className={cn(
+                              'block text-[16px] truncate transition-colors',
+                              theme.textTitle,
+                            )}
+                          >
+                            {category.name}
+                          </span>
+
+                          <span
+                            className={cn(
+                              'mt-1 w-fit text-[10px] px-2 py-0.5 rounded-md whitespace-nowrap',
+                              theme.repeatType,
+                            )}
+                          >
+                            {type === GetCategoriesTypeItem.INCOME
+                              ? t('income.categories.typeIncome')
+                              : t('expense.categories.typeExpense')}
+                          </span>
+                        </div>
+                      </div>
+
+                      {/* ACTIONS */}
+                      <div className="flex items-center gap-2 shrink-0 ml-3">
+                        {actions.map(({key, icon: ActionIcon, onClick}) => {
+                          const isDelete = key === 'delete';
+                          const btnBg = isDelete
+                            ? theme.deleteIconBg
+                            : theme.editIconBg;
+                          const btnText = isDelete
+                            ? theme.deleteIconText
+                            : theme.editIconText;
+
+                          return (
+                            <button
+                              key={key}
+                              onClick={() => onClick(category)}
+                              className={cn(
+                                'flex items-center justify-center p-2 rounded-lg transition-all cursor-pointer',
+                                'animate-in fade-in slide-in-from-right-2 duration-200 [@media(hover:hover)]:hidden [@media(hover:hover)]:group-hover:flex',
+                                '[@media(hover:none)]:text-[#0B1514] dark:[@media(hover:none)]:text-white',
+                                btnBg,
+                                btnText,
+                              )}
+                            >
+                              <ActionIcon className="size-4 sm:size-5" />
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </>
+          ) : (
+            <div className="flex flex-col items-center justify-center gap-4 text-center h-full mt-14">
+              <div
+                className={cn(
+                  'flex justify-center items-center size-20 rounded-lg border p-4 transition-all shadow-md',
+                  'bg-linear-to-b from-[#0B151403] via-[#315F551A] to-[#90D0B60D] backdrop-blur-sm',
+                  'border-[#9AA7A5] shadow-[#4B4B4B40]',
+                  'dark:border-[#183f35] dark:shadow-[#1d2f1c]',
+                )}
+              >
+                {!isArchive ? (
+                  <Plus className="size-10 text-[#5A736E]" />
+                ) : (
+                  <Archive className="size-8 text-[#5A736E]" />
+                )}
+              </div>
+              <h3 className="text-xl">
+                {isArchive ? catT('emptyArchivedTitle') : catT('emptyTitle')}
+              </h3>
+              <p className="dark:text-[#5A736E]">
+                {isArchive
+                  ? catT('emptyArchivedSubtitle')
+                  : catT('emptySubtitle')}
+              </p>
+            </div>
+          )}
+        </div>
+
+        {/* MODALS */}
+        {isAddOpen && (
           <AddCategory open onOpenChange={setIsAddOpen} type={type} />
-        ) : null}
-        {editingCategory ? (
+        )}
+
+        {editingCategory && (
           <EditCategory
             open
             category={editingCategory}
@@ -167,7 +418,8 @@ function CategoriesManager({
               if (!open) setEditingCategory(null);
             }}
           />
-        ) : null}
+        )}
+
         <CategoryActionDialog
           open={!!confirm}
           onOpenChange={open => {
@@ -199,11 +451,10 @@ function CategoriesManager({
           transferOptions={transferOptions}
           selectedTransferId={transferId}
           onTransferChange={setTransferId}
-          transferLabel={catT('modals.transferLabel')}
-          transferPlaceholder={catT('modals.transferPlaceholder')}
           onConfirm={() => {
             if (!confirm) return;
             const {action, category} = confirm;
+
             if (action === 'delete') {
               void handleDelete(category);
             } else {
@@ -212,169 +463,6 @@ function CategoriesManager({
             }
           }}
         />
-        <>
-          <div className="flex h-[79px] items-center justify-between px-6">
-            <h2 className="text-[20px] font-medium leading-[1.167]">
-              {catT('managerTitle')}
-            </h2>
-            <button
-              type="button"
-              onClick={onClose}
-              className="flex h-12.5 w-12.5 items-center justify-center rounded-[10px] text-muted-foreground transition-colors hover:text-foreground"
-            >
-              <X className="size-5" />
-            </button>
-          </div>
-
-          <div className="flex min-h-0 flex-1 flex-col items-center gap-2.5 px-6 pt-px">
-            <div className="flex flex-col md:flex-row w-full max-w-[820px] items-center justify-between gap-4">
-              <div className="flex w-full gap-[42px] md:gap-[8px] md:justify-start justify-between">
-                <Button
-                  type="button"
-                  variant={!isArchive ? 'primary' : 'secondary'}
-                  size="sm"
-                  onClick={() => setIsArchive(false)}
-                  className={cn('w-full md:w-[88px] h-[40px]')}
-                >
-                  {t('income.categories.active')}
-                </Button>
-                <Button
-                  type="button"
-                  variant={isArchive ? 'primary' : 'secondary'}
-                  size="sm"
-                  onClick={() => setIsArchive(true)}
-                  className={cn('w-full md:w-[88px] h-[40px]')}
-                >
-                  {t('income.categories.archived')}
-                </Button>
-              </div>
-              <div className="w-full max-w-[360px]">
-                <Input
-                  type="search"
-                  icon={<Search className="size-4" />}
-                  placeholder={catT('searchPlaceholder')}
-                  value={search}
-                  onChange={event => setSearch(event.target.value)}
-                  showErrorSlot={false}
-                />
-              </div>
-            </div>
-
-            <Button
-              onClick={() => setIsAddOpen(true)}
-              className="h-12.5 w-full max-w-[820px] cursor-pointer gap-2"
-              variant="primary"
-            >
-              <Plus className="size-4" />
-              {catT('createNew')}
-            </Button>
-
-            <div className="mt-2 flex w-full max-w-[820px] min-h-0 flex-1 flex-col gap-3 overflow-y-auto pb-3">
-              {isLoading ? (
-                <div className="text-muted-foreground">{catT('loading')}</div>
-              ) : visibleCategories.length > 0 ? (
-                <>
-                  <p className="text-[16px] leading-[1.167] text-foreground">
-                    {listTitle}
-                    {` (${visibleCategories.length})`}
-                  </p>
-                  {visibleCategories.map(category => {
-                    const Icon = category.icon
-                      ? ICONS_BY_ID[category.icon]
-                      : null;
-                    return (
-                      <div
-                        key={category.id ?? `${category.type}-${category.name}`}
-                        className={cn(
-                          'flex items-center justify-between rounded-[12px] border border-white/10 px-4 py-4 transition-all duration-500',
-                          'bg-[#193432] hover:border-transparent hover:[background:linear-gradient(0deg,rgba(2,98,77,0.6)_0%,rgba(4,200,158,1)_60%)]',
-                          category.type === 'EXPENSE' &&
-                            'hover:bg-[#015E4680] dark:hover:bg-none dark:hover:bg-linear-to-b dark:hover:from-[#AA7D00] dark:hover:to-[#AA7D0033]',
-                        )}
-                      >
-                        <div className="flex items-center gap-3">
-                          <div className="flex size-12 items-center justify-center rounded-[10px] bg-foreground/10">
-                            {Icon ? (
-                              <Icon className="size-6 text-foreground" />
-                            ) : null}
-                          </div>
-                          <div className="flex flex-col">
-                            <span className="text-[16px] leading-[1.167] text-foreground">
-                              {category.name}
-                            </span>
-                            <span className="mt-1 inline-flex w-fit items-center rounded-md bg-foreground/10 px-2 py-0.5 text-[10px] leading-[1.167] text-foreground">
-                              {type === GetCategoriesTypeItem.INCOME
-                                ? t('income.categories.typeIncome')
-                                : t('income.categories.typeExpense')}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2">
-                          {!isArchive && (
-                            <button
-                              type="button"
-                              onClick={() => setEditingCategory(category)}
-                              className="flex size-11 items-center justify-center rounded-[10px] border border-white/30 bg-[var(--glass-bg)] text-foreground [box-shadow:var(--glass-shadow)]"
-                            >
-                              <Edit className="size-5" />
-                            </button>
-                          )}
-                          <button
-                            type="button"
-                            onClick={() =>
-                              setConfirm({
-                                action: isArchive ? 'restore' : 'archive',
-                                category,
-                              })
-                            }
-                            className="flex size-11 items-center justify-center rounded-[10px] border border-white/30 bg-[var(--glass-bg)] text-foreground [box-shadow:var(--glass-shadow)]"
-                          >
-                            {isArchive ? (
-                              <ArchiveRestore className="size-5 text-foreground" />
-                            ) : (
-                              <Archive className="size-5 text-foreground" />
-                            )}
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setNeedsTransfer(false);
-                              setTransferId(undefined);
-                              setConfirm({action: 'delete', category});
-                            }}
-                            className="flex size-11 items-center justify-center rounded-[10px] border border-white/10 bg-[#8a0f0f] text-white [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.2),0px_4px_4px_0px_rgba(75,75,75,0.2)]"
-                          >
-                            <Trash className="size-5" />
-                          </button>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </>
-              ) : (
-                <div className="flex flex-1 flex-col items-center justify-center gap-6 text-center">
-                  <div
-                    className="flex size-20 cursor-pointer items-center justify-center rounded-[10px] border border-[#5a736e] bg-[var(--glass-bg)] [box-shadow:var(--glass-shadow)]"
-                    onClick={() => setIsAddOpen(true)}
-                  >
-                    <Plus className="size-6 text-muted-foreground" />
-                  </div>
-                  <h3 className="text-[16px] leading-[1.167] text-foreground">
-                    {isArchive
-                      ? catT('emptyArchivedTitle')
-                      : catT('emptyTitle')}
-                  </h3>
-                  <p className="text-[14px] leading-[1.167] text-muted-foreground">
-                    {isArchive
-                      ? catT('emptyArchivedSubtitle')
-                      : catT('emptySubtitle')}
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
-        </>
       </div>
     </div>
   );

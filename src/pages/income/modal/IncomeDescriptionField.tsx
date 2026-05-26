@@ -10,29 +10,12 @@ type Props = {
   inputValue?: string;
 };
 
-// export const IncomeDescriptionField = ({register, inputValue=''}: Props) => {
-//   const {t} = useTranslation();
+const MAX_LENGTH = 255;
 
-//   return (
-//     <div className="flex flex-col gap-2 mb-8 sm:mb-10">
-//       <Label className={cn('text-[14px] sm:text-[16px] text-dark-background')}>
-//         {t('incomeModal.fields.description')}
-//       </Label>
-
-//       <Textarea
-//         {...register('description')}
-//         className={cn(
-//           'h-19 py-3 resize-none data-[placeholder]:text-tertiary] text-[14px]',
-//         )}
-//         placeholder={t('incomeModal.fields.descriptionPlaceholder')}
-//       />
-//     </div>
-//   );
-// };
 export const IncomeDescriptionField = ({register, inputValue = ''}: Props) => {
   const {t} = useTranslation();
-
-  const isTooLong = inputValue.length > 256;
+ 
+  const isTooLong = inputValue.length > MAX_LENGTH;
 
   return (
     <div className="flex flex-col gap-2 mb-8 sm:mb-10">
@@ -41,7 +24,7 @@ export const IncomeDescriptionField = ({register, inputValue = ''}: Props) => {
       </Label>
 
       <Textarea
-        maxLength={256}
+        maxLength={MAX_LENGTH}
         {...register('description')}
         className={cn('h-19 py-3 resize-none text-[14px] custom-scrollbar')}
         placeholder={t('incomeModal.fields.descriptionPlaceholder')}
@@ -62,7 +45,7 @@ export const IncomeDescriptionField = ({register, inputValue = ''}: Props) => {
             isTooLong ? 'text-red-500' : 'text-muted-foreground/30',
           )}
         >
-          {inputValue.length}/256
+          {inputValue.length}/{MAX_LENGTH}
         </span>
       </div>
     </div>
