@@ -30,6 +30,13 @@ type EditCategoryProps = {
   type?: GetCategoriesTypeItem;
 };
 
+type ErrorState =
+  | {
+      name: string | undefined;
+      icon: string | undefined;
+    }
+  | undefined;
+
 function EditCategory({open, onOpenChange, category, type}: EditCategoryProps) {
   const {t, i18n} = useTranslation();
   const queryClient = useQueryClient();
@@ -45,25 +52,37 @@ function EditCategory({open, onOpenChange, category, type}: EditCategoryProps) {
 
   const [name, setName] = useState(category?.name ?? '');
   const [icon, setIcon] = useState<string | null>(category?.icon ?? null);
-  const [error, setError] = useState<string | null>(null);
+  const [error, setError] = useState<ErrorState>({
+    name: undefined,
+    icon: undefined,
+  });
+
+  const handleChangeName = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.value.length <= 25) {
+      setName(event.target.value);
+      setError(undefined);
+    }
+  };
 
   const handleSave = () => {
-    if (!category?.id) return;
+    const id = category?.id;
+    if(id === undefined) return;
+    
+    const trimmed = name.trim().slice(0, 25);
 
-    const trimmed = name.trim();
     if (!trimmed) {
-      setError(editT('errors.nameRequired'));
+      setError({...error, name: editT('errors.nameRequired')} as ErrorState);
       return;
     }
     if (!icon) {
-      setError(editT('errors.iconRequired'));
+      setError({...error, icon: editT('errors.iconRequired')} as ErrorState);
       return;
     }
-    setError(null);
+    setError({name: undefined, icon: undefined});
 
     updateCategory(
       {
-        categoryId: category.id,
+        categoryId: id,
         data: {
           name: trimmed,
           icon,
@@ -80,7 +99,7 @@ function EditCategory({open, onOpenChange, category, type}: EditCategoryProps) {
         onError: (err: unknown) => {
           const status = isAxiosError(err) ? err.response?.status : undefined;
           if (status === 409) {
-            setError(editT('errors.duplicate'));
+            setError({...error, name: editT('errors.duplicate')} as ErrorState);
             return;
           }
           toast.error(editT('errors.updateFailed'));
@@ -95,7 +114,7 @@ function EditCategory({open, onOpenChange, category, type}: EditCategoryProps) {
     <Dialog
       open={open}
       onOpenChange={next => {
-        if (!next) setError(null);
+        if (!next) setError(undefined);
         onOpenChange(next);
       }}
     >
@@ -120,19 +139,30 @@ function EditCategory({open, onOpenChange, category, type}: EditCategoryProps) {
 
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-3">
-            <label className="text-[16px] leading-[1.167] text-muted-foreground">
+            <label className="text-[16px] leading-[1.167] text-muted-foreground flex items-center justify-between">
               {editT('nameLabel')}
+              <span className="text-[12px] text-muted-foreground/40">
+                {name.length}/25
+              </span>
             </label>
             <Input
               placeholder={editT('namePlaceholder')}
               value={name}
-              onChange={event => setName(event.target.value)}
+              onChange={handleChangeName}
+              error={!!error?.name}
+              errorMessage={error?.name}
             />
           </div>
 
           <div className="flex flex-col gap-3">
-            <label className="text-[16px] leading-[1.167] text-muted-foreground">
+            <label className="text-[16px] leading-[1.167] text-muted-foreground flex items-center justify-between">
               {editT('iconLabel')}
+
+              {!icon && (
+                <p className="text-[10px] leading-[1.167] text-destructive">
+                  {error?.icon}
+                </p>
+              )}
             </label>
             <IconPicker
               value={icon}
@@ -142,12 +172,6 @@ function EditCategory({open, onOpenChange, category, type}: EditCategoryProps) {
               iconClassName="size-5"
             />
           </div>
-
-          {error && (
-            <p className="text-[10px] leading-[1.167] text-destructive">
-              {error}
-            </p>
-          )}
         </div>
 
         <DialogFooter className="mt-2 flex-row justify-end gap-3 sm:flex-row">

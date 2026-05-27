@@ -12,6 +12,7 @@ import {
   X,
 } from 'lucide-react';
 
+import {Tooltip, TooltipContent, TooltipTrigger} from '@/components/ui/tooltip'; 
 import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {toast} from 'sonner';
@@ -158,8 +159,8 @@ function CategoriesManager({
   );
 
   function isAction<T>(item: T | false): item is T {
-  return Boolean(item);
-}
+    return Boolean(item);
+  }
 
   const actions = [
     !isArchive && {
@@ -290,7 +291,7 @@ function CategoriesManager({
                 {visibleCategories.map(category => {
                   const Icon = category.icon
                     ? ICONS_BY_ID[category.icon]
-                    : null; 
+                    : null;
                   return (
                     <div
                       key={category.id ?? `${category.type}-${category.name}`}
@@ -311,10 +312,7 @@ function CategoriesManager({
                         >
                           {Icon && (
                             <Icon
-                              className={cn(
-                                'size-5 sm:size-6',
-                                theme.textIcon,
-                              )}
+                              className={cn('size-5 sm:size-6', theme.textIcon)}
                             />
                           )}
                         </div>
@@ -355,19 +353,29 @@ function CategoriesManager({
                             : theme.editIconText;
 
                           return (
-                            <button
-                              key={key}
-                              onClick={() => onClick(category)}
-                              className={cn(
-                                'flex items-center justify-center p-2 rounded-lg transition-all cursor-pointer',
-                                'animate-in fade-in slide-in-from-right-2 duration-200 [@media(hover:hover)]:hidden [@media(hover:hover)]:group-hover:flex',
-                                '[@media(hover:none)]:text-[#0B1514] dark:[@media(hover:none)]:text-white',
-                                btnBg,
-                                btnText,
-                              )}
-                            >
-                              <ActionIcon className="size-4 sm:size-5" />
-                            </button>
+                            <Tooltip key={key}>
+                              <TooltipTrigger asChild>
+                                <button
+                                  key={key}
+                                  onClick={() => onClick(category)}
+                                  className={cn(
+                                    'flex items-center justify-center p-2 rounded-lg transition-all cursor-pointer',
+                                    'animate-in fade-in slide-in-from-right-2 duration-200 [@media(hover:hover)]:hidden [@media(hover:hover)]:group-hover:flex',
+                                    '[@media(hover:none)]:text-[#0B1514] dark:[@media(hover:none)]:text-white',
+                                    btnBg,
+                                    btnText,
+                                  )}
+                                >
+                                  <ActionIcon className="size-4 sm:size-5" />
+                                </button>
+                              </TooltipTrigger>
+                              <TooltipContent
+                                sideOffset={1} 
+                                className="border text-[#3A4A48] dark:text-[#BFD9D2] bg-[#fafafa] fill-[#eef3f2] dark:bg-[#0f453c]"
+                              >
+                                <p>{key}</p> 
+                              </TooltipContent>
+                            </Tooltip>
                           );
                         })}
                       </div>
