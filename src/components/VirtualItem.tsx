@@ -34,7 +34,7 @@ export const VirtualItem = ({
 
   console.log(item, 'item');
 
-   return (
+  return (
     <>
       <div
         onClick={handleContainerClick}
@@ -59,20 +59,24 @@ export const VirtualItem = ({
 
         {/* CONTENT INFO */}
         <div className="relative flex items-center justify-between w-full flex-wrap gap-4">
-          <div className="flex flex-col">
+          <div className="flex flex-col overflow-hidden">
             <div
               className={cn(
-                'flex gap-2 items-center text-[16px] transition-colors duration-100',
+                'flex gap-2 items-center text-[16px] transition-colors duration-100 w-full min-w-0',
                 theme.textTitle,
               )}
             >
-              {category
-                ? dbItem?.name
-                : t('incomeModal.categories.categoryPlaceholder')}
+              <span className="truncate">
+                {' '}
+                {category
+                  ? dbItem?.name
+                  : t('incomeModal.categories.categoryPlaceholder')}
+              </span>
+
               {item.intervalUnit && item.intervalUnit !== 'ONCE' && (
                 <div
                   className={cn(
-                    'flex items-center text-[10px] justify-center sm:text-[14px] lowercase rounded-lg px-2 py-0.5 leading-none transition-colors duration-300',
+                    'flex items-center shrink-0 text-[10px] justify-center sm:text-[14px] lowercase rounded-lg px-2 py-1 leading-none transition-colors duration-300',
                     theme.repeatType,
                   )}
                 >
@@ -82,7 +86,7 @@ export const VirtualItem = ({
               {item.receiptsUrls && item.receiptsUrls?.length > 0 && (
                 <div
                   className={cn(
-                    'flex items-center gap-1 text-[10px] justify-center shadow-md sm:text-[14px] rounded-lg px-3 py-1 leading-none transition-colors duration-100  dark:text-[#E6E6E6]',
+                    'flex shrink-0 items-center gap-1 text-[10px] justify-center shadow-md sm:text-[14px] rounded-lg px-3 py-1 leading-none transition-colors duration-100  dark:text-[#E6E6E6]',
                     'bg-linear-to-b dark:from-[#0B151403] dark:via-[#315F551A] dark:to-[#90D0B60D]',
                     'border dark:border-white/10',
                     'group-hover:bg-[#037c5e31]',
@@ -96,6 +100,7 @@ export const VirtualItem = ({
                 </div>
               )}
             </div>
+            {/* DESCRIPTION */}
             <span
               className={cn(
                 'text-[14px] font-medium transition-colors duration-100 max-w-[140px] truncate whitespace-pre-wrap lg:max-w-full',
@@ -110,7 +115,8 @@ export const VirtualItem = ({
                 theme.dateText,
               )}
             >
-            {t(`months.${format(new Date(item.date), 'MMM').toLowerCase()}`)} {format(new Date(item.date), 'dd, yyyy')}
+              {t(`months.${format(new Date(item.date), 'MMM').toLowerCase()}`)}{' '}
+              {format(new Date(item.date), 'dd, yyyy')}
             </span>
           </div>
 

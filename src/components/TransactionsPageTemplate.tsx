@@ -39,7 +39,6 @@ export function TransactionsPageTemplate({
 
   const CURRENCY_SIGN = useGetCurrencySign();
 
-
   const {t} = useTranslation();
   const {data: categoriesResponse} = useGetCategories();
 
@@ -105,11 +104,10 @@ export function TransactionsPageTemplate({
                 sideOffset={8}
                 className={cn(
                   'relative overflow-visible p-3 rounded-lg shadow-sm',
-                  'text-[#0B1514] dark:text-[#EAF6F3]',
-                  'bg-[#eef3f2] dark:bg-[#122421]',
+                  'border text-[#3A4A48] dark:text-[#BFD9D2] bg-[#fafafa] fill-[#eef3f2] dark:bg-[#0f453c]',
                 )}
               >
-                <p className="text-base">{t('tooltipInfo')}</p>
+                <p className="text-sm">{t('tooltipInfo')}</p>
               </TooltipContent>
             </Tooltip>
           ) : (

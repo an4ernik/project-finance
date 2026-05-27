@@ -81,21 +81,23 @@ const TransactionModal = ({
   const modalSchema = useMemo(
     () =>
       z.object({
-        amount: z.preprocess(
-          val => {
-            if (val === '' || val === undefined) return undefined;
+        amount: z
+          .preprocess(
+            val => {
+              if (val === '' || val === undefined) return undefined;
 
-            const normalized = String(val).replace(',', '.');
-            const num = Number(normalized);
+              const normalized = String(val).replace(',', '.');
+              const num = Number(normalized);
 
-            if (Number.isNaN(num)) return undefined;
-            return Math.round(num * 100) / 100;
-          },
-          z
-            .number({message: t(`incomeModal.errors.amountRequired.${type}`)})
-            .min(0.01, t(`incomeModal.errors.amountLessThanZero.${type}`))
-            .max(1_000_000_000, t(`incomeModal.errors.amountMax.${type}`)),
-        ),
+              if (Number.isNaN(num)) return undefined;
+              return Math.floor(num * 100) / 100;
+            },
+            z
+              .number({message: t(`incomeModal.errors.amountRequired.${type}`)})
+              .min(0.01, t(`incomeModal.errors.amountLessThanZero.${type}`))
+              .max(1_000_000_000, t(`incomeModal.errors.amountMax.${type}`)),
+          )
+          .transform(val => Number(val.toFixed(2))),
         categoryId: z.coerce
           .number({
             message: t(`incomeModal.errors.categoryRequired.${type}`),
@@ -181,24 +183,21 @@ const TransactionModal = ({
   const watchedDescription = watch('description');
 
   useEffect(() => {
-  if (!watchedDescription) return;
+    if (!watchedDescription) return;
 
-  // Перевіряємо, чи є в тексті переноси рядків або подвійні пробіли
-  const hasLineBreaks = /\r?\n|\r/.test(watchedDescription);
-  const hasDoubleSpaces = /\s{2,}/.test(watchedDescription);
+    const hasLineBreaks = /\r?\n|\r/.test(watchedDescription);
+    const hasDoubleSpaces = /\s{2,}/.test(watchedDescription);
 
-  if (hasLineBreaks || hasDoubleSpaces) {
-    const normalizedDescription = watchedDescription
-      .replace(/\r?\n|\r/g, ' ') // заміняємо переноси на пробіли
-      .replace(/\s+/g, ' ');      // видаляємо дублі пробілів
-
-    // Оновлюємо значення у формі з прапорцем touch, але без тригеру зайвих рендерів
-    setValue('description', normalizedDescription, {
-      shouldValidate: true,
-      shouldDirty: true,
-    });
-  }
-}, [watchedDescription, setValue]);
+    if (hasLineBreaks || hasDoubleSpaces) {
+      const normalizedDescription = watchedDescription
+        .replace(/\r?\n|\r/g, ' ')
+        .replace(/\s+/g, ' ');
+      setValue('description', normalizedDescription, {
+        shouldValidate: true,
+        shouldDirty: true,
+      });
+    }
+  }, [watchedDescription, setValue]);
 
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = Array.from(e.target.files || []);
@@ -340,8 +339,6 @@ const TransactionModal = ({
     const selectedDate = new Date(watchedDate);
     selectedDate.setHours(0, 0, 0, 0);
 
-    // 1. If we are in UPDATE mode and the repeat setting hasn't changed,
-    // do absolutely nothing. Leave the saved date alone.
     if (mode === 'update' && watchedRepeat === initialData?.intervalUnit) {
       return;
     }
@@ -509,7 +506,7 @@ const TransactionModal = ({
             />
           </div>
 
-          <div className="flex w-full  justify-center sm:justify-end gap-10 sm:gap-3 p-6 dark:border-t">
+          <div className="flex w-full justify-center sm:justify-end gap-10 sm:gap-3 p-6 dark:border-t">
             <Button
               variant="secondary"
               type="button"
