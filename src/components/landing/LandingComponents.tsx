@@ -35,7 +35,7 @@ export function HeroCta({onClick}: {onClick: () => void}) {
   return (
     <button
       onClick={onClick}
-      className="relative h-12.5 md:h-14.5 flex items-center cursor-pointer justify-between px-2.5 rounded-[10px] backdrop-blur-[7px] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_4px_4px_0px_rgba(75,75,75,0.35)] w-full md:w-126.5 shrink-0 bg-linear-to-t from-[rgba(2,160,120,0.3)] via-[rgba(2,160,120,0.5)] to-[rgba(2,160,120,0.8)] md:border-white/25 md:[background:rgba(49,95,85,0.18)]"
+      className="relative h-12.5 md:h-14.5 flex items-center cursor-pointer justify-between px-2.5 rounded-[10px] backdrop-blur-[7px] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_4px_4px_0px_rgba(75,75,75,0.35)] w-full md:w-126.5 lg:w-115 shrink-0 bg-linear-to-t from-[rgba(2,160,120,0.3)] via-[rgba(2,160,120,0.5)] to-[rgba(2,160,120,0.8)] md:border-white/25 md:[background:rgba(49,95,85,0.18)]"
     >
       <span className="font-medium md:font-light text-[16px] md:text-[18px] tracking-[-1.5px] md:tracking-[0.5px] text-text-primary">
         {t('landing.hero.cta')}
@@ -87,13 +87,13 @@ export function StepCard({
   return (
     <div
       className={cn(
-        'relative flex flex-col h-auto items-center px-4.5 py-4 w-full shrink-0',
+        'relative flex flex-col h-auto text-wrap items-center px-4.5 py-4 max-w-full min-w-0 shrink-0',
         '[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_4px_4px_0px_rgba(75,75,75,0.2)]',
         // mobile: Figma dark glass card
         'max-md:gap-2 max-md:rounded-[14px] max-md:backdrop-blur-lg',
         'max-md:bg-linear-to-b max-md:from-[rgba(11,21,20,0.01)] max-md:via-[rgba(49,95,85,0.1)] max-md:via-1/2 max-md:to-[rgba(144,208,182,0.05)]',
         // desktop: dark glass card (always dark, no border)
-        'md:gap-3.5 md:rounded-[5px] md:backdrop-blur-lg md:bg-[#193432] md:items-start md:py-0 md:h-67.5',
+        'md:gap-3.5 md:rounded-[5px] md:backdrop-blur-lg md:bg-[#193432] md:items-start md:py-0 md:min-h-67.5',
         accent
           ? 'md:w-82.5 md:bg-linear-to-t md:from-[rgba(6,227,146,0.8)] md:from-[3.846%] md:to-[#027054]'
           : 'md:w-82.5',
@@ -121,7 +121,7 @@ export function StepCard({
         </p>
         <p
           className={cn(
-            'text-[13px] md:text-[16px] leading-[1.167]',
+            'text-[13px] md:text-[16px] md:pb-5 leading-[1.167]',
             'max-md:text-[#5a736e]',
             accent ? 'md:text-[#eaf6f3]' : 'md:text-[#7f9e97]',
           )}

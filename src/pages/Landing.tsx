@@ -1,11 +1,8 @@
 import {useNavigate} from 'react-router-dom';
 import {useTranslation} from 'react-i18next';
-import {useTheme} from '@/shared/providers/ThemeProvider';
 import Header from '@/components/ui/Header';
 import heroImg from '@/assets/landing-hero-image.png';
-import mailIcon from '@/assets/icons/mail.svg';
 import Logo from '@/components/ui/Logo';
-import mailDark from '@/assets/icons/mail-dark.svg';
 import arrowLight from '@/assets/icons/arrow-light.svg';
 import {
   FeatureCard,
@@ -17,9 +14,7 @@ import {getFeatures, getSteps, getSecurity} from '@/lib/landing-data';
 
 function Landing() {
   const navigate = useNavigate();
-  const {theme} = useTheme();
   const {t} = useTranslation();
-  const isDark = theme === 'dark';
 
   const features = getFeatures(t);
   const steps = getSteps(t);
@@ -102,6 +97,9 @@ function Landing() {
                     {t('landing.hero.word3')}
                   </span>
                 </div>
+                <div className="w-[100px] inline-block">
+                  <p>Від хаосу до контролю</p>
+                </div>
               </div>
               <div className="flex flex-col gap-7">
                 <p className="font-bold text-[24px] leading-[1.167] tracking-[1px] text-[#0b1514] dark:text-(--dark-text-secondary)">
@@ -128,7 +126,7 @@ function Landing() {
       <section id="about" className="min-h-screen">
         <div className="px-6 md:px-12.5 py-14">
           <div className="flex flex-col gap-3">
-            <h2 className="flex flex-col md:flex-row gap-3.75 justify-center md:justify-end items-center font-unbounded font-extralight text-[40px] md:text-[70px] leading-none tracking-[-1.5px] text-center md:text-right">
+            <h2 className="flex flex-col justify-center md:flex-row md:flex-wrap gap-3.75 md:justify-end items-center font-unbounded font-extralight text-[40px] md:text-[70px] leading-none tracking-[-1.5px] text-center md:text-right">
               <span className="text-[#00aa85]">
                 {t('landing.about.titleAccent')}
               </span>
@@ -193,27 +191,25 @@ function Landing() {
           </div>
 
           {/* Desktop: staggered grid */}
-          <div className="hidden md:flex gap-4.25 mt-12.5">
-            <div className="flex flex-col gap-12.5">
-              <div className="flex gap-9.75">
-                <StepCard {...steps[0]} />
-                <StepCard {...steps[1]} />
-              </div>
-              <div className="flex flex-col gap-11.5">
+          <div className="hidden md:grid justify-center md:grid-cols-2 lg:grid-cols-4 gap-x-[28px] gap-y-[80px] mt-12.5">
+            <StepCard {...steps[0]} />
+            <StepCard {...steps[1]} />
+            <div className="lg:flex items-center justify-center min-w-0  w-330px">
+              <p className="w-[150px] text-[16px] leading-[1.167] text-[#6f7e7c] dark:text-[#7f9e97]">
+                {t('landing.howItWorks.tagline')}
+              </p>
+            </div>
+            <StepCard {...steps[2]} />
+            <div className="lg:col-span-1 md:col-span-2 lg:col-span-2 lg:relative">
+              <div className="lg:absolute left-0 bottom-0 flex flex-col gap-11.5">
                 <p className="text-[16px] leading-[1.167] text-[#6f7e7c] dark:text-[#7f9e97] w-39.25">
                   {t('landing.howItWorks.note')}
                 </p>
                 <HeroCta onClick={() => navigate('/signup')} />
               </div>
             </div>
-
-            <div className="flex gap-7 items-end">
-              <StepCard {...steps[3]} />
-              <div className="flex flex-col gap-20.25">
-                <StepCard {...steps[2]} />
-                <StepCard {...steps[4]} />
-              </div>
-            </div>
+            <StepCard {...steps[3]} />
+            <StepCard {...steps[4]} />
           </div>
         </div>
       </section>
@@ -259,7 +255,7 @@ function Landing() {
         </div>
 
         {/* Desktop footer */}
-        <div className="hidden md:block h-39.5 relative overflow-hidden">
+        <div className="hidden md:grid grid-col-3 h-39.5 relative overflow-hidden">
           <div className="absolute inset-0 flex items-center justify-between px-13.75">
             <Logo className="h-9" />
 
@@ -270,24 +266,6 @@ function Landing() {
               <p className="text-[10px] leading-[1.167] text-[#6f7e7c] dark:text-[#7f9e97]">
                 {t('landing.footer.rights')}
               </p>
-            </div>
-
-            <div className="flex gap-4 items-center">
-              <div className="flex flex-col gap-0.5 items-end text-right">
-                <p className="text-[16px] leading-[1.167] tracking-[-1px] text-[#0b1514] dark:text-[#eaf6f3]">
-                  {t('landing.footer.question')}
-                </p>
-                <p className="text-[16px] leading-[1.167] tracking-[-1.5px] text-[#6f7e7c] dark:text-[#7f9e97]">
-                  {t('landing.footer.contact')}
-                </p>
-              </div>
-              <button className="relative flex items-center justify-center size-12.5 rounded-[10px] border border-[rgba(0,0,0,0.12)] dark:border-white/65 dark:bg-linear-to-b dark:from-[rgba(11,21,20,0.03)] dark:via-[rgba(49,95,85,0.1)] dark:to-[rgba(144,208,182,0.05)] backdrop-blur-lg [box-shadow:0px_4px_16px_0px_rgba(0,0,0,0.06)] dark:[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_4px_4px_0px_rgba(75,75,75,0.2)] opacity-50 hover:opacity-100 transition-opacity">
-                <img
-                  src={isDark ? mailIcon : mailDark}
-                  alt="Contact"
-                  className="size-8 object-contain"
-                />
-              </button>
             </div>
           </div>
         </div>

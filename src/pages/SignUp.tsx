@@ -1,5 +1,10 @@
 import {useState, useMemo, useEffect, useRef} from 'react';
-import {useForm, Controller, type SubmitHandler} from 'react-hook-form';
+import {
+  useForm,
+  Controller,
+  useWatch,
+  type SubmitHandler,
+} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {z} from 'zod';
 import {zodResolver} from '@hookform/resolvers/zod';
@@ -58,11 +63,11 @@ function SignUp() {
             .string()
             .min(8, t('auth.errors.tooShort'))
             .max(72, t('auth.errors.tooLong'))
-            .regex(/^[a-zA-Z0-9!@#$%^&*]*$/, t('auth.errors.latinOnly'))
+            .regex(/^[a-zA-Z0-9!@#$%^&*._\-+=?]*$/, t('auth.errors.latinOnly'))
             .regex(/[A-Z]/, t('auth.errors.uppercase'))
             .regex(/[a-z]/, t('auth.errors.lowercase'))
             .regex(/[0-9]/, t('auth.errors.number'))
-            .regex(/[!@#$%^&*]/, t('auth.errors.symbol'))
+            .regex(/[!@#$%^&*._\-+=?]/, t('auth.errors.symbol'))
             .regex(/^\S*$/, t('auth.errors.space')),
           confirmPassword: z.string().min(1, t('auth.errors.confirmRequired')),
           fullName: z
@@ -104,7 +109,6 @@ function SignUp() {
     control,
     handleSubmit,
     setError,
-    watch,
     trigger,
     formState: {errors, isValid},
   } = useForm<FormFields>({
@@ -120,7 +124,10 @@ function SignUp() {
     },
   });
 
-  const avatarFile = watch('avatar');
+  const avatarFile = useWatch({
+    control,
+    name: 'avatar',
+  });
 
   const previewUrl = useMemo(() => {
     if (avatarFile instanceof FileList && avatarFile.length > 0) {
