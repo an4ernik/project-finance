@@ -5,19 +5,18 @@ import {ThemeToggle} from './ThemeToggle';
 import Logo from './Logo';
 import {Button} from '@/components/ui/button';
 import LangSelect from './LangSelect';
-import {Menu, X} from 'lucide-react';
+import {Cog, Menu, SquareUserRound, X} from 'lucide-react';
 import {useAuthStore} from '@/shared/store/useAuthStore';
 
 function Header() {
   const {t} = useTranslation();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
-  const isAuth = useAuthStore(s => s.isAuth);
-
+  const isAuth = useAuthStore(s => s.isAuth);  
   const navItems = [
-    {label: t('landing.nav.about'), id: 'about'},
-    {label: t('landing.nav.howItWorks'), id: 'how-it-works'},
-    {label: t('landing.nav.security'), id: 'security'},
+    {label: t('landing.nav.about'), id: 'about', icon: SquareUserRound},
+    {label: t('landing.nav.howItWorks'), id: 'how-it-works', icon: Menu},
+    {label: t('landing.nav.security'), id: 'security', icon: Cog},
   ];
 
   const scrollTo = (id: string) => {
@@ -28,18 +27,19 @@ function Header() {
   return (
     <>
       {/* desktop header*/}
-      <header className="absolute top-14 left-12.5 right-12.5 hidden md:flex items-center justify-between z-10">
-        <Logo className="h-9" />
+      <header className="absolute top-14 left-12.5 right-12.5 hidden md:flex items-center justify-center lg:justify-between z-10">
+        <Logo className="h-9 shrink" />
 
-        <div className="flex-1 flex justify-center px-8">
-          <nav className="flex h-12.5 items-center gap-10 px-12.5 rounded-[10px] backdrop-blur-lg bg-white/60 dark:bg-transparent border border-[rgba(0,0,0,0.08)] dark:border-transparent [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_4px_4px_0px_rgba(75,75,75,0.2)]">
+        <div className="flex-1 flex justify-center lg:px-8">
+          <nav className="flex h-12.5 items-center gap-6 lg:gap-10 px-6 lg:px-12.5 rounded-[10px] backdrop-blur-lg bg-white/60 dark:bg-transparent border border-[rgba(0,0,0,0.08)] dark:border-transparent [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_4px_4px_0px_rgba(75,75,75,0.2)]">
             {navItems.map(item => (
               <button
                 key={item.id}
                 onClick={() => scrollTo(item.id)}
                 className="font-light text-[20px] leading-[1.167] cursor-pointer text-[#0b1514] dark:text-[#eaf6f3] hover:opacity-80 transition-opacity whitespace-nowrap"
               >
-                {item.label}
+                <span className="hidden lg:inline">{item.label}</span>
+                <item.icon className="size-6 lg:hidden" />
               </button>
             ))}
           </nav>

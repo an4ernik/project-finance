@@ -162,7 +162,7 @@ const VirtualList = ({type, formFilters, setTotalAmount}: VirtualListProps) => {
   const containerVirtualizer = useVirtualizer({
     count: earlierRows.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 120,
+    estimateSize: () => 140,
     overscan: 15,
   });
 

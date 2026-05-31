@@ -136,13 +136,13 @@ export function TransactionsPageTemplate({
 
       <FiltersWrapper>
         <TransactionFilters type={type} form={form} />
-        <div className="flex justify-between items-center min-w-[140px] gap-4">
+        <div className="flex justify-between items-center min-w-[140px] gap-4 flex-wrap">
           <span className="dark:text-[#BFD9D2]">
             {t(`incomeModal.filters.total.${type}`)}
           </span>
           <div
             className={cn(
-              'flex items-baseline gap-[10px] text-[24px] font-semibold',
+              'flex items-baseline gap-[10px] text-[24px] font-semibold' ,
               totalColorClass,
             )}
           >
