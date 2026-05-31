@@ -77,7 +77,7 @@ function SideBar({variant = 'desktop', isOpen = false, onClose}: SideBarProps) {
       )}
     >
       {/* Logo container: hide on md, show on lg and sm */}
-      <div className="flex items-center justify-between px-1 pt-6 lg:px-[24px] lg:pt-[24px]">
+      <div className="flex items-center justify-evenly px-1 pt-6 lg:px-[24px] lg:pt-[24px]">
         <Logo className="w-full h-[45px] my-[19px] lg:my-[43px] mx-auto" />
         {variant === 'mobile' && (
           <button

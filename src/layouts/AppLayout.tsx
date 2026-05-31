@@ -30,7 +30,7 @@ function AppLayout({title, subtitle, action, children}: AppLayoutProps) {
 
   return (
     <div
-      className={`relative flex h-screen bg-background text-foreground scrollbar-hide ${
+      className={` max-w-[2060px] mx-auto relative flex h-screen bg-background text-foreground scrollbar-hide ${
         menuOpen ? 'overflow-hidden' : 'overflow-y-auto'
       }`}
     >
