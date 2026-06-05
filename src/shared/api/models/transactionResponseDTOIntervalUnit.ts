@@ -13,6 +13,7 @@ export type TransactionResponseDTOIntervalUnit = typeof TransactionResponseDTOIn
 
 
 export const TransactionResponseDTOIntervalUnit = {
+  ONCE: 'ONCE',
   MONTHLY: 'MONTHLY',
   YEARLY: 'YEARLY',
 } as const;

@@ -88,8 +88,7 @@ function CategoriesManager({
     type: [type],
     archived: false,
   });
-
-  // Orval returns an object like: { data: CategoryResponseDTO[] | ProblemDetail; status: 200 }
+ 
   const categories = Array.isArray(response)
     ? response
     : Array.isArray(response)

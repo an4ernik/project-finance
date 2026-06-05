@@ -7,7 +7,6 @@ import {
   Clock3,
   History,
   Search,
-  type LucideIcon,
 } from 'lucide-react';
 
 import {useState} from 'react';
@@ -33,7 +32,7 @@ import {Input} from '@/components/ui/input';
 import type {UseFormReturn} from 'react-hook-form';
 import {
   ALL_CATEGORIES_VALUE,
-  type Period,
+  type PeriodOptions,
   type TransactionFiltersFormValues,
   type TransactionType,
 } from '@/types/types';
@@ -41,12 +40,7 @@ import {useGetCategories} from '@/shared/api/generated/category-management/categ
 import type {CategoryResponseDTO} from '@/shared/api/models';
 import {ICONS_BY_ID} from './IconPicker';
 
-type PeriodOption = {
-  val: Period;
-  icon: LucideIcon;
-};
-
-const PERIOD_OPTIONS: PeriodOption[] = [
+const PERIOD_OPTIONS: PeriodOptions[] = [
   {val: 'all', icon: Calendar},
   {val: 'today', icon: Clock3},
   {val: 'week', icon: History},
@@ -75,7 +69,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
       category.type === type,
   );
 
-  const {control, watch, register} = form;
+  const {control, watch, register, setValue} = form;
   const {t} = useTranslation();
   const [periodOpen, setPeriodOpen] = useState(false);
   const [categoryOpen, setCategoryOpen] = useState(false);
@@ -98,7 +92,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
     <div className="w-full bg-secondary flex-wrap flex flex-col sm:flex-row  gap-7 dark:border-b dark:border-[#434e4b]">
       {/* Period filter */}
       <div className="flex flex-col gap-2 w-full lg:max-w-[240px] md:flex-1 md:min-w-[200px]">
-        <h2>{t('incomeModal.filters.period.label')}</h2>
+        <h2 className='text-[#BFD9D2]'>{t('incomeModal.filters.period.label')}</h2>
         <Popover open={periodOpen} onOpenChange={setPeriodOpen}>
           <PopoverTrigger asChild>
             <Button
@@ -130,7 +124,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
           <PopoverContent
             className={cn(
               dropdownClass,
-              'border bg-[#EEF3F2] dark:bg-[#122421] px-2 py-2 text-[#A9C1BB] shadow-sm  dark:text-[#A9C1BB] overflow-y-auto',
+              'border bg-[#EEF3F2] dark:bg-[#122421] px-2 py-2 text-[#A9C1BB] shadow-sm dark:text-[#A9C1BB] overflow-y-auto',
             )}
             align="start"
           >
@@ -141,7 +135,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
                 render={({field}) => (
                   <FieldGroup
                     className={cn(
-                      'gap-2   border-[#dadddd] dark:border-[#434e4b]',
+                      'gap-2 border-[#dadddd] dark:border-[#434e4b]',
                       period === 'custom' && 'border-b pb-4',
                     )}
                   >
@@ -156,15 +150,24 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
                           className={cn(
                             'flex items-center gap-3 rounded-[12px] px-4 py-2 cursor-pointer transition-all',
                             isSelected
-                              ? 'border dark:border-[#4B6560] dark:bg-[linear-gradient(180deg,rgba(27,52,47,0.95)_0%,rgba(19,37,34,0.98)_100%)] text-[#0B1514]! dark:text-[#EAF6F3] shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_0_0_1px_rgba(125,164,154,0.08),0_10px_24px_rgba(0,0,0,0.2)]'
-                              : 'border border-transparent text-[#7F9E97] hover:bg-linear-to-b hover: hover:bg-[#0B151403] hover:via-[#315F551A] hover:shadow-md hover:to-[#90D0B60D] dark:hover:bg-[#17302c]',
+                              ? 'border dark:border-[#4B6560] dark:bg-[linear-gradient(180deg,rgba(27,52,47,0.95)_0%,rgba(19,37,34,0.98)_100%)] !text-[#0B1514] dark:!text-[#EAF6F3] shadow-[inset_0_1px_0_rgba(255,255,255,0.12),0_0_0_1px_rgba(125,164,154,0.08),0_10px_24px_rgba(0,0,0,0.2)]'
+                              : 'border border-transparent text-[#7F9E97] hover:bg-[#0B151403] hover:via-[#315F551A] hover:shadow-md dark:hover:bg-[#17302c]',
                           )}
                           onClick={() => {
                             field.onChange(item.val);
-                            if (item.val === 'custom') {
-                              setPeriodOpen(true);
-                            } else {
+
+                            if (item.val !== 'custom') {
+                              setValue('fromDate', undefined, {
+                                shouldDirty: true,
+                                shouldValidate: true,
+                              });
+                              setValue('toDate', undefined, {
+                                shouldDirty: true,
+                                shouldValidate: true,
+                              });
                               setPeriodOpen(false);
+                            } else {
+                              setPeriodOpen(true);
                             }
                           }}
                         >
@@ -172,7 +175,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
                             className={cn(
                               'flex flex-1 cursor-pointer items-center gap-3 text-[16px] font-normal',
                               isSelected
-                                ? 'text-[#0B1514] dark:text-[#EAF6F3]'
+                                ? '!text-[#0B1514] dark:!text-[#EAF6F3]' // 🎯 Теж виправлено знаки "!"
                                 : 'text-[#7F9E97]',
                             )}
                           >
@@ -180,7 +183,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
                               className={cn(
                                 'size-[18px]',
                                 isSelected
-                                  ? 'text-[#0B1514] dark:text-[#EAF6F3]'
+                                  ? '!text-[#0B1514] dark:!text-[#EAF6F3]'
                                   : 'text-[#6D8D87]',
                               )}
                             />
@@ -194,7 +197,11 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
               />
 
               {period === 'custom' && (
-                <div className="flex flex-col items-center gap-3 ">
+                <div
+                  className="flex flex-col items-center gap-3"
+                  onClick={e => e.stopPropagation()}
+                >
+                  {/* Календар FROM */}
                   <div className="flex flex-col w-full gap-1.5">
                     <label className="text-[14px] text-[#3A4A48] dark:text-[#BFD9D2] ml-1">
                       {t('incomeModal.filters.period.from')}
@@ -209,7 +216,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
                           )}
                         >
                           <CalendarDays className="size-4" />
-                          {fromDate instanceof Date
+                          {fromDate
                             ? format(fromDate, 'dd.MM.yyyy')
                             : t('incomeModal.filters.period.date')}
                         </Button>
@@ -218,6 +225,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
                         className="w-auto p-0"
                         side="right"
                         align="start"
+                        onClick={e => e.stopPropagation()}
                       >
                         <Controller
                           control={control}
@@ -240,6 +248,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
                     </Popover>
                   </div>
 
+                  {/* Календар TO */}
                   <div className="flex flex-col w-full gap-1.5">
                     <label className="text-[14px] text-[#3A4A48] dark:text-[#BFD9D2] ml-1">
                       {t('incomeModal.filters.period.to')}
@@ -251,7 +260,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
                           variant="tab"
                           type="button"
                           className={cn(
-                            'h-9 px-[16px] py-2.5 justify-start text-[#0B1514] dark:text-[#EAF6F3]',
+                            'h-9 px-4 py-2.5 justify-start text-[#0B1514] dark:text-[#EAF6F3] disabled:bg-none! disabled:text-[#6F7E7C] disabled:dark:text-[#7F9E97] disabled:border-none disabled:cursor-default',
                           )}
                         >
                           <CalendarDays className="size-4 text-inherit hover:text-primary" />
@@ -264,12 +273,13 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
                         className="w-auto p-0 text-[#6F7E7C]"
                         side="right"
                         align="start"
+                        onClick={e => e.stopPropagation()}
                       >
                         <Controller
                           control={control}
                           name="toDate"
                           render={({field}) => (
-                            <ComponentCalendar 
+                            <ComponentCalendar
                               disabled={(date: Date) => {
                                 const isFuture = date > new Date();
                                 const isBeforeFrom = fromDate
@@ -283,7 +293,12 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
                                   ? field.value
                                   : undefined
                               }
-                              onSelect={field.onChange}
+                              onSelect={date => {
+                                field.onChange(date);
+                                if (date) {
+                                  setPeriodOpen(false);
+                                }
+                              }}
                               locale={uk}
                             />
                           )}
@@ -300,7 +315,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
 
       {/* categories */}
       <div className="flex flex-col gap-2 w-full lg:max-w-[240px] md:flex-1 md:min-w-[200px]">
-        <h2>{t('incomeModal.filters.category.label')}</h2>
+        <h2 className='text-[#BFD9D2]'>{t('incomeModal.filters.category.label')}</h2>
 
         <Popover open={categoryOpen} onOpenChange={setCategoryOpen}>
           <PopoverTrigger asChild>
@@ -314,7 +329,9 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
               )}
             >
               <div className="flex items-center gap-2 truncate">
-                <span className="truncate tracking-tight">{selectedCategoriesLabel}</span>
+                <span className="truncate tracking-tight">
+                  {selectedCategoriesLabel}
+                </span>
               </div>
               <ChevronDown
                 className={cn(
@@ -404,7 +421,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
 
       {/* search */}
       <div className="flex flex-col gap-2 w-full lg:max-w-[320px] md:flex-1 md:min-w-[200px]">
-        <h2>{t('incomeModal.filters.search.label')}</h2>
+        <h2 className='text-[#BFD9D2]'>{t('incomeModal.filters.search.label')}</h2>
         <Input
           disabled={categories?.length === 0}
           className="text-[#6F7E7C] shadow-md border-black/10 dark:border-white/10 dark:text-[#A9C1BB] placeholder:text-[#6F7E7C] dark:placeholder:text-[#A9C1BB] tracking-normal"

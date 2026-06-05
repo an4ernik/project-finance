@@ -89,9 +89,7 @@ export const VirtualItem = ({
                   className={cn(
                     'flex shrink-0 items-center gap-1 text-[10px] justify-center shadow-md sm:text-[14px] rounded-lg px-3 py-1 leading-none transition-colors duration-100 dark:text-[#E6E6E6]',
                     'bg-linear-to-b dark:from-[#0B151403] dark:via-[#315F551A] dark:to-[#90D0B60D]',
-                    'border dark:border-white/10',
-                    'group-hover:bg-[#037c5e31]',
-                    'dark:group-hover:bg-none dark:group-hover:bg-linear-to-b dark:group-hover:from-[#059979] dark:group-hover:to-[#02624D99]',
+                    'border dark:border-white/10', 
                   )}
                 >
                   <FileText size={14} />

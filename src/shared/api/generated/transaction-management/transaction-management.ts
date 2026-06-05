@@ -29,9 +29,9 @@ import type {
   DeleteTransactionParams,
   GetTransactionsParams,
   ProblemDetail,
-  TransactionCreateRequestDTO,
+  TransactionCursorPageResponseDTO,
   TransactionResponseDTO,
-  UpdateTransactionParams
+  TransactionUpdateRequestDTO
 } from '../../models';
 
 import { customInstance } from '../../axios';
@@ -43,22 +43,44 @@ type SecondParameter<T extends (...args: never) => unknown> = Parameters<T>[1];
 
 
 /**
- * Returns the authenticated user's transactions filtered by account, category, type, and date range. Category filters can reference both active and archived categories that still exist in historical transactions.
- * @summary Get transactions
+ * Returns the authenticated user's transactions filtered by account, category, type, and date range.
+
+**Pagination:** Uses cursor-based pagination (not page numbers) for consistent ordering even when
+new transactions are added. The first request omits the `cursor` parameter. Subsequent requests
+should use the `nextCursor` value returned in the response.
+
+**Sorting:** Always returns transactions sorted from newest to oldest by date, then by ID.
+
+**Filters:** Category filters can reference both active and archived categories that still exist
+in historical transactions.
+
+ * @summary Get paginated transactions
  */
 export type getTransactionsResponse200 = {
-  data: TransactionResponseDTO[]
+  data: TransactionCursorPageResponseDTO
   status: 200
+}
+
+export type getTransactionsResponse400 = {
+  data: Blob
+  status: 400
+}
+
+export type getTransactionsResponse401 = {
+  data: Blob
+  status: 401
 }
     
 export type getTransactionsResponseSuccess = (getTransactionsResponse200) & {
   headers: Headers;
 };
-;
+export type getTransactionsResponseError = (getTransactionsResponse400 | getTransactionsResponse401) & {
+  headers: Headers;
+};
 
-export type getTransactionsResponse = (getTransactionsResponseSuccess)
+export type getTransactionsResponse = (getTransactionsResponseSuccess | getTransactionsResponseError)
 
-export const getGetTransactionsUrl = (params?: GetTransactionsParams,) => {
+export const getGetTransactionsUrl = (params: GetTransactionsParams,) => {
   const normalizedParams = new URLSearchParams();
 
   Object.entries(params || {}).forEach(([key, value]) => {
@@ -73,7 +95,7 @@ export const getGetTransactionsUrl = (params?: GetTransactionsParams,) => {
   return stringifiedParams.length > 0 ? `/api/v1/transactions?${stringifiedParams}` : `/api/v1/transactions`
 }
 
-export const getTransactions = async (params?: GetTransactionsParams, options?: RequestInit): Promise<getTransactionsResponse> => {
+export const getTransactions = async (params: GetTransactionsParams, options?: RequestInit): Promise<getTransactionsResponse> => {
   
   return customInstance<getTransactionsResponse>(getGetTransactionsUrl(params),
   {      
@@ -95,7 +117,7 @@ export const getGetTransactionsQueryKey = (params?: GetTransactionsParams,) => {
     }
 
     
-export const getGetTransactionsQueryOptions = <TData = Awaited<ReturnType<typeof getTransactions>>, TError = ErrorType<unknown>>(params?: GetTransactionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTransactions>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+export const getGetTransactionsQueryOptions = <TData = Awaited<ReturnType<typeof getTransactions>>, TError = ErrorType<Blob>>(params: GetTransactionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTransactions>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
 ) => {
 
 const {query: queryOptions, request: requestOptions} = options ?? {};
@@ -114,11 +136,11 @@ const {query: queryOptions, request: requestOptions} = options ?? {};
 }
 
 export type GetTransactionsQueryResult = NonNullable<Awaited<ReturnType<typeof getTransactions>>>
-export type GetTransactionsQueryError = ErrorType<unknown>
+export type GetTransactionsQueryError = ErrorType<Blob>
 
 
-export function useGetTransactions<TData = Awaited<ReturnType<typeof getTransactions>>, TError = ErrorType<unknown>>(
- params: undefined |  GetTransactionsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTransactions>>, TError, TData>> & Pick<
+export function useGetTransactions<TData = Awaited<ReturnType<typeof getTransactions>>, TError = ErrorType<Blob>>(
+ params: GetTransactionsParams, options: { query:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTransactions>>, TError, TData>> & Pick<
         DefinedInitialDataOptions<
           Awaited<ReturnType<typeof getTransactions>>,
           TError,
@@ -127,8 +149,8 @@ export function useGetTransactions<TData = Awaited<ReturnType<typeof getTransact
       >, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient
   ):  DefinedUseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetTransactions<TData = Awaited<ReturnType<typeof getTransactions>>, TError = ErrorType<unknown>>(
- params?: GetTransactionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTransactions>>, TError, TData>> & Pick<
+export function useGetTransactions<TData = Awaited<ReturnType<typeof getTransactions>>, TError = ErrorType<Blob>>(
+ params: GetTransactionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTransactions>>, TError, TData>> & Pick<
         UndefinedInitialDataOptions<
           Awaited<ReturnType<typeof getTransactions>>,
           TError,
@@ -137,16 +159,16 @@ export function useGetTransactions<TData = Awaited<ReturnType<typeof getTransact
       >, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
-export function useGetTransactions<TData = Awaited<ReturnType<typeof getTransactions>>, TError = ErrorType<unknown>>(
- params?: GetTransactionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTransactions>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+export function useGetTransactions<TData = Awaited<ReturnType<typeof getTransactions>>, TError = ErrorType<Blob>>(
+ params: GetTransactionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTransactions>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient
   ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> }
 /**
- * @summary Get transactions
+ * @summary Get paginated transactions
  */
 
-export function useGetTransactions<TData = Awaited<ReturnType<typeof getTransactions>>, TError = ErrorType<unknown>>(
- params?: GetTransactionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTransactions>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
+export function useGetTransactions<TData = Awaited<ReturnType<typeof getTransactions>>, TError = ErrorType<Blob>>(
+ params: GetTransactionsParams, options?: { query?:Partial<UseQueryOptions<Awaited<ReturnType<typeof getTransactions>>, TError, TData>>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient 
  ):  UseQueryResult<TData, TError> & { queryKey: DataTag<QueryKey, TData, TError> } {
 
@@ -465,7 +487,7 @@ export const useDeleteTransaction = <TError = ErrorType<unknown>,
       return useMutation(getDeleteTransactionMutationOptions(options), queryClient);
     }
     /**
- * Updates a transaction and recalculates related balances. For transactions generated by a recurring rule, recurringScope=ONLY_THIS updates only the selected occurrence, while recurringScope=THIS_AND_FUTURE also updates the recurring rule and already-created future occurrences. Transaction date can be in the past or today, but not in the future.
+ * Updates a transaction and recalculates related balances. For transactions generated by a recurring rule, recurringScope=ONLY_THIS updates only the selected occurrence, while recurringScope=THIS_AND_FUTURE also updates the recurring rule and future occurrences. Transaction date can be in the past or today, but not in the future.
  * @summary Update transaction
  */
 export type updateTransactionResponse200 = {
@@ -487,33 +509,24 @@ export type updateTransactionResponseError = (updateTransactionResponse400) & {
 
 export type updateTransactionResponse = (updateTransactionResponseSuccess | updateTransactionResponseError)
 
-export const getUpdateTransactionUrl = (id: number,
-    params?: UpdateTransactionParams,) => {
-  const normalizedParams = new URLSearchParams();
+export const getUpdateTransactionUrl = (id: number,) => {
 
-  Object.entries(params || {}).forEach(([key, value]) => {
-    
-    if (value !== undefined) {
-      normalizedParams.append(key, value === null ? 'null' : value.toString())
-    }
-  });
 
-  const stringifiedParams = normalizedParams.toString();
+  
 
-  return stringifiedParams.length > 0 ? `/api/v1/transactions/${id}?${stringifiedParams}` : `/api/v1/transactions/${id}`
+  return `/api/v1/transactions/${id}`
 }
 
 export const updateTransaction = async (id: number,
-    transactionCreateRequestDTO: TransactionCreateRequestDTO,
-    params?: UpdateTransactionParams, options?: RequestInit): Promise<updateTransactionResponse> => {
+    transactionUpdateRequestDTO: TransactionUpdateRequestDTO, options?: RequestInit): Promise<updateTransactionResponse> => {
   
-  return customInstance<updateTransactionResponse>(getUpdateTransactionUrl(id,params),
+  return customInstance<updateTransactionResponse>(getUpdateTransactionUrl(id),
   {      
     ...options,
     method: 'PATCH',
     headers: { 'Content-Type': 'application/json', ...options?.headers },
     body: JSON.stringify(
-      transactionCreateRequestDTO,)
+      transactionUpdateRequestDTO,)
   }
 );}
 
@@ -521,8 +534,8 @@ export const updateTransaction = async (id: number,
 
 
 export const getUpdateTransactionMutationOptions = <TError = ErrorType<ProblemDetail>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTransaction>>, TError,{id: number;data: TransactionCreateRequestDTO;params?: UpdateTransactionParams}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof updateTransaction>>, TError,{id: number;data: TransactionCreateRequestDTO;params?: UpdateTransactionParams}, TContext> => {
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTransaction>>, TError,{id: number;data: TransactionUpdateRequestDTO}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateTransaction>>, TError,{id: number;data: TransactionUpdateRequestDTO}, TContext> => {
 
 const mutationKey = ['updateTransaction'];
 const {mutation: mutationOptions, request: requestOptions} = options ?
@@ -534,10 +547,10 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
       
 
 
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateTransaction>>, {id: number;data: TransactionCreateRequestDTO;params?: UpdateTransactionParams}> = (props) => {
-          const {id,data,params} = props ?? {};
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateTransaction>>, {id: number;data: TransactionUpdateRequestDTO}> = (props) => {
+          const {id,data} = props ?? {};
 
-          return  updateTransaction(id,data,params,requestOptions)
+          return  updateTransaction(id,data,requestOptions)
         }
 
 
@@ -548,18 +561,18 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
   return  { mutationFn, ...mutationOptions }}
 
     export type UpdateTransactionMutationResult = NonNullable<Awaited<ReturnType<typeof updateTransaction>>>
-    export type UpdateTransactionMutationBody = TransactionCreateRequestDTO
+    export type UpdateTransactionMutationBody = TransactionUpdateRequestDTO
     export type UpdateTransactionMutationError = ErrorType<ProblemDetail>
 
     /**
  * @summary Update transaction
  */
 export const useUpdateTransaction = <TError = ErrorType<ProblemDetail>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTransaction>>, TError,{id: number;data: TransactionCreateRequestDTO;params?: UpdateTransactionParams}, TContext>, request?: SecondParameter<typeof customInstance>}
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateTransaction>>, TError,{id: number;data: TransactionUpdateRequestDTO}, TContext>, request?: SecondParameter<typeof customInstance>}
  , queryClient?: QueryClient): UseMutationResult<
         Awaited<ReturnType<typeof updateTransaction>>,
         TError,
-        {id: number;data: TransactionCreateRequestDTO;params?: UpdateTransactionParams},
+        {id: number;data: TransactionUpdateRequestDTO},
         TContext
       > => {
       return useMutation(getUpdateTransactionMutationOptions(options), queryClient);

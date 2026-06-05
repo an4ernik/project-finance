@@ -5,24 +5,24 @@ export const currencySigns = {
 } as const;
 export const DAY_KEYS = ['su', 'mo', 'tu', 'we', 'th', 'fr', 'sa'];
 export const MONTH_KEYS = [
-    'jan',
-    'feb',
-    'mar',
-    'apr',
-    'may',
-    'jun',
-    'jul',
-    'aug',
-    'sep',
-    'oct',
-    'nov',
-    'dec',
+  'jan',
+  'feb',
+  'mar',
+  'apr',
+  'may',
+  'jun',
+  'jul',
+  'aug',
+  'sep',
+  'oct',
+  'nov',
+  'dec',
 ];
 
 export const paths = [
-  "/dashboard", "/income", "/expenses", "/settings", 
-  "/settings/security", "/settings/notifications", 
-  "/login", "/signup", "/forgot-password", "/reset-password", 
+  "/dashboard", "/income", "/expenses", "/settings",
+  "/settings/security", "/settings/notifications",
+  "/login", "/signup", "/forgot-password", "/reset-password",
   "/", "/Home", "/verify"
 ];
 
@@ -97,3 +97,4 @@ export const TRANSACTION_THEMES = {
     amountPrefix: '-',
   },
 };
+

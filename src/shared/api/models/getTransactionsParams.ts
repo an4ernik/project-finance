@@ -5,12 +5,11 @@
  * REST API Documentation for MT Service
  * OpenAPI spec version: 1.0
  */
-import type { GetTransactionsType } from './getTransactionsType';
+import type { TransactionCursorRequest } from './transactionCursorRequest';
 
 export type GetTransactionsParams = {
-accountId?: number;
-categoryId?: number;
-type?: GetTransactionsType;
-dateFrom?: string;
-dateTo?: string;
+/**
+ * Pagination and filter parameters
+ */
+request: TransactionCursorRequest;
 };
