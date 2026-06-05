@@ -19,7 +19,7 @@ const DocumentModal = ({isOpen, onClose, files}: DocumentModalProps) => {
   useEffect(() => {
     if (isOpen && files?.length) {
       setActiveFile(files[0]);
-    } 
+    }
   }, [isOpen, files]);
   const handleDownload = async () => {
     if (!activeFile) return;
@@ -68,9 +68,7 @@ const DocumentModal = ({isOpen, onClose, files}: DocumentModalProps) => {
                 ? t('documentsModal.documents')
                 : t('documentsModal.document')}
             </h3>
-            <p className="dark:text-[#BFD9D2] opacity-60 italic text-sm self-center">
-              {/* {activeFile?.split('/').pop()} */}
-            </p>
+            <p className="dark:text-[#BFD9D2] opacity-60 italic text-sm self-center"></p>
           </div>
           <button
             onClick={onClose}
@@ -79,21 +77,26 @@ const DocumentModal = ({isOpen, onClose, files}: DocumentModalProps) => {
             <X className="size-6" />
           </button>
         </div> 
-
-        <div className="flex-1 min-h-0 my-2 overflow-y-auto custom-scrollbar">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+         
+        <div className="flex-1 min-h-0 my-2 overflow-y-auto custom-scrollbar flex items-stretch">
+          {/* 🎯 Трюк 1: flex-wrap + items-stretch змушує блоки адаптивно рости та заповнювати простір */}
+          <div className="flex flex-wrap gap-4 w-full h-full content-start justify-center">
             {files?.map(file => (
               <div
                 key={file}
                 onClick={() => setActiveFile(file)}
-                className={`relative h-[140px] sm:h-[220px] overflow-hidden cursor-pointer rounded-xl border  hover:border-gray-300 ${
-                  activeFile === file ? 'border-primary' : 'border-white/10'
+                // 🎯 Трюк 2: flex-1 (або flex-grow) з обмеженням min-w та max-w
+                // На мобілках базис [calc(50%-8px)], на десктопі [200px]. h-full або сувора висота залежно від кількості.
+                className={`relative flex-1 min-w-[140px] sm:min-w-[180px] max-w-full h-[160px] sm:h-[calc(50%-8px)] sm:min-h-[200px] bg-transparent overflow-hidden cursor-pointer border rounded-xl transition-all hover:border-gray-400 ${
+                  activeFile === file
+                    ? 'border-primary shadow-[0_0_0_2px_rgba(2,98,77,0.3)]'
+                    : 'border-white/10 bg-black/5 dark:bg-white/5'
                 }`}
               >
                 <img
                   src={file}
                   alt="Preview"
-                  className="block w-full h-full object-contain"
+                  className="block w-full h-full object-contain p-2"
                   onError={e => {
                     const target = e.currentTarget;
                     target.onerror = null;
@@ -101,8 +104,9 @@ const DocumentModal = ({isOpen, onClose, files}: DocumentModalProps) => {
                   }}
                 />
 
-                <span className="absolute bottom-0 w-full p-1 bg-[#02624db2] truncate text-white">
-                  {file}
+                {/* Затемнення та підпис файлу */}
+                <span className="absolute bottom-0 left-0 w-full p-2 bg-[#02624db2] backdrop-blur-xs truncate text-xs text-white text-center font-medium rounded-b-xl">
+                  {file.split('/').pop() || file}
                 </span>
               </div>
             ))}
