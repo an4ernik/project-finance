@@ -251,4 +251,86 @@ export const useUpdateMe = <TError = ErrorType<ProblemDetail>,
       > => {
       return useMutation(getUpdateMeMutationOptions(options), queryClient);
     }
+    /**
+ * Deletes the currently authenticated user account and all associated data (accounts, transactions, categories, recurring transactions, receipt images, etc.). This operation is irreversible.
+ * @summary Delete current user account
+ */
+export type deleteUserResponse204 = {
+  data: void
+  status: 204
+}
+    
+export type deleteUserResponseSuccess = (deleteUserResponse204) & {
+  headers: Headers;
+};
+;
+
+export type deleteUserResponse = (deleteUserResponseSuccess)
+
+export const getDeleteUserUrl = () => {
+
+
+  
+
+  return `/api/v1/users/me`
+}
+
+export const deleteUser = async ( options?: RequestInit): Promise<deleteUserResponse> => {
+  
+  return customInstance<deleteUserResponse>(getDeleteUserUrl(),
+  {      
+    ...options,
+    method: 'DELETE'
+    
+    
+  }
+);}
+
+
+
+
+export const getDeleteUserMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,void, TContext> => {
+
+const mutationKey = ['deleteUser'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof deleteUser>>, void> = () => {
+          
+
+          return  deleteUser(requestOptions)
+        }
+
+
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type DeleteUserMutationResult = NonNullable<Awaited<ReturnType<typeof deleteUser>>>
+    
+    export type DeleteUserMutationError = ErrorType<unknown>
+
+    /**
+ * @summary Delete current user account
+ */
+export const useDeleteUser = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof deleteUser>>, TError,void, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof deleteUser>>,
+        TError,
+        void,
+        TContext
+      > => {
+      return useMutation(getDeleteUserMutationOptions(options), queryClient);
+    }
     

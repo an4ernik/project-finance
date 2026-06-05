@@ -24,8 +24,6 @@ import InfoDialog, {type RecurringUpdateScope} from './InfoDialog';
 import type {IncomeModalProps} from '@/types/types';
 import {toTransactionDtoType} from '@/helpers/helpers';
 import {format} from 'date-fns';
-import {useCreateRecurringTransaction} from '@/shared/api/generated/recurring-transaction-management/recurring-transaction-management';
-import type {RecurringTransactionCreateRequestDTOIntervalUnit} from '@/shared/api/models';
 import {useQueryClient} from '@tanstack/react-query';
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024;
@@ -49,33 +47,21 @@ const TransactionModal = ({
   const {t} = useTranslation();
 
   const queryClient = useQueryClient();
-  const mutationConfig = {
-    mutation: {
-      onSuccess: () => {
-        queryClient.invalidateQueries({
-          queryKey: ['/api/v1/transactions'],
-          exact: false,
-        });
-
-        queryClient.refetchQueries({
-          predicate: query => {
-            return (
-              Array.isArray(query.queryKey) &&
-              query.queryKey[0] === '/api/v1/transactions'
-            );
-          },
-        });
-      },
+const mutationConfig = {
+  mutation: {
+    onSuccess: () => { 
+      queryClient.resetQueries({
+        queryKey: ['/api/v1/transactions'],
+        exact: false,
+      });
     },
-  };
+  },
+};
 
   const {mutateAsync: createIncome, isPending: isCreating} =
     useCreateTransaction(mutationConfig);
   const {mutateAsync: updateIncome, isPending: isUpdating} =
     useUpdateTransaction(mutationConfig);
-
-  const {mutateAsync: createWithRepeat, isPending: isCreatingRepeat} =
-    useCreateRecurringTransaction(mutationConfig);
 
   // SCHEMA
   const modalSchema = useMemo(
@@ -116,7 +102,7 @@ const TransactionModal = ({
               .replace(/\s+/g, ' ')
               .trim();
           }),
-        intervalUnit: z.string().optional(),
+        intervalUnit: z.enum(['ONCE', 'MONTHLY', 'YEARLY']).optional(),
         file: z
           .array(z.instanceof(File))
           .refine(
@@ -222,26 +208,82 @@ const TransactionModal = ({
 
   const displayTitle = t(`incomeModal.title.${mode}.${type}`);
 
-  const executeMutation = async (data: FormOutput) => {
-    try {
-      const isRecurring = data.intervalUnit && data.intervalUnit !== 'ONCE';
+  // const executeMutation = async (data: FormOutput, currentScope?: 'ONLY_THIS' | 'THIS_AND_FUTURE') => {
+  //   const reccuring = data.intervalUnit && data.intervalUnit !== 'ONCE';
+  //   try {
+  //     if (mode === 'create') {
+  //       await createIncome({
+  //         data: {
+  //           dto: {
+  //             amount: data.amount,
+  //             type: toTransactionDtoType(type),
+  //             categoryId: data.categoryId,
+  //             date: format(data.date, 'yyyy-MM-dd'),
+  //             description: data.description || '',
+  //             intervalUnit: data.intervalUnit,
+  //           },
+  //           receipts: data.file ?? undefined,
+  //         },
+  //       });
+  //       toast.success(t(`incomeModal.transaction.success.create.${type}`), {
+  //         id: 'success-create',
+  //       });
+  //     } else {
+  //       if (!initialData?.id) return;
+  //       if(reccuring) {
+  //         await updateIncome({
+  //           id: initialData.id,
+  //           data: {
+  //             amount: data.amount,
+  //             categoryId: data.categoryId,
+  //             date: format(data.date, 'yyyy-MM-dd'),
+  //             description: data.description || '',
+  //             transactionChangeScope: currentScope || scope,
+  //           },
+  //         });
+  //       }else{
+  //         await updateIncome({
+  //           id: initialData.id,
+  //           data: {
+  //             amount: data.amount,
+  //             categoryId: data.categoryId,
+  //             date: format(data.date, 'yyyy-MM-dd'),
+  //             description: data.description || '',
+  //           },
+  //         });
+  //       }
 
+  //       toast.success(t(`incomeModal.transaction.success.update.${type}`), {
+  //         id: 'success-update',
+  //       });
+  //     }
+
+  //     reset(getDefaultValues());
+  //     onClose();
+  //   } catch (error) {
+  //     console.error(error);
+  //     toast.error(t(`incomeModal.transaction.error.${mode}.${type}`), {
+  //       id: 'error',
+  //     });
+  //   } finally {
+  //     setShowInfoDialog(false);
+  //     setPendingData(null);
+  //   }
+  // };
+  const executeMutation = async (
+    data: FormOutput,
+    currentScope?: 'ONLY_THIS' | 'THIS_AND_FUTURE',
+  ) => {
+    // 🎯 ПРАВИЛЬНО: Перевіряємо, чи була ПОЧАТКОВА транзакція періодичною.
+    // Якщо initialData?.intervalUnit немає (наприклад, при створенні), безпечно перевіряємо дані форми.
+    const isInitiallyRecurring =
+      mode === 'update'
+        ? initialData?.intervalUnit && initialData?.intervalUnit !== 'ONCE'
+        : data.intervalUnit && data.intervalUnit !== 'ONCE';
+
+    try {
       if (mode === 'create') {
-        if (isRecurring) {
-          // Handle Recurring Creation
-          await createWithRepeat({
-            data: {
-              amount: data.amount,
-              type: toTransactionDtoType(type),
-              categoryId: data.categoryId,
-              date: format(data.date, 'yyyy-MM-dd'),
-              description: data.description || '',
-              intervalUnit:
-                data.intervalUnit as RecurringTransactionCreateRequestDTOIntervalUnit,
-            },
-          });
-        } else {
-          // Handle Single Creation
+        if (data.intervalUnit && data.intervalUnit === 'ONCE') {
           await createIncome({
             data: {
               dto: {
@@ -250,30 +292,33 @@ const TransactionModal = ({
                 categoryId: data.categoryId,
                 date: format(data.date, 'yyyy-MM-dd'),
                 description: data.description || '',
+                intervalUnit: data.intervalUnit,
               },
               receipts: data.file ?? undefined,
+            },
+          });
+        } else {
+          await createIncome({
+            data: {
+              dto: {
+                amount: data.amount,
+                type: toTransactionDtoType(type),
+                categoryId: data.categoryId,
+                date: format(data.date, 'yyyy-MM-dd'),
+                description: data.description || '',
+                intervalUnit: data.intervalUnit,
+              },
             },
           });
         }
         toast.success(t(`incomeModal.transaction.success.create.${type}`), {
           id: 'success-create',
         });
-      } else if (mode === 'update') {
+      } else {
         if (!initialData?.id) return;
 
-        if (isRecurring) {
-          await createWithRepeat({
-            data: {
-              amount: data.amount,
-              type: toTransactionDtoType(type),
-              categoryId: data.categoryId,
-              date: format(data.date, 'yyyy-MM-dd'),
-              description: data.description || '',
-              intervalUnit:
-                data.intervalUnit as RecurringTransactionCreateRequestDTOIntervalUnit,
-            },
-          });
-        } else {
+        // 🎯 Використовуємо нашу нову безпечну змінну
+        if (isInitiallyRecurring) {
           await updateIncome({
             id: initialData.id,
             data: {
@@ -281,18 +326,28 @@ const TransactionModal = ({
               categoryId: data.categoryId,
               date: format(data.date, 'yyyy-MM-dd'),
               description: data.description || '',
-              type: toTransactionDtoType(type),
+              transactionChangeScope: currentScope || scope,
             },
-            params: {recurringScope: scope},
+          });
+        } else {
+          // Сюди потраплять ОДНОРАЗОВІ (ONCE) транзакції. Бекенд не отримає scope і не сваритиметься.
+          await updateIncome({
+            id: initialData.id,
+            data: {
+              amount: data.amount,
+              categoryId: data.categoryId,
+              date: format(data.date, 'yyyy-MM-dd'),
+              description: data.description || '',
+            },
           });
         }
+
         toast.success(t(`incomeModal.transaction.success.update.${type}`), {
-          id: 'success',
+          id: 'success-update',
         });
       }
 
       reset(getDefaultValues());
-
       onClose();
     } catch (error) {
       console.error(error);
@@ -304,10 +359,15 @@ const TransactionModal = ({
       setPendingData(null);
     }
   };
-
-  const handleInfoDialogClose = async (scope: RecurringUpdateScope | null) => {
-    if (scope && pendingData) {
-      await executeMutation(pendingData);
+  const handleInfoDialogClose = async (
+    selectedScope: RecurringUpdateScope | null,
+  ) => {
+    if (selectedScope && pendingData) {
+      setScope(selectedScope as 'ONLY_THIS' | 'THIS_AND_FUTURE');
+      await executeMutation(
+        pendingData,
+        selectedScope as 'ONLY_THIS' | 'THIS_AND_FUTURE',
+      );
     } else {
       setShowInfoDialog(false);
       setPendingData(null);
@@ -318,7 +378,11 @@ const TransactionModal = ({
     if (mode === 'update' && !isDirty) {
       return;
     }
-    if (mode === 'update' && data.intervalUnit !== 'ONCE') {
+    if (
+      mode === 'update' &&
+      data.intervalUnit &&
+      data?.intervalUnit !== 'ONCE'
+    ) {
       setPendingData(data);
       setShowInfoDialog(true);
       return;
@@ -330,7 +394,6 @@ const TransactionModal = ({
   const today = new Date();
   today.setHours(0, 0, 0, 0);
 
-  // Keep track of the previous repeat mode to see if it actually changed
   const [prevRepeat, setPrevRepeat] = useState(watchedRepeat);
 
   useEffect(() => {
@@ -343,9 +406,7 @@ const TransactionModal = ({
       return;
     }
 
-    // 2. Only run adjustments if the user actively changed the repeat setting
     if (watchedRepeat !== prevRepeat) {
-      // REPEAT mode: today or future only
       if (watchedRepeat !== 'ONCE' && selectedDate < today) {
         setValue('date', today, {
           shouldValidate: true,
@@ -353,7 +414,6 @@ const TransactionModal = ({
         });
       }
 
-      // ONCE mode: past or today only
       if (watchedRepeat === 'ONCE' && selectedDate > today) {
         setValue('date', today, {
           shouldValidate: true,
@@ -361,7 +421,6 @@ const TransactionModal = ({
         });
       }
 
-      // Update our tracker
       setPrevRepeat(watchedRepeat);
     }
   }, [watchedRepeat, watchedDate, setValue, mode, initialData, prevRepeat]);
@@ -418,28 +477,19 @@ const TransactionModal = ({
                 const currentToday = new Date(today);
                 currentToday.setHours(0, 0, 0, 0);
 
-                // (UPDATE logic)
-                if (mode === 'update') {
+                if (mode === 'update' && watchedRepeat !== 'ONCE') {
                   const startOfMonth = new Date(
                     currentToday.getFullYear(),
                     currentToday.getMonth(),
                     1,
-                  );
+                  ); 
 
-                  const endOfMonth = new Date(
-                    currentToday.getFullYear(),
-                    currentToday.getMonth() + 1,
-                    0,
-                  );
-
-                  return d < startOfMonth || d > endOfMonth;
+                  return d < startOfMonth || d > today;
                 }
 
                 if (watchedRepeat === 'ONCE') {
-                  // disable future dates
                   return d > currentToday;
                 }
-                // disable past dates
                 return d < currentToday;
               }}
               onChange={(date: Date) =>
@@ -460,7 +510,7 @@ const TransactionModal = ({
             <IncomeRepeatField
               value={watchedRepeat}
               mode={mode}
-              onChange={(repeat: string) => {
+              onChange={(repeat: 'ONCE' | 'MONTHLY' | 'YEARLY') => {
                 if (mode !== 'update')
                   setValue('intervalUnit', repeat, {
                     shouldValidate: true,
@@ -522,17 +572,10 @@ const TransactionModal = ({
             <Button
               variant="primary"
               type="submit"
-              disabled={
-                !isValid ||
-                !isDirty ||
-                isCreating ||
-                isUpdating ||
-                isCreatingRepeat ||
-                (mode === 'update' && !isDirty)
-              }
+              disabled={!isValid || !isDirty || isCreating || isUpdating}
               className="w-[120px] h-[50px] sm:h-[36px] px-6 py-2 text-[14px] tracking-tight"
             >
-              {isCreating || isUpdating || isCreatingRepeat ? (
+              {isCreating || isUpdating ? (
                 <Spinner />
               ) : (
                 t('incomeModal.actions.save')

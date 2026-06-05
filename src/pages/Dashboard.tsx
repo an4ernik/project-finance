@@ -10,11 +10,11 @@ import {useGetTransactions} from '@/shared/api/generated/transaction-management/
 import {useMemo} from 'react';
 import type {CardItem, Transaction} from '@/types/types'; 
 import {DashboardSkeleton} from '@/components/skeletons/DashboardSkeleton';
-
+import SeedSettingsBlock from '../components/SeedSettingsBlock';
 function Dashboard() {
   const {t} = useTranslation();
-  const {data, isPending} = useGetTransactions();
-
+  const {data, isPending} = useGetTransactions({request: {limit: 100}});
+ 
   const transactions = useMemo(() => {
     return (Array.isArray(data) ? data : (data?.data ?? [])) as Transaction[];
   }, [data]);
@@ -82,6 +82,8 @@ function Dashboard() {
           <BalanceDynamicsChart />
         </div>
       )}
+
+      <SeedSettingsBlock />
     </AppLayout>
   );
 }

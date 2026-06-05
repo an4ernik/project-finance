@@ -26,7 +26,6 @@ import type {
 
 import type {
   ProblemDetail,
-  RecurringTransactionCreateRequestDTO,
   RecurringTransactionResponseDTO
 } from '../../models';
 
@@ -150,96 +149,6 @@ export function useGetRecurringTransactions<TData = Awaited<ReturnType<typeof ge
 
 
 /**
- * Creates a recurring transaction. Start date can be today or in the future. If the start date is today, the first transaction is created immediately. If the start date is in the future, the first transaction is scheduled for that date.
- * @summary Create recurring transaction
- */
-export type createRecurringTransactionResponse201 = {
-  data: RecurringTransactionResponseDTO
-  status: 201
-}
-
-export type createRecurringTransactionResponse400 = {
-  data: ProblemDetail
-  status: 400
-}
-    
-export type createRecurringTransactionResponseSuccess = (createRecurringTransactionResponse201) & {
-  headers: Headers;
-};
-export type createRecurringTransactionResponseError = (createRecurringTransactionResponse400) & {
-  headers: Headers;
-};
-
-export type createRecurringTransactionResponse = (createRecurringTransactionResponseSuccess | createRecurringTransactionResponseError)
-
-export const getCreateRecurringTransactionUrl = () => {
-
-
-  
-
-  return `/api/v1/recurring-transactions`
-}
-
-export const createRecurringTransaction = async (recurringTransactionCreateRequestDTO: RecurringTransactionCreateRequestDTO, options?: RequestInit): Promise<createRecurringTransactionResponse> => {
-  
-  return customInstance<createRecurringTransactionResponse>(getCreateRecurringTransactionUrl(),
-  {      
-    ...options,
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', ...options?.headers },
-    body: JSON.stringify(
-      recurringTransactionCreateRequestDTO,)
-  }
-);}
-
-
-
-
-export const getCreateRecurringTransactionMutationOptions = <TError = ErrorType<ProblemDetail>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createRecurringTransaction>>, TError,{data: RecurringTransactionCreateRequestDTO}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof createRecurringTransaction>>, TError,{data: RecurringTransactionCreateRequestDTO}, TContext> => {
-
-const mutationKey = ['createRecurringTransaction'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof createRecurringTransaction>>, {data: RecurringTransactionCreateRequestDTO}> = (props) => {
-          const {data} = props ?? {};
-
-          return  createRecurringTransaction(data,requestOptions)
-        }
-
-
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type CreateRecurringTransactionMutationResult = NonNullable<Awaited<ReturnType<typeof createRecurringTransaction>>>
-    export type CreateRecurringTransactionMutationBody = RecurringTransactionCreateRequestDTO
-    export type CreateRecurringTransactionMutationError = ErrorType<ProblemDetail>
-
-    /**
- * @summary Create recurring transaction
- */
-export const useCreateRecurringTransaction = <TError = ErrorType<ProblemDetail>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof createRecurringTransaction>>, TError,{data: RecurringTransactionCreateRequestDTO}, TContext>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof createRecurringTransaction>>,
-        TError,
-        {data: RecurringTransactionCreateRequestDTO},
-        TContext
-      > => {
-      return useMutation(getCreateRecurringTransactionMutationOptions(options), queryClient);
-    }
-    /**
  * Returns a recurring transaction owned by the authenticated user.
  * @summary Get recurring transaction by id
  */

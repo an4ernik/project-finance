@@ -124,6 +124,11 @@ export type ApiCategory = CategoryResponseDTO;
 
 // *for filters
 export type Period = 'all' | 'today' | 'week' | 'month' | 'year' | 'custom';
+
+export type PeriodOptions = {
+  val: Period;
+  icon: LucideIcon;
+};
 export type DateRange = {
   from: Date;
   to: Date;
@@ -140,7 +145,7 @@ export type Filters = {
 export type TransactionFiltersFormValues = {
   period?: Period;
   fromDate?: Date;
-  toDate?: Date;
+  toDate?: Date ;
   category?: string[];
   search?: string;
 };

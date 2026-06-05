@@ -19,24 +19,22 @@ import {useGetTransactions} from '@/shared/api/generated/transaction-management/
 import {endOfDay} from 'date-fns';
 import {useGetCurrencySign} from '@/shared/store/useCurrencySign';
 
-const calculateYAxisWidth = (min: number, max: number) => {
-  // Use the value with the most characters (either the lowest negative or highest positive)
+const calculateYAxisWidth = (min: number, max: number) => { 
   const extremeValue = Math.abs(min) > Math.abs(max) ? min : max;
 
   const formatted =
     Math.abs(extremeValue) >= 1000
       ? `${(extremeValue / 1000).toFixed(1)}K`
       : extremeValue.toString();
-
-  // Increase multiplier: ~9px per character + base padding
+ 
   const estimatedWidth = 15 + formatted.length * 3;
 
   return Math.min(Math.max(estimatedWidth, 50), 100);
 };
 
 const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
-  const {t} = useTranslation();
-  const {data} = useGetTransactions();
+  const {t} = useTranslation(); 
+  const {data} = useGetTransactions({request: {limit: 1000}});
   const CURRENCY_SIGN = useGetCurrencySign();
 
   const transactions = useMemo(() => {
@@ -113,8 +111,8 @@ const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
 
     if (activePeriod === 'year') {
       return Array.from({length: 12}, (_, m) => {
-        const monthStart = new Date(range.from.getFullYear(), m, 1);
-        const monthEnd = new Date(range.from.getFullYear(), m + 1, 0);
+        const monthStart = new Date(range.from.getFullYear(), m, 1) ;
+        const monthEnd = new Date(range.from.getFullYear(), m + 1, 0) ;
 
         if (monthStart > today) {
           return {

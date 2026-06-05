@@ -37,7 +37,7 @@ const ConfirmDeleteAccountModal: React.FC<ConfirmDeleteAccountModal> = ({
   return (
     <div className="fixed inset-0 w-full h-full z-50 overflow-y-auto flex justify-center items-start p-4 bg-black/40 backdrop-blur-sm animate-fade-in">
       {/* Modal Container */}
-      <div className="w-full max-w-[448px] my-auto rounded-3xl border border-zinc-800 p-6 shadow-2xl transition-colors duration-200 dark:border-zinc-800 bg-[#EEF3F2] dark:bg-[#142624] max-sm:p-5">
+      <div className="w-full max-w-[448px] my-auto rounded-3xl border border-zinc-800 p-3 sm:p-6 shadow-2xl transition-colors duration-200 dark:border-zinc-800 bg-[#EEF3F2] dark:bg-[#142624]">
         {/* Header */}
         <div className="flex items-center justify-between mb-5">
           <div className="flex items-center gap-3">

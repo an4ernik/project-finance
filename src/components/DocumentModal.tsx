@@ -19,8 +19,7 @@ const DocumentModal = ({isOpen, onClose, files}: DocumentModalProps) => {
   useEffect(() => {
     if (isOpen && files?.length) {
       setActiveFile(files[0]);
-    }
-    console.log('hello');
+    } 
   }, [isOpen, files]);
   const handleDownload = async () => {
     if (!activeFile) return;

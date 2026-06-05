@@ -5,21 +5,18 @@
  * REST API Documentation for MT Service
  * OpenAPI spec version: 1.0
  */
-import type { TransactionCreateRequestDTOIntervalUnit } from './transactionCreateRequestDTOIntervalUnit';
-import type { TransactionCreateRequestDTOType } from './transactionCreateRequestDTOType';
+import type { TransactionUpdateRequestDTOTransactionChangeScope } from './transactionUpdateRequestDTOTransactionChangeScope';
 
 /**
- * Create or update a one-time transaction. Date can be in the past or today, but not in the future.
+ * How to apply changes when the transaction belongs to a recurring rule.
  */
-export interface TransactionCreateRequestDTO {
+export interface TransactionUpdateRequestDTO {
   /**
    * Transaction amount, min 0.01 max 999_999_999_999.99
    * @minimum 0.01
    * @maximum 999999999999.99
    */
   amount: number;
-  /** Transaction type */
-  type: TransactionCreateRequestDTOType;
   /** Category ID */
   categoryId: number;
   /** Transaction date. For one-time transactions only past or today is allowed. */
@@ -28,6 +25,6 @@ export interface TransactionCreateRequestDTO {
   description?: string;
   /** Optional account ID. If omitted, the default account is used. */
   accountId?: number;
-  /** Interval unit for recurring transaction */
-  intervalUnit?: TransactionCreateRequestDTOIntervalUnit;
+  /** Transaction recurring scope */
+  transactionChangeScope?: TransactionUpdateRequestDTOTransactionChangeScope;
 }

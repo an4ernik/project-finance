@@ -13,8 +13,8 @@ const btnRepeatActive = cn(
 const REPEAT_INCOME_TYPES = ['ONCE', 'MONTHLY', 'YEARLY'] as const;
 
 type Props = {
-  value?: string;
-  onChange: (value: string) => void;
+  value?: "ONCE" | "MONTHLY" | "YEARLY";
+  onChange: (value: "ONCE" | "MONTHLY" | "YEARLY") => void;
   mode: 'create' | 'update';
 };
 
@@ -37,6 +37,7 @@ export const IncomeRepeatField = ({value, onChange, mode}: Props) => {
             onClick={() => onChange(type)}
             className={cn(
               'h-[47px] sm:h-[52px] tracking-tight text-dark-background cursor-pointer text-[12px] sm:text-[14px]',
+              value !== type && 'cursor-default!',
               value === type && btnRepeatActive,
             )}
           > 

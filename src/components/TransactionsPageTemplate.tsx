@@ -142,12 +142,14 @@ export function TransactionsPageTemplate({
           </span>
           <div
             className={cn(
-              'flex items-baseline gap-[10px] text-[24px] font-semibold' ,
+              'flex items-center justify-end gap-2.5 text-[24px] font-semibold min-w-0',
               totalColorClass,
             )}
           >
-            <span>{formattedAmount(totalAmount) || '0'}</span>
-            <span>{CURRENCY_SIGN}</span>
+            <span className="break-all min-w-0">
+              {formattedAmount(totalAmount) || '0'} 
+            </span>
+            <span className="shrink-0 self-end">{CURRENCY_SIGN}</span>
           </div>
         </div>
       </FiltersWrapper>

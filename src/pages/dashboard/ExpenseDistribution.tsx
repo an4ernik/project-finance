@@ -20,7 +20,7 @@ const EMPTY_DISTRIBUTION_ITEM = {
 };
 
 const ExpenseDonutChart = () => {
-  const {data} = useGetTransactions();
+  const {data} = useGetTransactions({request: {limit: 100}});
   const CURRENCY_SIGN = useGetCurrencySign();
 
 
@@ -48,6 +48,7 @@ const ExpenseDonutChart = () => {
 
     const today = new Date();
     today.setHours(23, 59, 59, 999);
+    
     const filtered = transactions.filter(item => {
       if (item.type !== 'EXPENSE') return false;
       if (!item.date) return false;

@@ -42,11 +42,11 @@ function AppLayout({title, subtitle, action, children}: AppLayoutProps) {
           <Menu className="size-5 text-[#0b1514] dark:text-[#eaf6f3]" />
         </button>
         <img src={SmallLogo} className="h-9.25" />
-        <div className="flex md:hidden items-center">
+        <div className="flex md:hidden items-center size-11 rounded-full">
           <img
             src={userData?.avatarUrl ? userData.avatarUrl : defaultAvatar}
             alt="avatar"
-            className="h-[29px] rounded-2xl"
+            className="h-full w-full object-cover"
           />
         </div>
       </header>

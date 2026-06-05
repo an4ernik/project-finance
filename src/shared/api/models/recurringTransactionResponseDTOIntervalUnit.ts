@@ -13,6 +13,7 @@ export type RecurringTransactionResponseDTOIntervalUnit = typeof RecurringTransa
 
 
 export const RecurringTransactionResponseDTOIntervalUnit = {
+  ONCE: 'ONCE',
   MONTHLY: 'MONTHLY',
   YEARLY: 'YEARLY',
 } as const;

@@ -26,6 +26,7 @@ import {
 import {useMe} from '@/shared/api/users/useMe';
 import {
   getGetUserProfileQueryKey,
+  useDeleteUser,
   useUpdateMe,
 } from '@/shared/api/generated/user-management/user-management';
 import {useUpdateEmail} from '@/shared/api/generated/user-identity/user-identity';
@@ -33,11 +34,11 @@ import {useQueryClient} from '@tanstack/react-query';
 import {UpdateUserProfileDTOCurrencyCode} from '@/shared/api/models/updateUserProfileDTOCurrencyCode';
 import type {ResponseUserDTO} from '@/shared/api/models';
 import {parseISO, format} from 'date-fns';
-import {useAuthStore} from '@/shared/store/useAuthStore';
 import ConfirmDeleteAccountModal from '@/components/ConfirmDeleteAccountModal';
-import axios from 'axios'; 
+import axios from 'axios';
 import {useSetCurrencySign} from '@/shared/store/useCurrencySign';
-import { useGetTransactions } from '@/shared/api/generated/transaction-management/transaction-management';
+import {useGetTransactions} from '@/shared/api/generated/transaction-management/transaction-management';
+import {useNavigate} from 'react-router-dom';
 
 const MAX_FILE_SIZE = 2 * 1024 * 1024;
 const ACCEPTED_IMAGE_TYPES = [
@@ -49,18 +50,18 @@ const ACCEPTED_IMAGE_TYPES = [
 
 function AccountSettings() {
   const {t} = useTranslation();
+  const {user, isLoading, refetch} = useMe();
+  const navigate = useNavigate();
 
-  const {data} = useGetTransactions();
+  const {mutateAsync: deleteUser} = useDeleteUser();
+  const {data} = useGetTransactions({request: {accountId: user?.id}});
   const transactions = useMemo(() => {
     if (Array.isArray(data)) return data;
     if (data && 'data' in data && Array.isArray(data.data)) return data.data;
     return [];
   }, [data]);
-
   const disabled = transactions.length > 0;
   const setCurrencySign = useSetCurrencySign();
-  const {logout} = useAuthStore();
-  const {user, isLoading, refetch} = useMe();
   const userData = user as ResponseUserDTO | undefined;
   const queryClient = useQueryClient();
   const {mutate: updateMe, isPending: isUpdatingProfile} = useUpdateMe();
@@ -276,8 +277,9 @@ function AccountSettings() {
   };
 
   const handleDeleteAccount = () => {
-    logout();
+    deleteUser();
     setIsOpenDeleteAccountModal(false);
+    navigate('/login');
   };
 
   return (
@@ -397,15 +399,17 @@ function AccountSettings() {
                 <Controller
                   disabled={disabled}
                   name="currencyCode"
-                  control={control} 
+                  control={control}
                   render={({field}) => (
                     <Select
                       disabled={disabled}
                       onValueChange={field.onChange}
                       value={field.value}
                     >
-                       
-                      <SelectTrigger className="w-full  data-disabled:cursor-default" disabled={disabled}>
+                      <SelectTrigger
+                        className="w-full  data-disabled:cursor-default"
+                        disabled={disabled}
+                      >
                         <SelectValue
                           placeholder={
                             userData?.currencyCode ||
@@ -443,8 +447,8 @@ function AccountSettings() {
           </FieldGroup>
         </form>
       </div>
-      <div className="w-full md:max-w-3/5 border-t sm:p-4 mt-6 flex gap-6 flex-col sm:flex-row items-center justify-between">
-        <div className="flex flex-col gap-3">
+      <div className="w-full lg:max-w-[80%] xl:max-w-[60%] border-t p-2 sm:p-4 mt-6 flex gap-6 flex-col sm:flex-row items-center justify-between">
+        <div className="flex flex-col sm:gap-3">
           <span className="text-base text-[#0B1514] dark:text-[#EAF6F3]">
             {t('settings.account.unsafeChanges.unsafeTitle')}
           </span>
