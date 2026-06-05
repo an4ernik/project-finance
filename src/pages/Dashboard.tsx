@@ -9,8 +9,7 @@ import BalanceDynamicsChart from './dashboard/BalanceDynamicsChart';
 import {useGetTransactions} from '@/shared/api/generated/transaction-management/transaction-management';
 import {useMemo} from 'react';
 import type {CardItem, Transaction} from '@/types/types'; 
-import {DashboardSkeleton} from '@/components/skeletons/DashboardSkeleton';
-import SeedSettingsBlock from '../components/SeedSettingsBlock';
+import {DashboardSkeleton} from '@/components/skeletons/DashboardSkeleton'; 
 function Dashboard() {
   const {t} = useTranslation();
   const {data, isPending} = useGetTransactions({request: {limit: 100}});
@@ -82,8 +81,6 @@ function Dashboard() {
           <BalanceDynamicsChart />
         </div>
       )}
-
-      <SeedSettingsBlock />
     </AppLayout>
   );
 }
