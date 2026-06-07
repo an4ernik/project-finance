@@ -72,11 +72,12 @@ export function TransactionsPageTemplate({
     type === 'INCOME'
       ? 'text-[#00AA85]'
       : 'text-[#FF7C02CC] dark:text-[#AA7D00]';
-
+ 
   return (
-    <AppLayout
+    <AppLayout 
       title={t(`${lowercaseType}.title`)}
       subtitle={t(`${lowercaseType}.subtitle`)}
+      className={cn(isManageOpen ? 'overflow-hidden' : 'overflow-y-auto', 'scrollbar-hide')}
       action={
         <CreateButtonsWrapper>
           <Button

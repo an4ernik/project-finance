@@ -60,6 +60,11 @@ const RemoveDialog = ({
 
   if (!isOpen || !item) return null;
 
+  const handleClose = () => {
+    onClose();
+    setDeleteAllFuture(false);
+  };
+
   const amount = formattedAmount(item.amount) || item.amount;
   const scope = deleteAllFuture ? 'THIS_AND_FUTURE' : 'ONLY_THIS';
 
@@ -67,7 +72,7 @@ const RemoveDialog = ({
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div
         className="absolute inset-0 bg-black/40 backdrop-blur-[4px] animate-in fade-in duration-200"
-        onClick={onClose}
+        onClick={handleClose}
       />
 
       <div
@@ -149,8 +154,8 @@ const RemoveDialog = ({
                 onChange={e => setDeleteAllFuture(e.target.checked)}
                 className={cn(
                   'peer appearance-none size-6 rounded-lg border transition-all cursor-pointer',
-                  'border-[#6F7E7C] dark:border-[#7F9E97] checked:bg-[#9c0505] checked:border-[#CE0000]',
-                  'hover:border-[#CE0000] dark:hover:border-[#CE0000] dark:checked:border-[#700808]',
+                  'border-[#6F7E7C] dark:border-[#7F9E97] checked:bg-linear-to-b from-[#C7000033] to-[#C700004D] checked:border-[#CE0000]',
+                  'hover:border-[#CE0000] dark:hover:border-[#c82e2e] dark:checked:border-[#700808]',
                 )}
               />
               {/* Checkmark Icon */}

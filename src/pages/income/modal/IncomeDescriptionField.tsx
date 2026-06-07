@@ -26,7 +26,7 @@ export const IncomeDescriptionField = ({register, inputValue = ''}: Props) => {
       <Textarea
         maxLength={MAX_LENGTH}
         {...register('description')}
-        className={cn('h-19 py-3 resize-none text-[14px] custom-scrollbar')}
+        className={cn('h-19 py-3 resize-none text-[14px] scrollbar-hide')}
         placeholder={t('incomeModal.fields.descriptionPlaceholder')}
       />
 

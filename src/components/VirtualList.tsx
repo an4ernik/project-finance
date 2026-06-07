@@ -2,7 +2,6 @@ import {useRef, useState, useEffect, useLayoutEffect, useMemo} from 'react';
 import {useVirtualizer} from '@tanstack/react-virtual';
 
 import VirtualItem from './VirtualItem';
-import Spinner from './Spinner';
 import {t} from 'i18next';
 import {toast} from 'sonner';
 import {useDeleteTransaction} from '@/shared/api/generated/transaction-management/transaction-management';
@@ -101,7 +100,7 @@ const VirtualList = ({type, formFilters, setTotalAmount}: VirtualListProps) => {
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000,
   });
-
+ 
   const {mutateAsync: deleteIncome} = useDeleteTransaction(mutationConfig);
 
   const parentRef = useRef<HTMLDivElement>(null);
@@ -359,9 +358,7 @@ const VirtualList = ({type, formFilters, setTotalAmount}: VirtualListProps) => {
                       }}
                     >
                       {isLoaderRow ? (
-                        <div className="flex justify-center items-center p-6 w-full text-[#02A078]">
-                          <Spinner />
-                        </div>
+                        <VirtualItemSkeleton />
                       ) : (
                         item && (
                           <VirtualItem
@@ -379,7 +376,7 @@ const VirtualList = ({type, formFilters, setTotalAmount}: VirtualListProps) => {
               </ul>
             )}
 
-            {isFilteredListEmpty && (
+            {isFilteredListEmpty && !isLoading && !isFetchingNextPage && (
               <NotAvailableTransactions
                 isNotLength={transactions.length > 0}
                 type={type}

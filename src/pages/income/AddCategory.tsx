@@ -117,7 +117,7 @@ function AddCategory({
     >
       <DialogContent
         showCloseButton={false}
-        className="w-[calc(100%-40px)] min-w-0 max-h-[90vh] overflow-y-auto sm:w-full rounded-[10px] border border-white/[0.14] p-5 bg-[#FAFAFA] dark:bg-[#142624] [box-shadow:var(--glass-shadow)] backdrop-blur-[24px] custom-scrollbar"
+        className="w-[calc(100%-40px)] min-w-0 max-h-[90vh] overflow-y-auto sm:w-full rounded-[10px] border border-white/[0.14] p-5 bg-[#FAFAFA] dark:bg-[#142624] [box-shadow:var(--glass-shadow)] backdrop-blur-[24px] scrollbar-hide"
       >
         <DialogHeader className="text-left">
           <div className="flex items-center justify-between">
@@ -127,7 +127,7 @@ function AddCategory({
             <button
               type="button"
               onClick={() => onOpenChange(false)}
-              className="flex size-9 items-center justify-center text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
+              className="flex items-center justify-center text-muted-foreground transition-colors hover:text-foreground cursor-pointer"
             >
               ✕
             </button>

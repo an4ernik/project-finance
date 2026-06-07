@@ -57,7 +57,7 @@ function Dashboard() {
       {isPending ? (
         <DashboardSkeleton />
       ) : (
-        <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch pb-3 custom-scrollbar">
+        <div className="w-full grid grid-cols-1 xl:grid-cols-2 gap-6 items-stretch pb-3 scrollbar-hide">
           {/* Finance Overview Section */}
           <FinanceOverview>
             {totals &&

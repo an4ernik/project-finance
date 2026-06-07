@@ -12,7 +12,7 @@ import {
   X,
 } from 'lucide-react';
 
-import {Tooltip, TooltipContent, TooltipTrigger} from '@/components/ui/tooltip'; 
+import {Tooltip, TooltipContent, TooltipTrigger} from '@/components/ui/tooltip';
 import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {toast} from 'sonner';
@@ -33,6 +33,9 @@ import CategoryActionDialog from './CategoryActionDialog';
 import EditCategory from './EditCategory';
 import {ICONS_BY_ID} from './IconPicker';
 import {TRANSACTION_THEMES} from '@/constances/constances';
+import {getGetTransactionsQueryKey} from '@/shared/api/generated/transaction-management/transaction-management';
+import MobileHeader from '@/components/MobileHeader';
+import SideBar from '@/components/ui/SideBar';
 
 type Props = {
   onClose: () => void;
@@ -46,12 +49,13 @@ function CategoriesManager({
   const {t, i18n} = useTranslation();
   const queryClient = useQueryClient();
 
-  const theme = TRANSACTION_THEMES[type];
+  const theme = TRANSACTION_THEMES[type]; 
 
   const [isArchive, setIsArchive] = useState(false);
   const [search, setSearch] = useState('');
   const [searchInput, setSearchInput] = useState('');
   const [isAddOpen, setIsAddOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [editingCategory, setEditingCategory] =
     useState<CategoryResponseDTO | null>(null);
   const [confirm, setConfirm] = useState<{
@@ -88,7 +92,7 @@ function CategoriesManager({
     type: [type],
     archived: false,
   });
- 
+
   const categories = Array.isArray(response)
     ? response
     : Array.isArray(response)
@@ -106,6 +110,9 @@ function CategoriesManager({
 
   const invalidateCategories = async () => {
     await queryClient.invalidateQueries({queryKey: getGetCategoriesQueryKey()});
+    await queryClient.invalidateQueries({
+      queryKey: getGetTransactionsQueryKey(),
+    });
   };
 
   const handleToggleArchive = async (category: CategoryResponseDTO) => {
@@ -163,7 +170,8 @@ function CategoriesManager({
 
   const actions = [
     !isArchive && {
-      key: 'edit',
+      key: t(`${type.toLocaleLowerCase()}.categories.tooltip.edit`),
+      title: 'edit',
       icon: Edit,
       onClick: (category: CategoryResponseDTO) => setEditingCategory(category),
       className:
@@ -171,7 +179,10 @@ function CategoriesManager({
     },
 
     {
-      key: 'archive',
+      key: isArchive
+        ? t(`${type.toLocaleLowerCase()}.categories.tooltip.restore`)
+        : t(`${type.toLocaleLowerCase()}.categories.tooltip.archive`),
+        title: 'archive',
       icon: isArchive ? ArchiveRestore : Archive,
       onClick: (category: CategoryResponseDTO) =>
         setConfirm({
@@ -183,7 +194,8 @@ function CategoriesManager({
     },
 
     {
-      key: 'delete',
+      key: t(`${type.toLocaleLowerCase()}.categories.tooltip.delete`),
+      title: 'delete',
       icon: Trash,
       onClick: (category: CategoryResponseDTO) => {
         setNeedsTransfer(false);
@@ -191,7 +203,7 @@ function CategoriesManager({
         setConfirm({action: 'delete', category});
       },
       className:
-        'flex p-2.5 sm:p-3.5 items-center justify-center rounded-[10px] bg-red-700 text-white',
+        'flex p-2.5 sm:p-3.5 items-center justify-center rounded-[10px] text-white',
     },
   ].filter(isAction);
 
@@ -204,12 +216,33 @@ function CategoriesManager({
   }, [searchInput]);
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center bg-black/40 backdrop-blur-[6.2px] p-4 overflow-y-auto custom-scrollbar">
+    <div className="fixed inset-0 z-50 flex gap-3 flex-col items-center justify-start bg-[#F2F2F2] md:bg-[#f2f2f282] dark:bg-[#0B1514] md:dark:bg-[#0b151469] md:backdrop-blur-[6.2px] md:p-6 overflow-y-auto scrollbar-hide">
+      <MobileHeader
+        onClick={() => setMenuOpen(true)}
+        className="sticky top-0 z-50 shrink-0"
+      />
+
+      <SideBar
+        variant="mobile"
+        isOpen={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        className="z-[210]"
+      />
+
+      <div className="flex md:hidden items-start flex-col px-[25px] mt-5 mb-5.5 self-start">
+        <h2 className="text-xl sm:text-2xl font-semibold">
+          {t(`${type.toLocaleLowerCase()}.title`)}
+        </h2>
+        <p className="text-sm text-muted-foreground">
+          {t(`${type.toLocaleLowerCase()}.subtitle`)}
+        </p>
+      </div>
+
       {/* MODAL CONTAINER */}
       <div
         className={cn(
-          'relative flex w-full min-h-[95dvh] max-w-[900px] flex-col rounded-2xl bg-[#EEF3F2] dark:bg-[#142624]',
-          '[box-shadow:0px_4px_4px_0px_rgba(75,75,75,0.2),inset_0px_1px_0px_0px_rgba(255,255,255,0.25)] px-3 sm:px-6 py-7',
+          'relative flex w-[calc(100%-3rem)] md:w-full max-w-[900px] h-auto min-h-[74dvh] flex-col rounded-2xl bg-[#EEF3F2] dark:bg-[#142624] shrink-0 mb-10',
+          '[box-shadow:0px_2px_2px_0px_rgba(75,75,75,0.2),inset_0px_1px_0px_0px_rgba(255,255,255,0.25)] px-3 sm:px-6 py-7',
         )}
       >
         {/* HEADER */}
@@ -281,7 +314,7 @@ function CategoriesManager({
         </p>
 
         {/* LIST */}
-        <div className="flex-1 custom-scrollbar">
+        <div className="flex-1">
           {isLoading ? (
             <div className="text-muted-foreground">{catT('loading')}</div>
           ) : visibleCategories.length > 0 ? (
@@ -342,41 +375,44 @@ function CategoriesManager({
 
                       {/* ACTIONS */}
                       <div className="flex items-center gap-2 shrink-0 ml-3">
-                        {actions.map(({key, icon: ActionIcon, onClick}) => {
-                          const isDelete = key === 'delete';
-                          const btnBg = isDelete
-                            ? theme.deleteIconBg
-                            : theme.editIconBg;
-                          const btnText = isDelete
-                            ? theme.deleteIconText
-                            : theme.editIconText;
+                        {actions.map(
+                          ({key,title, icon: ActionIcon, onClick, className}) => {
+                            const isDelete = title === 'delete';
+                            const btnBg = isDelete
+                              ? theme.deleteIconBg
+                              : theme.editIconBg;
+                            const btnText = isDelete
+                              ? theme.deleteIconText
+                              : theme.editIconText;
 
-                          return (
-                            <Tooltip key={key}>
-                              <TooltipTrigger asChild>
-                                <button
-                                  key={key}
-                                  onClick={() => onClick(category)}
-                                  className={cn(
-                                    'flex items-center justify-center p-2 rounded-lg transition-all cursor-pointer',
-                                    'animate-in fade-in slide-in-from-right-2 duration-200 [@media(hover:hover)]:hidden [@media(hover:hover)]:group-hover:flex',
-                                    '[@media(hover:none)]:text-[#0B1514] dark:[@media(hover:none)]:text-white',
-                                    btnBg,
-                                    btnText,
-                                  )}
+                            return (
+                              <Tooltip key={title}>
+                                <TooltipTrigger asChild>
+                                  <button
+                                    key={title}
+                                    onClick={() => onClick(category)}
+                                    className={cn(
+                                      'flex items-center justify-center p-2 rounded-lg transition-all cursor-pointer',
+                                      'animate-in fade-in slide-in-from-right-2 duration-200 [@media(hover:hover)]:hidden [@media(hover:hover)]:group-hover:flex',
+                                      '[@media(hover:none)]:text-[#0B1514] dark:[@media(hover:none)]:text-white',
+                                      className,
+                                      btnBg,
+                                      btnText,
+                                    )}
+                                  >
+                                    <ActionIcon className="size-4 sm:size-5" />
+                                  </button>
+                                </TooltipTrigger>
+                                <TooltipContent
+                                  sideOffset={1}
+                                  className="border text-[#3A4A48] dark:text-[#BFD9D2] bg-[#fafafa] fill-[#eef3f2] dark:bg-[#0f453c]"
                                 >
-                                  <ActionIcon className="size-4 sm:size-5" />
-                                </button>
-                              </TooltipTrigger>
-                              <TooltipContent
-                                sideOffset={1} 
-                                className="border text-[#3A4A48] dark:text-[#BFD9D2] bg-[#fafafa] fill-[#eef3f2] dark:bg-[#0f453c]"
-                              >
-                                <p>{key}</p> 
-                              </TooltipContent>
-                            </Tooltip>
-                          );
-                        })}
+                                  <p>{key.toLocaleLowerCase()}</p>
+                                </TooltipContent>
+                              </Tooltip>
+                            );
+                          },
+                        )}
                       </div>
                     </div>
                   );

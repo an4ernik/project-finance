@@ -47,16 +47,16 @@ const TransactionModal = ({
   const {t} = useTranslation();
 
   const queryClient = useQueryClient();
-const mutationConfig = {
-  mutation: {
-    onSuccess: () => { 
-      queryClient.resetQueries({
-        queryKey: ['/api/v1/transactions'],
-        exact: false,
-      });
+  const mutationConfig = {
+    mutation: {
+      onSuccess: () => {
+        queryClient.resetQueries({
+          queryKey: ['/api/v1/transactions'],
+          exact: false,
+        });
+      },
     },
-  },
-};
+  };
 
   const {mutateAsync: createIncome, isPending: isCreating} =
     useCreateTransaction(mutationConfig);
@@ -208,74 +208,10 @@ const mutationConfig = {
 
   const displayTitle = t(`incomeModal.title.${mode}.${type}`);
 
-  // const executeMutation = async (data: FormOutput, currentScope?: 'ONLY_THIS' | 'THIS_AND_FUTURE') => {
-  //   const reccuring = data.intervalUnit && data.intervalUnit !== 'ONCE';
-  //   try {
-  //     if (mode === 'create') {
-  //       await createIncome({
-  //         data: {
-  //           dto: {
-  //             amount: data.amount,
-  //             type: toTransactionDtoType(type),
-  //             categoryId: data.categoryId,
-  //             date: format(data.date, 'yyyy-MM-dd'),
-  //             description: data.description || '',
-  //             intervalUnit: data.intervalUnit,
-  //           },
-  //           receipts: data.file ?? undefined,
-  //         },
-  //       });
-  //       toast.success(t(`incomeModal.transaction.success.create.${type}`), {
-  //         id: 'success-create',
-  //       });
-  //     } else {
-  //       if (!initialData?.id) return;
-  //       if(reccuring) {
-  //         await updateIncome({
-  //           id: initialData.id,
-  //           data: {
-  //             amount: data.amount,
-  //             categoryId: data.categoryId,
-  //             date: format(data.date, 'yyyy-MM-dd'),
-  //             description: data.description || '',
-  //             transactionChangeScope: currentScope || scope,
-  //           },
-  //         });
-  //       }else{
-  //         await updateIncome({
-  //           id: initialData.id,
-  //           data: {
-  //             amount: data.amount,
-  //             categoryId: data.categoryId,
-  //             date: format(data.date, 'yyyy-MM-dd'),
-  //             description: data.description || '',
-  //           },
-  //         });
-  //       }
-
-  //       toast.success(t(`incomeModal.transaction.success.update.${type}`), {
-  //         id: 'success-update',
-  //       });
-  //     }
-
-  //     reset(getDefaultValues());
-  //     onClose();
-  //   } catch (error) {
-  //     console.error(error);
-  //     toast.error(t(`incomeModal.transaction.error.${mode}.${type}`), {
-  //       id: 'error',
-  //     });
-  //   } finally {
-  //     setShowInfoDialog(false);
-  //     setPendingData(null);
-  //   }
-  // };
   const executeMutation = async (
     data: FormOutput,
     currentScope?: 'ONLY_THIS' | 'THIS_AND_FUTURE',
   ) => {
-    // 🎯 ПРАВИЛЬНО: Перевіряємо, чи була ПОЧАТКОВА транзакція періодичною.
-    // Якщо initialData?.intervalUnit немає (наприклад, при створенні), безпечно перевіряємо дані форми.
     const isInitiallyRecurring =
       mode === 'update'
         ? initialData?.intervalUnit && initialData?.intervalUnit !== 'ONCE'
@@ -317,7 +253,6 @@ const mutationConfig = {
       } else {
         if (!initialData?.id) return;
 
-        // 🎯 Використовуємо нашу нову безпечну змінну
         if (isInitiallyRecurring) {
           await updateIncome({
             id: initialData.id,
@@ -330,7 +265,6 @@ const mutationConfig = {
             },
           });
         } else {
-          // Сюди потраплять ОДНОРАЗОВІ (ONCE) транзакції. Бекенд не отримає scope і не сваритиметься.
           await updateIncome({
             id: initialData.id,
             data: {
@@ -426,7 +360,7 @@ const mutationConfig = {
   }, [watchedRepeat, watchedDate, setValue, mode, initialData, prevRepeat]);
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto backdrop-blur-sm custom-scrollbar">
+    <div className="fixed inset-0 z-50 overflow-y-auto backdrop-blur-sm scrollbar-hide">
       <div className="min-h-full flex items-center justify-center p-3">
         <InfoDialog
           isOpen={showInfoDialog}
@@ -482,7 +416,7 @@ const mutationConfig = {
                     currentToday.getFullYear(),
                     currentToday.getMonth(),
                     1,
-                  ); 
+                  );
 
                   return d < startOfMonth || d > today;
                 }

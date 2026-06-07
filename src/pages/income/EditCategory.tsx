@@ -22,6 +22,7 @@ import {
 } from '@/shared/api/generated/category-management/category-management';
 
 import IconPicker from './IconPicker';
+import {getGetTransactionsQueryKey} from '@/shared/api/generated/transaction-management/transaction-management';
 
 type EditCategoryProps = {
   open: boolean;
@@ -66,8 +67,8 @@ function EditCategory({open, onOpenChange, category, type}: EditCategoryProps) {
 
   const handleSave = () => {
     const id = category?.id;
-    if(id === undefined) return;
-    
+    if (id === undefined) return;
+
     const trimmed = name.trim().slice(0, 25);
 
     if (!trimmed) {
@@ -92,6 +93,9 @@ function EditCategory({open, onOpenChange, category, type}: EditCategoryProps) {
         onSuccess: async () => {
           await queryClient.invalidateQueries({
             queryKey: getGetCategoriesQueryKey(),
+          });
+          await queryClient.invalidateQueries({
+            queryKey: getGetTransactionsQueryKey(),
           });
           toast.success(editT('success'));
           onOpenChange(false);

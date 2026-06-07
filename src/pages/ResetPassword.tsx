@@ -132,7 +132,7 @@ function ResetPassword() {
   };
 
   return (
-    <div className="relative flex h-screen w-full overflow-hidden bg-background">
+    <div className="relative flex h-screen w-full overflow-y-auto bg-background">
       <div className="absolute top-0 left-0 flex w-full h-dvh items-center justify-center">
         <div>
           <img src={vectors} alt="" className="w-full h-dvh object-cover" />

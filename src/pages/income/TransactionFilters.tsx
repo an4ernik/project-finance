@@ -424,7 +424,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
         <h2 className='text-[#BFD9D2]'>{t('incomeModal.filters.search.label')}</h2>
         <Input
           disabled={categories?.length === 0}
-          className="text-[#6F7E7C] shadow-md border-black/10 dark:border-white/10 dark:text-[#A9C1BB] placeholder:text-[#6F7E7C] dark:placeholder:text-[#A9C1BB] tracking-normal"
+          className="text-[#6F7E7C] dark:text-[#A9C1BB] placeholder:text-[#6F7E7C] dark:placeholder:text-[#A9C1BB] tracking-normal"
           icon={
             <Search className="size-5 text-[#0B1514] dark:text-[#EAF6F3]" />
           }
