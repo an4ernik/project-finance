@@ -80,7 +80,7 @@ function Landing() {
           <div className="relative w-1/2 flex items-center">
             <img src={heroImg} alt="Budget illustration" />
             <p className="mt-3 w-32 text-[16px] leading-[1.167] text-[#7f9e97] absolute left-9 lg:top-0 md:-top-5 ">
-              Без зайвого. Лише важливе.
+              {t('landing.hero.pigTitle')}
             </p>
           </div>
 

@@ -128,7 +128,7 @@
         "transferLabel": "Transfer to category",
         "transferPlaceholder": "Select category"
       },
-      "tooltip":{
+      "tooltip": {
         "archive": "Archive",
         "restore": "Restore",
         "delete": "Delete",
@@ -179,7 +179,7 @@
       "createNew": "Add new category",
       "loading": "Loading...",
       "categoryType": "Expense categories",
-      "archivedTitle": "Archived categories", 
+      "archivedTitle": "Archived categories",
       "typeExpense": "Expenses",
       "emptyTitle": "You don't have any categories yet.",
       "emptySubtitle": "Create your first category to get started.",
@@ -202,7 +202,7 @@
         "transferLabel": "Transfer to category",
         "transferPlaceholder": "Select category"
       },
-      "tooltip":{
+      "tooltip": {
         "archive": "Archive",
         "restore": "Restore",
         "delete": "Delete",
@@ -441,10 +441,9 @@
       "cta": "Start controlling your budget",
       "ctaNote1": "Free.",
       "ctaNote2": "Start today",
-      "sideNote1": "Nothing extra.",
-      "sideNote2": "Only what matters.",
       "kicker1": "From chaos",
-      "kicker2": "To control"
+      "kicker2": "To control",
+      "pigTitle": "No clutter. Only what matters."
     },
     "about": {
       "titleAccent": "Finance,",
