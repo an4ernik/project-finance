@@ -76,7 +76,7 @@ function AccountSettings() {
   useEffect(() => {
     if (userData) {
       setCurrencySign(
-        userData.currencyCode as UpdateUserProfileDTOCurrencyCode,
+        userData.currencyCode as RequestUpdateUserProfileDTOCurrencyCode,
       );
     }
   }, [userData, setCurrencySign]);

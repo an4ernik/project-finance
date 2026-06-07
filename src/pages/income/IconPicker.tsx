@@ -39,7 +39,6 @@ export const ICON_OPTIONS: IconOption[] = [
   {id: 'DATABASE', Icon: DatabaseBackup},
 ];
 
-
 export const ICONS_BY_ID = ICON_OPTIONS.reduce<Record<string, LucideIcon>>(
   (acc, item) => {
     acc[item.id] = item.Icon;
@@ -77,31 +76,30 @@ function IconPicker({
     <div
       role="radiogroup"
       className={cn(
-        ' grid sm:grid-cols-7 gap-3 sm:gap-5', 
-        className, 
-        columnsClass
+        ' grid sm:grid-cols-7 gap-3 sm:gap-5',
+        className,
+        columnsClass,
       )}
     >
-      {ICON_OPTIONS.map(({id, Icon}) => { 
+      {ICON_OPTIONS.map(({id, Icon}) => {
         const isActive = value === id;
         return (
           <button
             key={id}
             type="button"
-            role="radio" 
+            role="radio"
             aria-checked={isActive}
             onClick={() => onChange(id)}
-            className={cn( 
-                  'sm:justify-self-center flex-1 flex justify-center items-center rounded-lg border p-3 sm:size-12 transition-all shadow-md cursor-pointer',
-                  'bg-linear-to-b from-[#0B151403] via-[#315F551A] to-[#90D0B60D]',
-                  'border-[#9AA7A5] shadow-[#4B4B4B40]',
-                  'dark:border-[#183f35] dark:shadow-[#1d2f1c]',
-                      isActive
-                ? 'border bg-[#00AA854D]'
-                : 'border bg-white/5 hover:bg-white/10', 
-                
-                buttonClassName,
-                )} 
+            className={cn(
+              'sm:justify-self-center flex-1 flex justify-center items-center rounded-lg border p-3 sm:size-12 transition-all shadow-md cursor-pointer',
+              'bg-linear-to-b from-[#0B151403] via-[#315F551A] to-[#90D0B60D] backdrop-blur-sm',
+              'border-[#9AA7A5] shadow-[#4B4B4B40]',
+              'dark:border-[#183f35] dark:shadow-[#1d2f1c]',
+              isActive
+                ? 'border-emerald-400 bg-emerald-500/20'
+                : 'border-white/30 bg-white/5 hover:bg-white/10',
+              buttonClassName,
+            )}
           >
             <Icon className={cn('size-10 text-foreground', iconClassName)} />
           </button>

@@ -440,7 +440,11 @@
       "subtitle": "One space for all your finances.",
       "cta": "Start controlling your budget",
       "ctaNote1": "Free.",
-      "ctaNote2": "Start today"
+      "ctaNote2": "Start today",
+      "sideNote1": "Nothing extra.",
+      "sideNote2": "Only what matters.",
+      "kicker1": "From chaos",
+      "kicker2": "To control"
     },
     "about": {
       "titleAccent": "Finance,",
