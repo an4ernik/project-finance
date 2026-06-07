@@ -127,19 +127,19 @@ function ForgotPassword() {
         },
       },
     );
-  };
+  }; 
+
   return (
-    <div className="relative flex h-screen w-full overflow-hidden bg-background">
-      <div className="absolute top-0 left-0 flex w-full h-dvh items-center justify-center">
-        <div>
-          <img src={vectors} alt="" className="w-full h-dvh object-cover" />
-        </div>
+    <div className="relative flex min-h-screen w-full max-w-[2060px] mx-auto flex-col items-center justify-center overflow-y-auto bg-background p-4 md:p-0">
+      <div className="fixed inset-0 flex max-w-[2060px] mx-auto w-full h-full items-center justify-center ">
+        <img src={vectors} alt="" className="w-full h-full object-cover" />
       </div>
 
+    {/* modal */}
       <div
-        className={cn(
-          'absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2',
-          'flex w-171.75 flex-col items-start justify-center gap-9 rounded-[10px] px-12.5 py-30',
+        className={cn( 
+          'w-full max-w-[690px]   flex flex-col items-start justify-center gap-9 rounded-[10px] px-6 py-10 md:px-12.5 md:py-30',
+ 
           'border border-white/[0.14] backdrop-blur-lg',
           'bg-linear-to-b from-[rgba(11,21,20,0.03)] via-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)]',
           'shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)]',
@@ -149,16 +149,17 @@ function ForgotPassword() {
         {!emailSent ? (
           <>
             <div className="flex w-full flex-col gap-5.5">
-              <div className="flex flex-col gap-9.5">
-                <div className="flex flex-col gap-2">
-                  <p className="text-[34px] font-bold leading-[1.167] tracking-[-1.5px] text-foreground">
+              <div className="flex flex-col gap-6 md:gap-9.5"> 
+                <div className="flex flex-col gap-2.5">
+                  <p className="text-2xl sm:text-3xl md:text-[34px] font-bold leading-[1.167] tracking-[-1.5px] text-foreground">
                     {t('forgotPassword.title1')}
                   </p>
-                  <p className="text-[34px] font-bold leading-[1.167] tracking-[-1.5px] text-foreground">
+                  <p className="text-2xl sm:text-3xl md:text-[34px] font-bold leading-[1.167] tracking-[-1.5px] text-foreground">
                     {t('forgotPassword.title2')}
                   </p>
                 </div>
-                <p className="text-[20px] font-medium leading-[1.167] text-muted-foreground whitespace-pre-wrap">
+
+                <p className="text-base md:text-[20px] font-medium leading-[1.167] text-muted-foreground whitespace-pre-wrap">
                   {t('forgotPassword.subtitle')}
                 </p>
               </div>
@@ -178,7 +179,11 @@ function ForgotPassword() {
                     {...register('email')}
                   />
 
-                  <Button type="submit" disabled={isPending || !isValid}>
+                  <Button
+                    type="submit"
+                    disabled={isPending || !isValid}
+                    className="w-full"
+                  >
                     {isPending
                       ? t('forgotPassword.loading')
                       : t('forgotPassword.sendButton')}
@@ -186,9 +191,9 @@ function ForgotPassword() {
                 </form>
               </div>
             </div>
-
-            <div className="flex w-full items-center justify-center gap-7">
-              <p className="text-[14px] leading-[1.167] tracking-[-1.5px] text-(--text-tertiary)/80">
+ 
+            <div className="flex flex-col sm:flex-row w-full items-center justify-center gap-3 sm:gap-7 pt-4 border-t border-white/10">
+              <p className="text-[14px] leading-[1.167] tracking-[-1.5px] text-(--text-tertiary)/80 text-center">
                 {t('forgotPassword.rememberPassword')}
               </p>
               <Link
@@ -203,7 +208,7 @@ function ForgotPassword() {
                 }}
               >
                 {t('forgotPassword.loginLink')}
-                <div className="flex items-center justify-center p-1">
+                <div className="flex items-center justify-center p-1 shrink-0">
                   <img
                     src={arrow}
                     alt="arrow to login"
@@ -214,7 +219,7 @@ function ForgotPassword() {
               </Link>
             </div>
           </>
-        ) : (
+        ) : ( 
           <ResetConfirmationModal timeLeft={timeLeft} onResend={handleResend} />
         )}
       </div>
