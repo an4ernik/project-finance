@@ -127,6 +127,12 @@
         "deleteTransferDescription": "This category is used in transactions. Select a new category to move the transactions.",
         "transferLabel": "Transfer to category",
         "transferPlaceholder": "Select category"
+      },
+      "tooltip":{
+        "archive": "Archive",
+        "restore": "Restore",
+        "delete": "Delete",
+        "edit": "Edit"
       }
     },
     "addCategory": {
@@ -195,6 +201,12 @@
         "deleteTransferDescription": "This category is used in transactions. Select a new category to move the transactions.",
         "transferLabel": "Transfer to category",
         "transferPlaceholder": "Select category"
+      },
+      "tooltip":{
+        "archive": "Archive",
+        "restore": "Restore",
+        "delete": "Delete",
+        "edit": "Edit"
       }
     },
     "actions": {

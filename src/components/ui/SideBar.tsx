@@ -46,9 +46,15 @@ type SideBarProps = {
   variant?: 'desktop' | 'mobile';
   isOpen?: boolean;
   onClose?: () => void;
+  className?: string;
 };
 
-function SideBar({variant = 'desktop', isOpen = false, onClose}: SideBarProps) {
+function SideBar({
+  variant = 'desktop',
+  isOpen = false,
+  onClose,
+  className,
+}: SideBarProps) {
   const {t} = useTranslation();
   const logout = useAuthStore(set => set.logout);
   const queryClient = useQueryClient();
@@ -68,12 +74,13 @@ function SideBar({variant = 'desktop', isOpen = false, onClose}: SideBarProps) {
         'sm:w-full md:w-[120px] lg:w-[305px] min-h-full flex-col shrink-0 rounded-[10px] transition-all duration-300',
         variant === 'desktop' && 'hidden md:flex',
         variant === 'mobile' &&
-          'w-full fixed left-0 top-0 z-50 flex h-full -translate-x-full md:hidden',
-        variant === 'mobile' && isOpen && 'translate-x-0',
+          'w-full fixed left-0 top-0 flex h-full -translate-x-full md:hidden z-[100]! pointer-events-none',
+        variant === 'mobile' && isOpen && 'translate-x-0 pointer-events-auto',
         'border border-white/[0.14] backdrop-blur-lg',
         'bg-linear-to-b from-[rgba(11,21,20,0.03)] via-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)]',
-        'shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)]',
-        '[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_rgba(0,0,0,0.2)]',
+        'm:shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)]',
+        'md:[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_rgba(0,0,0,0.2)]',
+        className,
       )}
     >
       {/* Logo container: hide on md, show on lg and sm */}
@@ -91,7 +98,6 @@ function SideBar({variant = 'desktop', isOpen = false, onClose}: SideBarProps) {
       </div>
 
       <div className="flex-1 flex flex-col justify-between overflow-hidden">
-   
         <ul className="flex flex-col items-start md:items-center lg:items-start px-[70px] md:px-3  space-y-[4px]">
           {SIDEBAR_LINKS.map(link => (
             <NavItem
@@ -102,7 +108,7 @@ function SideBar({variant = 'desktop', isOpen = false, onClose}: SideBarProps) {
             />
           ))}
         </ul>
- 
+
         <div className="pb-[40px] flex flex-col gap-[20px] items-start md:items-center lg:items-start">
           <ul className="space-y-[4px] w-full px-[70px] md:px-0">
             <li className="flex items-center justify-start md:justify-center lg:justify-start gap-[12px] pl-[16px]md:pl-0 lg:pl-[16px] py-[10px] text-muted-foreground">
@@ -122,7 +128,7 @@ function SideBar({variant = 'desktop', isOpen = false, onClose}: SideBarProps) {
               </span>
             </li>
           </ul>
- 
+
           <div className="flex flex-row md:flex-col lg:flex-row items-center gap-[16px] px-[60px] md:px-3 lg:px-[30px]">
             <ThemeToggle />
             <LangSelect />

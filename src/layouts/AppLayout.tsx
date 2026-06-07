@@ -4,20 +4,26 @@ import SideBar from '@/components/ui/SideBar';
 import {useMe} from '@/shared/api/users/useMe';
 import defaultAvatar from '@/assets/default-photo.png';
 import type {UserResponseDTO} from '@/shared/api/models';
-import {Menu} from 'lucide-react';
 import {useState} from 'react';
-import SmallLogo from '@/assets/icons/small-logo.svg';
 import {paths} from '@/constances/constances';
-import {cn} from '@/lib/utils'; 
+import {cn} from '@/lib/utils';
+import MobileHeader from '@/components/MobileHeader';
 
 type AppLayoutProps = {
   title?: React.ReactNode;
   subtitle?: React.ReactNode;
   action?: React.ReactNode;
   children?: React.ReactNode;
+  className?: string;
 };
 
-function AppLayout({title, subtitle, action, children}: AppLayoutProps) {
+function AppLayout({
+  title,
+  subtitle,
+  action,
+  children,
+  className,
+}: AppLayoutProps) {
   const {pathname: location} = useLocation();
   const isNotExistingRoute = paths.includes(location);
 
@@ -27,29 +33,20 @@ function AppLayout({title, subtitle, action, children}: AppLayoutProps) {
   const resolvedTitle = title ?? t('settings.welcomeBack');
   const resolvedSubtitle = subtitle ?? t('settings.welcomeSubtitle');
   const [menuOpen, setMenuOpen] = useState(false);
-
+ 
   return (
     <div
-      className={` max-w-[2060px] mx-auto relative flex h-screen bg-background text-foreground scrollbar-hide ${
-        menuOpen ? 'overflow-hidden' : 'overflow-y-auto'
-      }`}
+      className={cn(
+        ` max-w-[2060px] mx-auto relative flex h-screen bg-background text-foreground scrollbar-hide ${
+          menuOpen ? 'overflow-hidden' : 'overflow-y-auto'
+        }`,
+        className,
+      )}
     >
-      <header className="absolute top-0 left-0 right-0 flex md:hidden items-center justify-between z-30 px-6 h-16.25 bg-[--light-background] dark:bg-[#0b1514] [box-shadow:0px_4px_4px_0px_rgba(75,75,75,0.2),inset_0px_1px_0px_0px_rgba(255,255,255,0.25)]">
-        <button
-          onClick={() => setMenuOpen(prev => !prev)}
-          className="flex items-center justify-center size-12.5 rounded-xl border border-white/30 backdrop-blur-lg bg-linear-to-b from-[rgba(11,21,20,0.01)] via-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_4px_4px_0px_rgba(75,75,75,0.2)]"
-        >
-          <Menu className="size-5 text-[#0b1514] dark:text-[#eaf6f3]" />
-        </button>
-        <img src={SmallLogo} className="h-9.25" />
-        <div className="flex md:hidden items-center size-11 rounded-full">
-          <img
-            src={userData?.avatarUrl ? userData.avatarUrl : defaultAvatar}
-            alt="avatar"
-            className="h-full w-full object-cover"
-          />
-        </div>
-      </header>
+      <MobileHeader
+        onClick={() => setMenuOpen(true)}
+        className="absolute top-0 left-0 right-0"
+      />
 
       {menuOpen && (
         <div
@@ -63,9 +60,10 @@ function AppLayout({title, subtitle, action, children}: AppLayoutProps) {
         variant="mobile"
         isOpen={menuOpen}
         onClose={() => setMenuOpen(false)}
+        className="z-[200]"
       />
 
-      <div className="flex h-auto sm:h-full min-h-0 flex-1 flex-col overflow-y-auto custom-scrollbar py-[33.5px] px-[25px] md:pr-[50px] pt-16.25 md:pt-0">
+      <div className="flex h-auto sm:h-full min-h-0 flex-1 flex-col overflow-y-auto scrollbar-hide py-[33.5px] px-[25px] md:pr-[50px] pt-16.25 md:pt-0">
         <div
           className={cn(
             'mt-[35px] w-full',
@@ -75,6 +73,7 @@ function AppLayout({title, subtitle, action, children}: AppLayoutProps) {
             'md:grid md:grid-cols-2 md:gap-y-4 md:items-center',
             // LG: Single Row Flex
             'xl:flex xl:flex-row xl:justify-between xl:gap-6',
+            !isNotExistingRoute && 'xl:justify-end',
           )}
         >
           {/* TITLE SECTION */}
@@ -90,14 +89,20 @@ function AppLayout({title, subtitle, action, children}: AppLayoutProps) {
           )}
 
           {/* AVATAR SECTION */}
-          <div className="hidden md:flex items-center gap-2 md:col-start-2 md:row-start-1 md:justify-self-end lg:order-3">
-            <img
-              src={userData?.avatarUrl || defaultAvatar}
-              alt="avatar"
-              className="h-[29px] w-[29px] rounded-full object-cover"
-            />
+          <div
+            className={cn(
+              'hidden md:flex items-center gap-2 md:col-start-2 md:row-start-1 md:justify-self-end lg:order-3',
+            )}
+          >
+            <div className="flex items-center justify-center size-[29px] rounded-full overflow-hidden">
+              <img
+                src={userData?.avatarUrl || defaultAvatar}
+                alt="avatar"
+                className="w-full h-full object-cover "
+              />
+            </div>
             <p className="whitespace-nowrap">
-              {userData?.fullName ?? t('layout.userName')}
+              {userData && userData?.fullName}
             </p>
           </div>
 
@@ -115,8 +120,8 @@ function AppLayout({title, subtitle, action, children}: AppLayoutProps) {
           </div>
         </div>
 
-        <main className="mt-[15px] min-h-0 flex-1 custom-scrollbar"> 
-            {children ?? <Outlet />} 
+        <main className="mt-[15px] min-h-0 flex-1 scrollbar-hide">
+          {children ?? <Outlet />}
         </main>
       </div>
     </div>

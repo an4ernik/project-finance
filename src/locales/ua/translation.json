@@ -130,6 +130,12 @@
         "deleteTransferDescription": "Ця категорія використовується. Виберіть нову категорію для перенесення транзакцій.",
         "transferLabel": "Перенести до категорії",
         "transferPlaceholder": "Виберіть категорію"
+      },
+      "tooltip": {
+        "archive": "Аріхівувати",
+        "restore": "Відновити",
+        "delete": "Видалити",
+        "edit": "Редагувати"
       }
     },
     "addCategory": {
@@ -176,7 +182,7 @@
       "createNew": "Створити нову категорію",
       "loading": "Завантаження...",
       "categoryType": "Категорії витрат",
-      "archivedTitle": "Категорії в архіві", 
+      "archivedTitle": "Категорії в архіві",
       "typeExpense": "Витрати",
       "categoryExpense": "Витрати",
       "emptyTitle": "У вас ще немає категорій.",
@@ -199,6 +205,12 @@
         "deleteTransferDescription": "Ця категорія використовується. Виберіть нову категорію для перенесення транзакцій.",
         "transferLabel": "Перенести до категорії",
         "transferPlaceholder": "Виберіть категорію"
+      },
+      "tooltip": {
+        "archive": "Аріхівувати",
+        "restore": "Відновити",
+        "delete": "Видалити",
+        "edit": "Редагувати"
       }
     },
     "actions": {

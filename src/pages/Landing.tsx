@@ -26,7 +26,7 @@ function Landing() {
   const security = getSecurity(t);
 
   return (
-    <div className="bg-[--light-background] dark:bg-[--dark-background] overflow-x-hidden custom-scrollbar">
+    <div className="bg-[--light-background] dark:bg-[--dark-background] overflow-x-hidden scrollbar-hide">
       <section className="relative overflow-hidden">
         <Header />
         {/* Mobile hero */}

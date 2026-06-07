@@ -6,13 +6,28 @@
 html,
 body,
 #root {
-  height: 100%;
-  /* Don't disable page scrolling globally; layouts/components can opt-in to overflow control. */
   overflow-x: hidden;
-
+  width: 100%;
+  height: 100%
 }
 
-@layer utilities {
+/* Застосовуємо приховування до всієї сторінки та кореня застосунку */
+html,
+body,
+#root {
+  /* 1. Для Chrome, Safari, Opera та нових версій Edge (WebKit рушій) */
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* 2. Для Firefox */
+  scrollbar-width: none;
+
+  /* 3. Для старих версій Internet Explorer та Edge */
+  -ms-overflow-style: none;
+}
+
+/* @layer utilities {
   .scrollbar-hide::-webkit-scrollbar {
     display: none;
   }
@@ -21,8 +36,7 @@ body,
     -ms-overflow-style: none;
     scrollbar-width: none;
   }
-
-  /* Custom Scrollbar */
+ 
   .custom-scrollbar::-webkit-scrollbar {
     width: 5px;
   }
@@ -34,12 +48,55 @@ body,
 
   .custom-scrollbar::-webkit-scrollbar-thumb {
     background: #162e27;
-    border-radius: 10px;
-    /* border: 1px solid #315f55; */
+    border-radius: 10px; 
   }
 
   .custom-scrollbar::-webkit-scrollbar-thumb:hover {
     background: #081a16;
+  }
+} */
+
+@layer utilities {
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  /* 🌟 Адаптивний Custom Scrollbar */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 5px;
+    height: 5px; /* додаємо для горизонтального скролу, якщо знадобиться */
+  }
+
+  /* ТРЕК (Фон скролбару) */
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: #e8e9e9; /* Світла тема: ніжно-сірий */
+    border-radius: 10px;
+  }
+  .dark .custom-scrollbar::-webkit-scrollbar-track {
+    background: #0b1514; /* Темна тема: твій оригінальний колір */
+  }
+
+  /* ПОВЗУНОК (Тумба скролбару) */
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #bcbfbe; /* Світла тема: помірно сірий */
+    border-radius: 10px; 
+    transition: background 0.2s ease;
+  }
+  .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #162e27; /* Темна тема: твій оригінальний зелений */
+  }
+
+  /* ХОВЕР ПОВЗУНКА */
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #a3a7a6; /* Світла тема (ховер): трохи темніший сірий */
+  }
+  .dark .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: #081a16; /* Темна тема (ховер) */
   }
 }
 
@@ -55,7 +112,8 @@ body,
   --dark-accent-secondary: #315e55;
 
   /* === LIGHT THEME === */
-  --light-background: #f2f2f2;
+  --header-bg: #fafafa;
+  --light-background: #f2f2f2; 
   --light-background-secondary: #fafafa;
   --light-text-primary: #0b1514;
   --light-text-secondary: #3a4a48;
@@ -168,6 +226,12 @@ body,
 }
 
 .dark {
+  --header-bg: linear-gradient(
+    to bottom, 
+    rgba(11, 21, 20, 0.03), 
+    rgba(49, 95, 85, 0.1), 
+    rgba(144, 208, 182, 0.05)
+  );
   --background: var(--dark-background);
   --foreground: var(--dark-text-primary);
   --card: var(--dark-background-secondary);

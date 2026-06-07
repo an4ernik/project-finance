@@ -283,7 +283,7 @@ function AccountSettings() {
   };
 
   return (
-    <section className="h-full min-h-0 px-6 py-6 text-foreground custom-scrollbar">
+    <section className="h-full min-h-0 px-6 py-6 text-foreground scrollbar-hide">
       <ConfirmDeleteAccountModal
         isOpen={isOpenDeleteAccountModal}
         onClose={() => setIsOpenDeleteAccountModal(false)}
