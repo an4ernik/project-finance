@@ -150,108 +150,6 @@ export function useGetUserProfile<TData = Awaited<ReturnType<typeof getUserProfi
 
 
 /**
- * Updates the current user's profile data and optional avatar.
- * @summary Update user's profile
- */
-export type updateMeResponse200 = {
-  data: ResponseUserDTO
-  status: 200
-}
-
-export type updateMeResponse400 = {
-  data: ProblemDetail
-  status: 400
-}
-
-export type updateMeResponse404 = {
-  data: ProblemDetail
-  status: 404
-}
-    
-export type updateMeResponseSuccess = (updateMeResponse200) & {
-  headers: Headers;
-};
-export type updateMeResponseError = (updateMeResponse400 | updateMeResponse404) & {
-  headers: Headers;
-};
-
-export type updateMeResponse = (updateMeResponseSuccess | updateMeResponseError)
-
-export const getUpdateMeUrl = () => {
-
-
-  
-
-  return `/api/v1/users/me`
-}
-
-export const updateMe = async (updateMeBody: UpdateMeBody, options?: RequestInit): Promise<updateMeResponse> => {
-    const formData = new FormData();
-if(updateMeBody.dto !== undefined) {
- formData.append(`dto`, new Blob([JSON.stringify(updateMeBody.dto)], { type: 'application/json' }));
- }
-if(updateMeBody.avatar !== undefined) {
- formData.append(`avatar`, updateMeBody.avatar);
- }
-
-  return customInstance<updateMeResponse>(getUpdateMeUrl(),
-  {      
-    ...options,
-    method: 'PUT'
-    ,
-    body: 
-      formData,
-  }
-);}
-
-
-
-
-export const getUpdateMeMutationOptions = <TError = ErrorType<ProblemDetail>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateMe>>, TError,{data: UpdateMeBody}, TContext>, request?: SecondParameter<typeof customInstance>}
-): UseMutationOptions<Awaited<ReturnType<typeof updateMe>>, TError,{data: UpdateMeBody}, TContext> => {
-
-const mutationKey = ['updateMe'];
-const {mutation: mutationOptions, request: requestOptions} = options ?
-      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
-      options
-      : {...options, mutation: {...options.mutation, mutationKey}}
-      : {mutation: { mutationKey, }, request: undefined};
-
-      
-
-
-      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateMe>>, {data: UpdateMeBody}> = (props) => {
-          const {data} = props ?? {};
-
-          return  updateMe(data,requestOptions)
-        }
-
-
-
-        
-
-
-  return  { mutationFn, ...mutationOptions }}
-
-    export type UpdateMeMutationResult = NonNullable<Awaited<ReturnType<typeof updateMe>>>
-    export type UpdateMeMutationBody = UpdateMeBody
-    export type UpdateMeMutationError = ErrorType<ProblemDetail>
-
-    /**
- * @summary Update user's profile
- */
-export const useUpdateMe = <TError = ErrorType<ProblemDetail>,
-    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateMe>>, TError,{data: UpdateMeBody}, TContext>, request?: SecondParameter<typeof customInstance>}
- , queryClient?: QueryClient): UseMutationResult<
-        Awaited<ReturnType<typeof updateMe>>,
-        TError,
-        {data: UpdateMeBody},
-        TContext
-      > => {
-      return useMutation(getUpdateMeMutationOptions(options), queryClient);
-    }
-    /**
  * Deletes the currently authenticated user account and all associated data (accounts, transactions, categories, recurring transactions, receipt images, etc.). This operation is irreversible.
  * @summary Delete current user account
  */
@@ -332,5 +230,107 @@ export const useDeleteUser = <TError = ErrorType<unknown>,
         TContext
       > => {
       return useMutation(getDeleteUserMutationOptions(options), queryClient);
+    }
+    /**
+ * Updates the current user's profile data and optional avatar.
+ * @summary Update user's profile
+ */
+export type updateMeResponse200 = {
+  data: ResponseUserDTO
+  status: 200
+}
+
+export type updateMeResponse400 = {
+  data: ProblemDetail
+  status: 400
+}
+
+export type updateMeResponse404 = {
+  data: ProblemDetail
+  status: 404
+}
+    
+export type updateMeResponseSuccess = (updateMeResponse200) & {
+  headers: Headers;
+};
+export type updateMeResponseError = (updateMeResponse400 | updateMeResponse404) & {
+  headers: Headers;
+};
+
+export type updateMeResponse = (updateMeResponseSuccess | updateMeResponseError)
+
+export const getUpdateMeUrl = () => {
+
+
+  
+
+  return `/api/v1/users/me`
+}
+
+export const updateMe = async (updateMeBody: UpdateMeBody, options?: RequestInit): Promise<updateMeResponse> => {
+    const formData = new FormData();
+if(updateMeBody.dto !== undefined) {
+ formData.append(`dto`, new Blob([JSON.stringify(updateMeBody.dto)], { type: 'application/json' }));
+ }
+if(updateMeBody.avatar !== undefined) {
+ formData.append(`avatar`, updateMeBody.avatar);
+ }
+
+  return customInstance<updateMeResponse>(getUpdateMeUrl(),
+  {      
+    ...options,
+    method: 'PATCH'
+    ,
+    body: 
+      formData,
+  }
+);}
+
+
+
+
+export const getUpdateMeMutationOptions = <TError = ErrorType<ProblemDetail>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateMe>>, TError,{data: UpdateMeBody}, TContext>, request?: SecondParameter<typeof customInstance>}
+): UseMutationOptions<Awaited<ReturnType<typeof updateMe>>, TError,{data: UpdateMeBody}, TContext> => {
+
+const mutationKey = ['updateMe'];
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+      
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof updateMe>>, {data: UpdateMeBody}> = (props) => {
+          const {data} = props ?? {};
+
+          return  updateMe(data,requestOptions)
+        }
+
+
+
+        
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type UpdateMeMutationResult = NonNullable<Awaited<ReturnType<typeof updateMe>>>
+    export type UpdateMeMutationBody = UpdateMeBody
+    export type UpdateMeMutationError = ErrorType<ProblemDetail>
+
+    /**
+ * @summary Update user's profile
+ */
+export const useUpdateMe = <TError = ErrorType<ProblemDetail>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof updateMe>>, TError,{data: UpdateMeBody}, TContext>, request?: SecondParameter<typeof customInstance>}
+ , queryClient?: QueryClient): UseMutationResult<
+        Awaited<ReturnType<typeof updateMe>>,
+        TError,
+        {data: UpdateMeBody},
+        TContext
+      > => {
+      return useMutation(getUpdateMeMutationOptions(options), queryClient);
     }
     

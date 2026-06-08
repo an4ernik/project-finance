@@ -5,6 +5,7 @@
  * REST API Documentation for MT Service
  * OpenAPI spec version: 1.0
  */
+import type { UpdateCategoryDTOIcon } from './updateCategoryDTOIcon';
 
 /**
  * Update category
@@ -16,5 +17,5 @@ export interface UpdateCategoryDTO {
    */
   name: string;
   /** Icon */
-  icon?: string;
+  icon: UpdateCategoryDTOIcon;
 }
