@@ -21,7 +21,7 @@ import {
 import {CreateCategoryDTOType} from '@/shared/api/models/createCategoryDTOType';
 import {GetCategoriesTypeItem} from '@/shared/api/models/getCategoriesTypeItem';
 
-import IconPicker from './IconPicker';
+import IconPicker, {type CategoryIcon} from './IconPicker';
 
 type AddCategoryProps = {
   open: boolean;
@@ -54,7 +54,7 @@ function AddCategory({
   };
 
   const [name, setName] = useState('');
-  const [icon, setIcon] = useState<string | null>(null);
+  const [icon, setIcon] = useState<CategoryIcon | null>(null);
   const [error, setError] = useState<ErrorState>({
     name: undefined,
     icon: undefined,

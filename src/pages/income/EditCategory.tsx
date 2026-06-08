@@ -21,7 +21,10 @@ import {
   useUpdateCategory,
 } from '@/shared/api/generated/category-management/category-management';
 
-import IconPicker from './IconPicker';
+import IconPicker, {
+  isCategoryIcon,
+  type CategoryIcon,
+} from './IconPicker';
 import {getGetTransactionsQueryKey} from '@/shared/api/generated/transaction-management/transaction-management';
 
 type EditCategoryProps = {
@@ -52,7 +55,9 @@ function EditCategory({open, onOpenChange, category, type}: EditCategoryProps) {
   };
 
   const [name, setName] = useState(category?.name ?? '');
-  const [icon, setIcon] = useState<string | null>(category?.icon ?? null);
+  const [icon, setIcon] = useState<CategoryIcon | null>(
+    isCategoryIcon(category?.icon) ? category.icon : null,
+  );
   const [error, setError] = useState<ErrorState>({
     name: undefined,
     icon: undefined,

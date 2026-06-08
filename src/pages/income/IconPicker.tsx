@@ -16,9 +16,12 @@ import {
   DatabaseBackup,
 } from 'lucide-react';
 import {cn} from '@/lib/utils';
+import type {CreateCategoryDTOIcon} from '@/shared/api/models/createCategoryDTOIcon';
+
+export type CategoryIcon = CreateCategoryDTOIcon;
 
 export type IconOption = {
-  id: string;
+  id: CategoryIcon;
   Icon: LucideIcon;
 };
 
@@ -47,9 +50,13 @@ export const ICONS_BY_ID = ICON_OPTIONS.reduce<Record<string, LucideIcon>>(
   {},
 );
 
+export const isCategoryIcon = (
+  value: string | null | undefined,
+): value is CategoryIcon => Boolean(value && ICONS_BY_ID[value]);
+
 type IconPickerProps = {
-  value: string | null;
-  onChange: (id: string) => void;
+  value: CategoryIcon | null;
+  onChange: (id: CategoryIcon) => void;
   className?: string;
   buttonClassName?: string;
   iconClassName?: string;
