@@ -31,7 +31,7 @@ import {
 } from '@/shared/api/generated/user-management/user-management';
 import {useUpdateEmail} from '@/shared/api/generated/user-identity/user-identity';
 import {useQueryClient} from '@tanstack/react-query';
-import {UpdateUserProfileDTOCurrencyCode} from '@/shared/api/models/updateUserProfileDTOCurrencyCode';
+import {RequestUpdateUserProfileDTOCurrencyCode} from '@/shared/api/models';
 import type {ResponseUserDTO} from '@/shared/api/models';
 import {parseISO, format} from 'date-fns';
 import ConfirmDeleteAccountModal from '@/components/ConfirmDeleteAccountModal';
@@ -76,7 +76,7 @@ function AccountSettings() {
   useEffect(() => {
     if (userData) {
       setCurrencySign(
-        userData.currencyCode as UpdateUserProfileDTOCurrencyCode,
+        userData.currencyCode as RequestUpdateUserProfileDTOCurrencyCode,
       );
     }
   }, [userData, setCurrencySign]);
@@ -169,9 +169,9 @@ function AccountSettings() {
   const onSubmit = (values: FormFields) => {
     if (!userData) return;
 
-    const nextFullName = values.fullName?.trim() || '';
-    const nextEmail = values.email?.trim() || '';
-    const nextCurrency = values.currencyCode || '';
+    const nextFullName = values.fullName?.trim() || userData.fullName || '';
+    const nextEmail = values.email?.trim() || userData.email || '';
+    const nextCurrency = values.currencyCode || userData.currencyCode || 'UAH';
     const nextAvatar = values.avatar?.[0];
 
     const fullNameChanged = nextFullName !== (userData.fullName ?? '');
@@ -194,10 +194,8 @@ function AccountSettings() {
     const needsEmailUpdate = emailChanged;
 
     const dto = {
-      fullName: fullNameChanged ? nextFullName : (userData.fullName ?? ''),
-      currencyCode: (currencyChanged
-        ? nextCurrency
-        : (userData.currencyCode ?? 'UAH')) as UpdateUserProfileDTOCurrencyCode,
+      fullName: nextFullName,
+      currencyCode: nextCurrency as RequestUpdateUserProfileDTOCurrencyCode,
     };
 
     const handleError = (error: unknown) => {
@@ -219,12 +217,7 @@ function AccountSettings() {
       void refetch();
       setCurrencySign(dto.currencyCode);
       toast.success(t('settings.account.saveSuccess'));
-      reset({
-        fullName: '',
-        email: '',
-        currencyCode: '',
-        avatar: undefined,
-      });
+      reset();
     };
 
     if (needsProfileUpdate && needsEmailUpdate) {

@@ -128,7 +128,7 @@
         "transferLabel": "Transfer to category",
         "transferPlaceholder": "Select category"
       },
-      "tooltip":{
+      "tooltip": {
         "archive": "Archive",
         "restore": "Restore",
         "delete": "Delete",
@@ -179,7 +179,7 @@
       "createNew": "Add new category",
       "loading": "Loading...",
       "categoryType": "Expense categories",
-      "archivedTitle": "Archived categories", 
+      "archivedTitle": "Archived categories",
       "typeExpense": "Expenses",
       "emptyTitle": "You don't have any categories yet.",
       "emptySubtitle": "Create your first category to get started.",
@@ -202,7 +202,7 @@
         "transferLabel": "Transfer to category",
         "transferPlaceholder": "Select category"
       },
-      "tooltip":{
+      "tooltip": {
         "archive": "Archive",
         "restore": "Restore",
         "delete": "Delete",
@@ -434,13 +434,16 @@
     },
     "hero": {
       "word1": "Your",
-      "word2": "BUDGET-",
-      "word3": "TRANSPARENT",
+      "word2": "budget",
+      "word3": "transparent",
       "tagline": "See. Understand. Manage.",
       "subtitle": "One space for all your finances.",
       "cta": "Start controlling your budget",
       "ctaNote1": "Free.",
-      "ctaNote2": "Start today"
+      "ctaNote2": "Start today",
+      "kicker1": "From chaos",
+      "kicker2": "To control",
+      "pigTitle": "No clutter. Only what matters."
     },
     "about": {
       "titleAccent": "Finance,",
@@ -449,28 +452,29 @@
       "f1Title": "All your finances in one place",
       "f1Desc": "Expenses, income, and goals — everything in a single space.",
       "f2Title": "Full transparency",
-      "f2Desc": "See where your money goes. Know how much you have left.",
+      "f2Desc": "You always see where your money goes and how much you have left.",
       "f3Title": "Effortless control",
       "f3Desc": "Automatic categorization, clear analytics, precise numbers.",
       "f4Title": "Secure and under your control",
-      "f4Desc": "Your data is protected. Stored securely, only you."
+      "f4Desc": "Your data is protected. Access belongs only to you."
     },
     "howItWorks": {
       "titleWord1": "A simple path",
       "titleWord2": "to budget",
       "titleWord3": "control",
       "subtitle": "No complex setup. No unnecessary steps. Everything — step by step.",
-      "note": "Transparent. Clear. Under your control.",
+      "tagline": "You stay in control from the very first step.",
+      "note": "Transparent. Simple. In your control.",
       "s1Title": "Create an account",
       "s1Desc": "Registration takes just a few minutes. No cards. No complicated forms.",
       "s2Title": "Add your finances",
-      "s2Desc": "Income, expenses, recurring bills, and goals — manually or automatically.",
+      "s2Desc": "Enter income, expenses, and goals — manually or automatically.",
       "s3Title": "See the real picture",
-      "s3Desc": "Analytics that shows your income, expenses and financial goals.",
+      "s3Desc": "Analytics show where your money goes and what remains.",
       "s4Title": "Manage and plan",
       "s4Desc": "Adjust expenses, set goals, and monitor your budget daily.",
       "s5Title": "Automate routine tasks",
-      "s5Desc": "Use manual input, integrations and smart reminders."
+      "s5Desc": "Less manual work, more clarity and time for yourself."
     },
     "security": {
       "titleWord1": "Your finances —",
