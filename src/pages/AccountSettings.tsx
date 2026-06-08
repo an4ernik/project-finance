@@ -64,8 +64,9 @@ function AccountSettings() {
   const setCurrencySign = useSetCurrencySign();
   const userData = user as ResponseUserDTO | undefined;
   const queryClient = useQueryClient();
-  const {mutate: updateMe, isPending: isUpdatingProfile} = useUpdateMe();
-  const {mutate: updateEmail, isPending: isUpdatingEmail} = useUpdateEmail();
+  const {mutateAsync: updateMe, isPending: isUpdatingProfile} = useUpdateMe();
+  const {mutateAsync: updateEmail, isPending: isUpdatingEmail} =
+    useUpdateEmail();
   const [fullNameInput, setFullNameInput] = useState<boolean>(false);
   const [emailInput, setEmailInput] = useState<boolean>(false);
   const regDate = userData?.createdAt ? parseISO(userData.createdAt) : null;
@@ -166,7 +167,7 @@ function AccountSettings() {
     };
   }, [previewUrl]);
 
-  const onSubmit = (values: FormFields) => {
+  const onSubmit = async (values: FormFields) => {
     if (!userData) return;
 
     const nextFullName = values.fullName?.trim() || userData.fullName || '';
@@ -197,6 +198,10 @@ function AccountSettings() {
       fullName: nextFullName,
       currencyCode: nextCurrency as RequestUpdateUserProfileDTOCurrencyCode,
     };
+    const profileData = {
+      dto,
+      avatar: nextAvatar,
+    };
 
     const handleError = (error: unknown) => {
       if (
@@ -220,53 +225,19 @@ function AccountSettings() {
       reset();
     };
 
-    if (needsProfileUpdate && needsEmailUpdate) {
-      updateMe(
-        {
-          data: {
-            dto,
-            avatar: nextAvatar,
-          },
-        },
-        {
-          onSuccess: () => {
-            updateEmail(
-              {data: {email: nextEmail}},
-              {
-                onSuccess: handleSuccess,
-                onError: handleError,
-              },
-            );
-          },
-          onError: handleError,
-        },
-      );
-      return;
-    }
+    try {
+      if (needsProfileUpdate) {
+        await updateMe({data: profileData});
+      }
 
-    if (needsProfileUpdate) {
-      updateMe(
-        {
-          data: {
-            dto,
-            avatar: nextAvatar,
-          },
-        },
-        {
-          onSuccess: handleSuccess,
-          onError: handleError,
-        },
-      );
-      return;
-    }
+      if (needsEmailUpdate) {
+        await updateEmail({data: {email: nextEmail}});
+      }
 
-    updateEmail(
-      {data: {email: nextEmail}},
-      {
-        onSuccess: handleSuccess,
-        onError: handleError,
-      },
-    );
+      handleSuccess();
+    } catch (error) {
+      handleError(error);
+    }
   };
 
   const handleDeleteAccount = () => {
