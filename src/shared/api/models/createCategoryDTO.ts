@@ -5,6 +5,7 @@
  * REST API Documentation for MT Service
  * OpenAPI spec version: 1.0
  */
+import type { CreateCategoryDTOIcon } from './createCategoryDTOIcon';
 import type { CreateCategoryDTOType } from './createCategoryDTOType';
 
 /**
@@ -18,9 +19,6 @@ export interface CreateCategoryDTO {
   name: string;
   /** Type */
   type: CreateCategoryDTOType;
-  /**
-   * Icon
-   * @minLength 1
-   */
-  icon: string;
+  /** Icon */
+  icon: CreateCategoryDTOIcon;
 }

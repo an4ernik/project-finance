@@ -5,17 +5,17 @@ import {z} from 'zod';
 import {Link, useNavigate} from 'react-router-dom';
 import {toast} from 'sonner';
 import {useTranslation} from 'react-i18next';
-import {Mail, Lock, ChevronRight} from 'lucide-react';
+import {Mail, Lock, ArrowRight} from 'lucide-react';
 import {cn} from '@/lib/utils';
+import backgroundImage from '@/assets/white-background-login.png';
+import backgroundImageDark from '@/assets/dark-background-login.png';
 
-import moneyBg from '@/assets/money-bg.png';
-import moneyBgLight from '@/assets/money-bg-light.png';
 import {useLogin} from '@/shared/api/generated/authentication/authentication';
 import {Input} from '@/components/ui/input';
 import {Button} from '@/components/ui/button';
 import {useTheme} from '@/shared/providers/ThemeProvider';
 import {useAuthStore} from '@/shared/store/useAuthStore';
-import {type JwtResponseDTO} from '@/shared/api/models'; 
+import {type JwtResponseDTO} from '@/shared/api/models';
 
 type LoginFormData = {
   email: string;
@@ -23,7 +23,7 @@ type LoginFormData = {
 };
 
 function Login() {
-  const {setAuth} = useAuthStore(); 
+  const {setAuth} = useAuthStore();
   const {theme} = useTheme();
   const {t, i18n} = useTranslation();
   const navigate = useNavigate();
@@ -82,7 +82,7 @@ function Login() {
             localStorage.setItem('rememberMe', 'true');
           } else {
             localStorage.removeItem('rememberMe');
-          }  
+          }
 
           toast.success(t('login.success'));
 
@@ -105,64 +105,48 @@ function Login() {
     );
   };
 
+  const backgroundImageSrc =
+    theme === 'dark' ? backgroundImageDark : backgroundImage;
+
   return (
-    <div className="relative flex h-screen w-full items-center justify-center overflow-hidden">
-      {theme === 'dark' && (
-        <div className="absolute -left-20.25 -top-98.75 flex h-371.75 w-341.25 items-center justify-center">
-          <img
-            src={moneyBg}
-            alt=""
-            className="h-309.25 w-250 rotate-33 object-cover opacity-30"
-          />
+    <div
+      className="relative px-5 flex justify-center bg-cover lg:bg-contain md:justify-end h-screen w-full max-w-[2060px] mx-auto overflow-hidden"
+      style={{
+        backgroundImage: `url(${backgroundImageSrc})`,
+        backgroundRepeat: 'no-repeat',
+      }}
+    >
+      {/* register button */}
+      <div className="hidden md:fixed bottom-7.5 left-7.5 z-[100] md:flex h-fit gap-2 items-start justify-center rounded-[10px] px-5 py-4 backdrop-blur-lg shadow-[0px_24px_64px_0px_rgba(0, 0, 0, 0.458)] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_rgba(0,0,0,0.2)]">
+        <div className="flex flex-col gap-1.5">
+          <p className="text-[16px] leading-[1.167] text-foreground">
+            {t('login.noAccount')}
+          </p>
+          <Link
+            to="/signup"
+            className="flex items-center gap-1.5 text-[24px] font-semibold leading-[1.167] tracking-[-1.5px] text-(--accent-interactive) transition-colors hover:text-primary"
+          >
+            {t('login.signUpLink')}
+          </Link>
         </div>
-      )}
-
-      {theme === 'light' && (
-        <>
-          <div className="absolute left-0 top-0 h-screen w-full pointer-events-none overflow-hidden">
-            <img
-              src={moneyBgLight}
-              alt=""
-              className="w-290 object-cover object-center opacity-70"
-            />
-          </div>
-          <div
-            className="absolute inset-0 pointer-events-none"
-            style={{
-              background:
-                'linear-gradient(37deg, rgba(255,255,255,0.8) 0.6%, rgba(255,255,255,0.16) 20%), linear-gradient(122deg, rgba(255,255,255,0.1) 20%, rgb(255,255,255) 70%)',
-            }}
-          />
-        </>
-      )}
-
-      <div className="hidden lg:absolute lg:bottom-10 lg:left-10 z-10 lg:flex flex-col items-start justify-center rounded-[10px] px-5 py-4 backdrop-blur-lg shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_rgba(0,0,0,0.2)]">
-        <p className="text-[16px] leading-[1.167] text-foreground">
-          {t('login.noAccount')}
-        </p>
-        <Link
-          to="/signup"
-          className="flex items-center gap-1.5 text-[24px] font-semibold leading-[1.167] tracking-[-1.5px] text-(--accent-interactive) transition-colors hover:text-primary"
-        >
-          {t('login.signUpLink')}
-          <ChevronRight className="size-4" />
-        </Link>
+        <ArrowRight className="size-5 self-center text-[#90D0B6]" />
       </div>
 
+      {/* login form */}
       <div
         className={cn(
-          'relative z-10 flex w-full max-w-[540px] h-full flex-col items-start justify-start gap-7 rounded-[10px] px-6 py-10 overflow-y-auto sm:overflow-visible sm:justify-center sm:absolute sm:right-67 sm:top-0 sm:w-133.5 sm:px-12.5 sm:py-8',
-          'border border-white/[0.14] backdrop-blur-lg',
+          'scrollbar-hide z-10 w-full max-w-[540px] h-full static sm:absolute flex flex-col justify-start md:justify-center gap-7 rounded-[10px] px-6 py-10 overflow-y-auto sm:px-12.5 sm:py-8 mr-0 md:mr-[100px] lg:mr-[150px]',
+          'border border-white/[0.14] backdrop-blur-md',
           'bg-linear-to-b from-[rgba(11,21,20,0.03)] via-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)]',
           'shadow-[0px_24px_64px_0px_rgba(0,0,0,0.2)]',
           '[box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_24px_64px_0px_rgba(0,0,0,0.2)]',
         )}
       >
-        <div className="flex flex-col gap-3.5">
+        <div className="flex flex-col landscape:mt-12 gap-3.5">
           <h1 className="text-[34px] font-bold leading-[1.167] tracking-[-1.5px] text-foreground">
             {t('login.title')}
           </h1>
-          <p className="text-[20px] font-medium leading-[1.167] text-muted-foreground">
+          <p className="text-[24px] font-medium leading-[1.167] text-muted-foreground">
             {t('login.subtitle')}
           </p>
         </div>
@@ -214,7 +198,7 @@ function Login() {
               />
             </div>
 
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap md:flex-row gap-7 md:gap-0 items-start md:items-center justify-between mt-2">
               <button
                 type="button"
                 onClick={() => setRememberMe(!rememberMe)}
@@ -247,6 +231,22 @@ function Login() {
           <Button type="submit" disabled={isPending || !isValid}>
             {isPending ? t('login.loading') : t('login.loginButton')}
           </Button>
+
+          {/* register btn */}
+          <div className="flex flex-col md:hidden gap-5 mt-5 p-3 justify-center align-center w-fit">
+            <p className="text-[16px] leading-[1.167] text-foreground">
+              {t('login.noAccount')}
+            </p>
+            <div className="flex items-center gap-3 border rounded-md shadow-md shadow-white/5 p-3">
+              <Link
+                to="/signup"
+                className="flex items-center gap-1.5 text-[18px] sm:text-[24px] leading-[1.167] tracking-[0.65px] text-foreground transition-colors hover:text-primary"
+              >
+                {t('login.signUpLink')}
+              </Link>
+              <ArrowRight className="size-5 self-center text-[#90D0B6]" />
+            </div>
+          </div>
         </form>
       </div>
     </div>

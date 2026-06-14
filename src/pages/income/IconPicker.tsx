@@ -23,21 +23,22 @@ export type IconOption = {
 };
 
 export const ICON_OPTIONS: IconOption[] = [
-  {id: 'trend_up', Icon: TrendingUp},
-  {id: 'award', Icon: Award},
-  {id: 'dollar', Icon: DollarSign},
-  {id: 'gift', Icon: Gift},
-  {id: 'dock', Icon: Dock},
-  {id: 'briefcase', Icon: BriefcaseBusiness},
-  {id: 'coins', Icon: Coins},
-  {id: 'wallet', Icon: Wallet},
-  {id: 'percent', Icon: Percent},
-  {id: 'trophy', Icon: Trophy},
-  {id: 'receipt', Icon: Receipt},
-  {id: 'monitor', Icon: MonitorCheck},
-  {id: 'globe', Icon: Globe},
-  {id: 'database', Icon: DatabaseBackup},
+  {id: 'TREND_UP', Icon: TrendingUp},
+  {id: 'AWARD', Icon: Award},
+  {id: 'DOLLAR', Icon: DollarSign},
+  {id: 'GIFT', Icon: Gift},
+  {id: 'DOCK', Icon: Dock},
+  {id: 'BRIEFCASE', Icon: BriefcaseBusiness},
+  {id: 'COINS', Icon: Coins},
+  {id: 'WALLET', Icon: Wallet},
+  {id: 'PERCENT', Icon: Percent},
+  {id: 'TROPHY', Icon: Trophy},
+  {id: 'RECEIPT', Icon: Receipt},
+  {id: 'MONITOR', Icon: MonitorCheck},
+  {id: 'GLOBE', Icon: Globe},
+  {id: 'DATABASE', Icon: DatabaseBackup},
 ];
+
 
 export const ICONS_BY_ID = ICON_OPTIONS.reduce<Record<string, LucideIcon>>(
   (acc, item) => {

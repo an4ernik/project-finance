@@ -33,4 +33,5 @@ export interface TransactionCursorRequest {
    * @maximum 100
    */
   limit?: number;
+  dateRangeValid?: boolean;
 }
