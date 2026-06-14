@@ -40,7 +40,7 @@ export const VirtualItem = ({
       <div
         onClick={handleContainerClick}
         className={cn(
-          'hidden lg:flex', // 🌟 Поза межами lg цей блок повністю прихований
+          'hidden lg:flex', 
           'group relative min-h-[112px] items-center rounded-xl p-5 gap-4 tracking-wider cursor-pointer w-full',
           'bg-white dark:bg-[#193432] border border-slate-100 dark:border-none text-slate-900 dark:text-white',
           'bg-linear-to-b from-transparent to-transparent',
@@ -50,7 +50,7 @@ export const VirtualItem = ({
         {/* ICON BOX */}
         <div
           className={cn(
-            'size-10 hidden sm:flex justify-center items-center p-3 rounded-lg shrink-0',
+            'size-10 hidden sm:flex justify-center items-center p-1 rounded-lg shrink-0',
             theme.bgIcon,
           )}
         >

@@ -200,8 +200,7 @@ const VirtualList = ({type, formFilters, setTotalAmount}: VirtualListProps) => {
     });
     setTotalAmount(total);
   }, [transactions, setTotalAmount]);
-
-  // 3. Keep filtering logic right alongside the list rendering mechanisms
+ 
   const filteredData = useMemo(() => {
     const normalized = {
       period: formFilters.period ?? 'all',
@@ -282,7 +281,7 @@ const VirtualList = ({type, formFilters, setTotalAmount}: VirtualListProps) => {
   if (isLoading && !isFetchingNextPage) return <VirtualItemSkeleton />;
 
   return (
-    <div className="flex flex-col h-[100svh] w-full pt-8 md:h-full md:overflow-hidden">
+    <div className="flex flex-col h-svh w-full pt-8 md:h-full md:overflow-hidden">
       {isModalOpen && (
         <TransactionModal
           type={type}

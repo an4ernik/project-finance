@@ -84,7 +84,7 @@ function AddCategory({
         data: {
           name: trimmed,
           type: type as unknown as CreateCategoryDTOType,
-          icon,
+          icon: icon as any,
         },
       },
       {

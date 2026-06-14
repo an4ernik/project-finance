@@ -91,7 +91,7 @@ function EditCategory({open, onOpenChange, category, type}: EditCategoryProps) {
         categoryId: id,
         data: {
           name: trimmed,
-          icon,
+          icon: icon as any,
         },
       },
       {

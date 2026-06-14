@@ -42,6 +42,7 @@ export const ICON_OPTIONS: IconOption[] = [
   {id: 'DATABASE', Icon: DatabaseBackup},
 ];
 
+
 export const ICONS_BY_ID = ICON_OPTIONS.reduce<Record<string, LucideIcon>>(
   (acc, item) => {
     acc[item.id] = item.Icon;
