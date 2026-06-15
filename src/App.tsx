@@ -5,14 +5,13 @@ import PublicRoute from './components/PublicRoute';
 import ProtectedRoute from './components/ProtectedRoute';
 import ThemeProvider from '@/shared/providers/ThemeProvider';
 import TransactionOverviewPage from './pages/TransactionOverviewPage';
-import MainDashboardSkeleton from './components/skeletons/MainDashboardSkeleton'; 
+import MainDashboardSkeleton from './components/skeletons/MainDashboardSkeleton';
 
 // Lazy load all page components
 const Dashboard = lazy(() => import('@/pages/Dashboard'));
 const Income = lazy(() => import('@/pages/income/Income'));
 const Expense = lazy(() => import('@/pages/Expense'));
 const Landing = lazy(() => import('./pages/Landing'));
-const Home = lazy(() => import('./pages/Home'));
 const SignUp = lazy(() => import('./pages/SignUp'));
 const Login = lazy(() => import('./pages/Login'));
 const VerifyEmailPage = lazy(() => import('@/pages/VerifyEmailPage'));
@@ -31,41 +30,40 @@ function App() {
     <ThemeProvider>
       <Toaster />
       {/* <Suspense fallback={<MainDashboardSkeleton />}> */}
-        <Routes>
-          <Route element={<ProtectedRoute />}>
-            <Route
-              path="/dashboard"
-              element={
-                <Suspense fallback={<MainDashboardSkeleton />}>
-                  <Dashboard />
-                </Suspense>
-              }
-            />
-            <Route path="/income" element={<Income />} />
-            <Route path="/expenses" element={<Expense />} />
-            <Route
-              path="/:transactionType/:id"
-              element={<TransactionOverviewPage />}
-            />
-            <Route path="/settings" element={<SettingsPage />}>
-              <Route index element={<AccountSettings />} />
-              <Route path="security" element={<SecuritySettings />} />
-              <Route path="notifications" element={<NotificationsSettings />} />
-            </Route>
+      <Routes>
+        <Route element={<ProtectedRoute />}>
+          <Route
+            path="/dashboard"
+            element={
+              <Suspense fallback={<MainDashboardSkeleton />}>
+                <Dashboard />
+              </Suspense>
+            }
+          />
+          <Route path="/income" element={<Income />} />
+          <Route path="/expenses" element={<Expense />} />
+          <Route
+            path="/:transactionType/:id"
+            element={<TransactionOverviewPage />}
+          />
+          <Route path="/settings" element={<SettingsPage />}>
+            <Route index element={<AccountSettings />} />
+            <Route path="security" element={<SecuritySettings />} />
+            <Route path="notifications" element={<NotificationsSettings />} />
           </Route>
+        </Route>
 
-          <Route element={<PublicRoute />}>
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<SignUp />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-          </Route>
+        <Route element={<PublicRoute />}>
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/forgot-password" element={<ForgotPassword />} />
+          <Route path="/reset-password" element={<ResetPassword />} />
+        </Route>
 
-          <Route path="/" element={<Landing />} />
-          <Route path="/Home" element={<Home />} />
-          <Route path="/verify" element={<VerifyEmailPage />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/verify" element={<VerifyEmailPage />} />
+        <Route path="*" element={<NotFound />} />
+      </Routes>
       {/* </Suspense> */}
     </ThemeProvider>
   );

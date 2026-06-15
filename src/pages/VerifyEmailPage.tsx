@@ -62,6 +62,11 @@ function VerifyEmailPage() {
               return;
             }
           }
+          if (status === 404) {
+            toast.info(t('auth.verify.tokenHasExpired'));
+            navigate('/?token_expired=true', {replace: true});
+            return;
+          }
         }
 
         toast.error(t('auth.verify.activationError'));

@@ -337,10 +337,11 @@
     },
     "verify": {
       "title": "Almost there — you’re all set!",
-      "message": "We've sent a confirmation email to your inbox. Click the link in the email to activate your account. The link is valid for 24 hours. If you don’t see the email, please check your Spam folder.",
+      "message": "We've sent a confirmation email to your inbox. Click the link in the email to activate your account. The link is valid for 15 minutes. After the link expires, you will need to confirm your registration again. If you don’t see the email, please check your Spam folder.",
       "button": "Back to login",
       "tokenDoesntExist": "Token doesn't exist",
       "accountAlreadyActivated": "Account already activated",
+      "tokenHasExpired": "This link has expired.",
       "activationError": "Activation error. Maybe the token has expired.",
       "activationSuccess": "Email successfully verified!",
       "loading": "Verification in progress..."
@@ -349,6 +350,11 @@
       "title": "Email verified.",
       "message": "Your account has been activated. Thank you for confirming your email address.",
       "button": "Log in"
+    },
+    "expired": {
+      "title": "This link has expired.",
+      "message": "For security reasons, the email confirmation link is valid for only 15 minutes.",
+      "button": "Please sign up again to receive a new confirmation link."
     }
   },
   "common": {
