@@ -193,7 +193,7 @@ function SignUp() {
   };
 
   const backgroundImageSrc = theme === 'dark' ? franklinDark : franklinLight;
-  
+
   return (
     <div className="flex h-screen w-full items-center justify-center dark:bg-radial-fade overflow-hidden">
       <div

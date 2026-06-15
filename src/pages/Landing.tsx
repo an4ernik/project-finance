@@ -11,11 +11,11 @@ import {
   HeroCta,
 } from '@/components/landing/LandingComponents';
 import {getFeatures, getSteps, getSecurity} from '@/lib/landing-data';
+import {VerifiedDialog} from '@/components/landing/VerifiedDialog';
 
 function Landing() {
   const navigate = useNavigate();
   const {t} = useTranslation();
-
   const features = getFeatures(t);
   const steps = getSteps(t);
   const security = getSecurity(t);
@@ -270,6 +270,7 @@ function Landing() {
           </div>
         </div>
       </footer>
+      <VerifiedDialog />
     </div>
   );
 }
