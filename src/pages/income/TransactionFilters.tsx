@@ -175,7 +175,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
                             className={cn(
                               'flex flex-1 cursor-pointer items-center gap-3 text-[16px] font-normal',
                               isSelected
-                                ? '!text-[#0B1514] dark:!text-[#EAF6F3]' // 🎯 Теж виправлено знаки "!"
+                                ? '!text-[#0B1514] dark:!text-[#EAF6F3]'  
                                 : 'text-[#7F9E97]',
                             )}
                           >
@@ -201,7 +201,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
                   className="flex flex-col items-center gap-3"
                   onClick={e => e.stopPropagation()}
                 >
-                  {/* Календар FROM */}
+                  {/* Calendar FROM */}
                   <div className="flex flex-col w-full gap-1.5">
                     <label className="text-[14px] text-[#3A4A48] dark:text-[#BFD9D2] ml-1">
                       {t('incomeModal.filters.period.from')}

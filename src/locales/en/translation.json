@@ -579,8 +579,8 @@
         "EXPENSE": "Expense amount must be greater than 0"
       },
       "amountMax": {
-        "INCOME": "Income amount cannot exceed more than 1 000 000 000",
-        "EXPENSE": "Expense amount cannot exceed more than 1 000 000 000"
+        "INCOME": "Income amount cannot exceed more than 999 999 999 999.99",
+        "EXPENSE": "Expense amount cannot exceed more than 999 999 999 999.99"
       },
       "categoryRequired": {
         "INCOME": "Income category is required",

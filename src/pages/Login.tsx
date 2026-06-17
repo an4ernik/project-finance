@@ -70,7 +70,6 @@ function Login() {
       {
         onSuccess: response => {
           const data = response as JwtResponseDTO;
-          console.log('Login successful, received data:', data);
           if (data && 'accessToken' in data && data.accessToken) {
             setAuth(
               data.accessToken,

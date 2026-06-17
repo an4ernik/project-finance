@@ -11,7 +11,6 @@ import FiltersWrapper from '@/components/FiltersWrapper';
 import CreateButtonsWrapper from '@/components/CreateButtonsWrapper';
 import VirtualList from '@/components/VirtualList';
 
-// Adjust these paths to match your project imports exactly
 import CategoriesManager from '../pages/income/CategoriesManager'; // Or a shared folder path
 import TransactionFilters from '../pages/income/TransactionFilters';
 import TransactionModal from '@/pages/income/modal/TransactionModal';
