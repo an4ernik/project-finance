@@ -206,7 +206,7 @@ function SignUp() {
           alt="background"
           className="absolute top-1/2  transform -translate-y-1/2 right-0 h-[450px] w-fit object-cover xl:mr-[180px]"
         />
-        {/* login form */}
+        {/* signup form */}
         <div
           className={cn(
             'scrollbar-hide static sm:absolute flex flex-col justify-start h-full min-h-0 overflow-y-auto md:left-0 mx-4 md:ml-[100px] lg:ml-[150px] xl:ml-[350px] overflow-y-auto z-50 w-full  max-w-134 items-start gap-3.5 rounded-[10px] px-4 sm:px-[50px] py-8 h-full',

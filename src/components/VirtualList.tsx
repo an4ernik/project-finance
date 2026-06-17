@@ -15,7 +15,7 @@ import {
   type TransactionUI,
 } from '@/types/types';
 import VirtualItemSkeleton from './skeletons/VIrtualListSkeleton';
-import {applyFilters, isToday} from '@/helpers/helpers';
+import {applyFilters, getPeriodRange, isToday} from '@/helpers/helpers';
 import TransactionModal from '@/pages/income/modal/TransactionModal';
 import {useInfiniteQuery, useQueryClient} from '@tanstack/react-query';
 import type {TransactionCursorRequest} from '@/shared/api/models/transactionCursorRequest';
@@ -67,21 +67,24 @@ const VirtualList = ({type, formFilters, setTotalAmount}: VirtualListProps) => {
       type,
       formFilters.fromDate,
       formFilters.toDate,
+      formFilters.period,
     ],
 
     initialPageParam: undefined as string | undefined,
 
     queryFn: async ({pageParam}: {pageParam?: string}) => {
+      const range = getPeriodRange({
+        period: formFilters.period,
+        fromDate: formFilters.fromDate,
+        toDate: formFilters.toDate,
+      }); 
+      
       const requestParams: TransactionCursorRequest = {
         type,
         limit: LIMIT,
         cursor: pageParam,
-        dateFrom: formFilters?.fromDate
-          ? format(formFilters.fromDate, 'yyyy-MM-dd')
-          : undefined,
-        dateTo: formFilters?.toDate
-          ? format(formFilters.toDate, 'yyyy-MM-dd')
-          : undefined,
+        dateFrom: range?.from ? format(range.from, 'yyyy-MM-dd') : undefined,
+        dateTo: range?.to ? format(range.to, 'yyyy-MM-dd') : undefined,
       };
 
       const response = await api.get<TransactionsPage>('/api/v1/transactions', {
@@ -100,7 +103,7 @@ const VirtualList = ({type, formFilters, setTotalAmount}: VirtualListProps) => {
     refetchOnWindowFocus: false,
     staleTime: 5 * 60 * 1000,
   });
- 
+
   const {mutateAsync: deleteIncome} = useDeleteTransaction(mutationConfig);
 
   const parentRef = useRef<HTMLDivElement>(null);
@@ -200,7 +203,7 @@ const VirtualList = ({type, formFilters, setTotalAmount}: VirtualListProps) => {
     });
     setTotalAmount(total);
   }, [transactions, setTotalAmount]);
- 
+
   const filteredData = useMemo(() => {
     const normalized = {
       period: formFilters.period ?? 'all',

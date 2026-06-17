@@ -1,23 +1,21 @@
-import type { UseFormRegister, FieldValues, Path } from "react-hook-form";
+import type {UseFormRegister, FieldValues, Path} from 'react-hook-form';
 import {useTranslation} from 'react-i18next';
 import {Input} from '@/components/ui/input';
 import {cn} from '@/lib/utils';
 import type {TransactionType} from '@/types/types';
 
 type Props<T extends FieldValues> = {
-  // Path<T> гарантує, що ми передаємо ім'я поля, яке існує у формі
   register: UseFormRegister<T>;
-  name: Path<T>; 
+  name: Path<T>;
   error?: string;
   type?: TransactionType;
 };
 
- 
 export const IncomeAmountField = <T extends FieldValues>({
-  register, 
+  register,
   name,
   error,
-  type = 'INCOME'
+  type = 'INCOME',
 }: Props<T>) => {
   const {t} = useTranslation();
 
@@ -41,9 +39,14 @@ export const IncomeAmountField = <T extends FieldValues>({
         {...register(name, {
           onChange: e => {
             const value = e.target.value;
-            const cleanedValue = value
+            let cleanedValue = value
               .replace(/[^0-9.]/g, '')
               .replace(/(\..*)\./g, '$1');
+            const dotIndex = cleanedValue.indexOf('.');
+            if (dotIndex !== -1) {
+              cleanedValue = cleanedValue.substring(0, dotIndex + 3);
+            }
+
             e.target.value = cleanedValue;
           },
         })}

@@ -81,7 +81,10 @@ const TransactionModal = ({
             z
               .number({message: t(`incomeModal.errors.amountRequired.${type}`)})
               .min(0.01, t(`incomeModal.errors.amountLessThanZero.${type}`))
-              .max(1_000_000_000, t(`incomeModal.errors.amountMax.${type}`)),
+              .max(
+                999_999_999_999.99,
+                t(`incomeModal.errors.amountMax.${type}`),
+              ),
           )
           .transform(val => Number(val.toFixed(2))),
         categoryId: z.coerce
@@ -100,7 +103,8 @@ const TransactionModal = ({
             return val
               .replace(/\r?\n|\r/g, ' ')
               .replace(/\s+/g, ' ')
-              .trim();
+              .trim()
+              .slice(0, 256);
           }),
         intervalUnit: z.enum(['ONCE', 'MONTHLY', 'YEARLY']).optional(),
         file: z

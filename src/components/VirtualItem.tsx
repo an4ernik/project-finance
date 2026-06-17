@@ -9,6 +9,7 @@ import DocumentModal from './DocumentModal';
 import {useState} from 'react';
 import {useGetCurrencySign} from '@/shared/store/useCurrencySign';
 import {TRANSACTION_THEMES} from '@/constances/constances';
+import ActionButtonWithTooltip from './ActionButtonWithTooltip';
 export const VirtualItem = ({
   item,
   type = 'INCOME',
@@ -34,13 +35,10 @@ export const VirtualItem = ({
 
   return (
     <>
-      {/* ========================================================================= */}
-      {/* 🌟 ВАРІАНТ 1 — ПОКАЗУЄТЬСЯ ТІЛЬКИ НА LG І БІЛЬШИХ ЕКРАНАХ (lg:flex) */}
-      {/* ========================================================================= */}
       <div
         onClick={handleContainerClick}
         className={cn(
-          'hidden lg:flex', 
+          'hidden lg:flex',
           'group relative min-h-[112px] items-center rounded-xl p-5 gap-4 tracking-wider cursor-pointer w-full',
           'bg-white dark:bg-[#193432] border border-slate-100 dark:border-none text-slate-900 dark:text-white',
           'bg-linear-to-b from-transparent to-transparent',
@@ -50,12 +48,12 @@ export const VirtualItem = ({
         {/* ICON BOX */}
         <div
           className={cn(
-            'size-10 hidden sm:flex justify-center items-center p-1 rounded-lg shrink-0',
+            'hidden sm:flex justify-center items-center p-3 rounded-lg shrink-0',
             theme.bgIcon,
           )}
         >
           {Icon && (
-            <Icon className={cn('size-5 transition-colors', theme.textIcon)} />
+            <Icon className={cn('size-4 transition-colors', theme.textIcon)} />
           )}
         </div>
 
@@ -83,13 +81,13 @@ export const VirtualItem = ({
                 >
                   {t(`incomeModal.repeat.${item.intervalUnit}`)}
                 </div>
-              )} 
+              )}
               {item.receiptsUrls && item.receiptsUrls?.length > 0 && (
                 <div
                   className={cn(
                     'flex shrink-0 items-center gap-1 text-[10px] justify-center shadow-md sm:text-[14px] rounded-lg px-3 py-1 leading-none transition-colors duration-100 dark:text-[#E6E6E6]',
                     'bg-linear-to-b dark:from-[#0B151403] dark:via-[#315F551A] dark:to-[#90D0B60D]',
-                    'border dark:border-white/10', 
+                    'border dark:border-white/10',
                   )}
                 >
                   <FileText size={14} />
@@ -102,7 +100,7 @@ export const VirtualItem = ({
             {/* DESCRIPTION */}
             <span
               className={cn(
-                'text-[14px] font-medium transition-colors duration-100 max-w-[140px] truncate whitespace-pre-wrap lg:max-w-full',
+                'text-[14px] font-medium transition-colors duration-100 max-w-[140px] whitespace-pre-wrap break-all lg:max-w-full',
                 theme.subTitle,
               )}
             >
@@ -132,58 +130,37 @@ export const VirtualItem = ({
 
             {/* BUTTONS */}
             <div className="absolute top-1/2 right-2 -translate-y-1/2 sm:relative sm:top-0 sm:right-0 sm:translate-y-0 flex align-top gap-4 sm:gap-5 animate-in fade-in slide-in-from-right-2 duration-200 [@media(hover:hover)]:hidden [@media(hover:hover)]:group-hover:flex">
-              <button
-                type="button"
-                onClick={e => {
-                  e.stopPropagation();
-                  onEdit(item);
-                }}
-                className={cn(
-                  'flex justify-center items-center size-10 rounded-lg shadow-inner cursor-pointer outline-none',
-                  theme.editIconBg,
+              {/* EDIT */}
+              <ActionButtonWithTooltip
+                title="edit"
+                tooltipText={t(
+                  `${type.toLocaleLowerCase()}.categories.tooltip.edit`,
                 )}
-              >
-                <Pencil
-                  className={cn(
-                    'size-5 transition-colors duration-300',
-                    theme.editIconText,
-                    '[@media(hover:none)]:text-[#0B1514] dark:[@media(hover:none)]:text-white',
-                  )}
-                  strokeWidth={1.5}
-                />
-              </button>
+                icon={Pencil}
+                theme={theme}
+                onClick={() => onEdit(item)}
+              />
 
-              <button
-                type="button"
-                onClick={e => {
-                  e.stopPropagation();
-                  onDelete(item);
-                }}
-                className={cn(
-                  'flex justify-center items-center size-10 rounded-lg shadow-md cursor-pointer transition-all',
-                  theme.deleteIconBg,
+              {/* DELETE */}
+              <ActionButtonWithTooltip
+                title="delete"
+                tooltipText={t(
+                  `${type.toLocaleLowerCase()}.categories.tooltip.delete`,
                 )}
-              >
-                <Trash
-                  className={cn(
-                    'size-5 transition-colors duration-300',
-                    theme.deleteIconText,
-                  )}
-                  strokeWidth={1.5}
-                />
-              </button>
+                icon={Trash}
+                theme={theme}
+                onClick={() => onDelete(item)}
+              />
             </div>
           </div>
         </div>
       </div>
 
-      {/* ========================================================================= */}
-      {/* 🌟 ВАРІАНТ 2 — ПОКАЗУЄТЬСЯ НА МОБІЛКАХ ТА MD, ХОВАЄТЬСЯ НА LG (lg:hidden) */}
-      {/* ========================================================================= */}
+      {/* mobile */}
       <div
         onClick={handleContainerClick}
         className={cn(
-          'flex lg:hidden', // 🌟 Активний на малюках та md, зникає як тільки екран стає lg
+          'flex lg:hidden',
           'group relative w-full flex flex-col items-center justify-start rounded-xl p-5 gap-4 tracking-wider cursor-pointer',
           'bg-white dark:bg-[#193432] border border-slate-100 dark:border-none text-slate-900 dark:text-white',
           'bg-linear-to-b from-transparent to-transparent',
@@ -218,7 +195,7 @@ export const VirtualItem = ({
               </div>
             )}
             {/* DOCUMENTS */}
-            {item.receiptsUrls && item.receiptsUrls?.length > 0  && (
+            {item.receiptsUrls && item.receiptsUrls?.length > 0 && (
               <div
                 className={cn(
                   'flex shrink-0 items-center gap-1 text-[10px] justify-center shadow-md sm:text-[14px] rounded-lg px-3 py-1 leading-none transition-colors duration-100 dark:text-[#E6E6E6]',
@@ -255,7 +232,7 @@ export const VirtualItem = ({
             {/* DESCRIPTION */}
             <div
               className={cn(
-                'text-[14px] font-medium transition-colors duration-100 w-full block whitespace-normal break-words',
+                'text-[14px] font-medium transition-colors duration-100 w-full block whitespace-break-spaces break-all',
                 theme.subTitle,
               )}
             >
@@ -330,7 +307,6 @@ export const VirtualItem = ({
         </div>
       </div>
 
-      {/* МОДАЛКА ОДНА НА ДВОХ */}
       <DocumentModal
         isOpen={isDocumentModalOpen}
         onClose={() => setIsDocumentModalOpen(false)}

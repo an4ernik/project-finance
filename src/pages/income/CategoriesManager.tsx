@@ -12,7 +12,6 @@ import {
   X,
 } from 'lucide-react';
 
-import {Tooltip, TooltipContent, TooltipTrigger} from '@/components/ui/tooltip';
 import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {toast} from 'sonner';
@@ -36,6 +35,7 @@ import {TRANSACTION_THEMES} from '@/constances/constances';
 import {getGetTransactionsQueryKey} from '@/shared/api/generated/transaction-management/transaction-management';
 import MobileHeader from '@/components/MobileHeader';
 import SideBar from '@/components/ui/SideBar';
+import ActionButtonWithTooltip from '@/components/ActionButtonWithTooltip';
 
 type Props = {
   onClose: () => void;
@@ -49,7 +49,7 @@ function CategoriesManager({
   const {t, i18n} = useTranslation();
   const queryClient = useQueryClient();
 
-  const theme = TRANSACTION_THEMES[type]; 
+  const theme = TRANSACTION_THEMES[type];
 
   const [isArchive, setIsArchive] = useState(false);
   const [search, setSearch] = useState('');
@@ -182,7 +182,7 @@ function CategoriesManager({
       key: isArchive
         ? t(`${type.toLocaleLowerCase()}.categories.tooltip.restore`)
         : t(`${type.toLocaleLowerCase()}.categories.tooltip.archive`),
-        title: 'archive',
+      title: 'archive',
       icon: isArchive ? ArchiveRestore : Archive,
       onClick: (category: CategoryResponseDTO) =>
         setConfirm({
@@ -338,14 +338,12 @@ function CategoriesManager({
                         {/* ICON WRAPPER */}
                         <div
                           className={cn(
-                            'flex p-2 sm:p-3 items-center justify-center rounded-[10px] shrink-0 transition-colors',
+                            'flex p-3 items-center justify-center rounded-lg shrink-0 transition-colors',
                             theme.bgIcon,
                           )}
                         >
                           {Icon && (
-                            <Icon
-                              className={cn('size-5 sm:size-6', theme.textIcon)}
-                            />
+                            <Icon className={cn('size-4', theme.textIcon)} />
                           )}
                         </div>
 
@@ -375,7 +373,7 @@ function CategoriesManager({
 
                       {/* ACTIONS */}
                       <div className="flex items-center gap-2 shrink-0 ml-3">
-                        {actions.map(
+                        {/* {actions.map(
                           ({key,title, icon: ActionIcon, onClick, className}) => {
                             const isDelete = title === 'delete';
                             const btnBg = isDelete
@@ -412,6 +410,21 @@ function CategoriesManager({
                               </Tooltip>
                             );
                           },
+                        )} */}
+
+                        {actions.map(
+                          ({key, title, icon, onClick, className}) => (
+                            <ActionButtonWithTooltip
+                              key={title}
+                              title={title}
+                              tooltipText={key}
+                              icon={icon}
+                              theme={theme}
+                              className={className}
+                              responsiveHoverHide={true}
+                              onClick={() => onClick(category)}
+                            />
+                          ),
                         )}
                       </div>
                     </div>

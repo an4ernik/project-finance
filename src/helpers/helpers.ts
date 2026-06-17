@@ -18,7 +18,7 @@ import {
     isWithinInterval,
     parseISO,
 } from 'date-fns';
-import z from 'zod'; 
+import z from 'zod';
 
 export const REPEAT_TYPES = ['once', 'yearly', 'monthly'];
 
@@ -33,12 +33,33 @@ export const toTransactionDtoType = (type: TransactionType) => type;
 
 // * format this: 15400 -> 15 400
 export const formattedAmount = (amount: string | number) => {
-    const num = Number(amount) || 0;
+    // 1. Convert input to string and trim spaces
+    const cleanString = String(amount).trim();
+
+    if (!cleanString || isNaN(Number(cleanString))) return "0,00";
+
+    // 2. Check if there is a decimal part
+    if (cleanString.includes('.')) {
+        const [integerPart, fractionalPart] = cleanString.split('.');
+
+        // If user typed exactly 1 digit after dot (like '1'), transform it to '01'
+        if (fractionalPart.length === 1) {
+            const adjustedNum = Number(`${integerPart}.0${fractionalPart}`);
+            return formatWithUkrainianLocale(adjustedNum);
+        }
+    }
+
+    // Default fallback handling for standard numbers
+    return formatWithUkrainianLocale(Number(cleanString));
+};
+
+const formatWithUkrainianLocale = (num: number) => {
     return new Intl.NumberFormat('uk-UA', {
-        minimumFractionDigits: 0, // don't show decimal places
-        maximumFractionDigits: 2, // show 2 decimal places if there are any
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
     }).format(num);
 };
+
 // * get period range by filters
 export const getPeriodRange = (filters: Partial<Filters>): DateRange => {
     const now = new Date();
@@ -85,14 +106,14 @@ export const getPeriodRange = (filters: Partial<Filters>): DateRange => {
 };
 
 // * check if date is today
- export const isToday = (date: Date) => {
+export const isToday = (date: Date) => {
     const today = new Date();
     return (
-      date.getDate() === today.getDate() &&
-      date.getMonth() === today.getMonth() &&
-      date.getFullYear() === today.getFullYear()
+        date.getDate() === today.getDate() &&
+        date.getMonth() === today.getMonth() &&
+        date.getFullYear() === today.getFullYear()
     );
-  };
+};
 
 export const applyFilters = (
     items: TransactionUI[],
@@ -148,13 +169,13 @@ export interface CategoryOption {
 // * schema to filter by date
 export const filtersSchema = z.object({
     period: z
-      .enum(['all', 'today', 'week', 'month', 'year', 'custom'])
-      .default('all'),
+        .enum(['all', 'today', 'week', 'month', 'year', 'custom'])
+        .default('all'),
     fromDate: z.date().optional(),
     toDate: z.date().optional(),
     category: z.array(z.string()).default([ALL_CATEGORIES_VALUE]),
     search: z.string().default(''),
-  });
+});
 
 export const getColors = (length: number): string[] => {
     // 1. Define the starting colors exactly as seen in your image

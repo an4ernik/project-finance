@@ -37,7 +37,7 @@ function AppLayout({
   return (
     <div
       className={cn(
-        ` max-w-[1580px] mx-auto relative flex h-screen bg-background text-foreground scrollbar-hide ${
+        ` max-w-[2060px] mx-auto relative flex h-screen bg-background text-foreground scrollbar-hide ${
           menuOpen ? 'overflow-hidden' : 'overflow-y-auto'
         }`,
         className,
