@@ -215,6 +215,8 @@ function CategoriesManager({
     return () => clearTimeout(timeout);
   }, [searchInput]);
 
+  const selectedCategoryName = confirm?.category?.name || '';
+
   return (
     <div className="fixed inset-0 z-50 flex gap-3 flex-col items-center justify-start bg-[#F2F2F2] md:bg-[#f2f2f282] dark:bg-[#0B1514] md:dark:bg-[#0b151469] md:backdrop-blur-[6.2px] md:p-6 overflow-y-auto scrollbar-hide">
       <MobileHeader
@@ -373,45 +375,6 @@ function CategoriesManager({
 
                       {/* ACTIONS */}
                       <div className="flex items-center gap-2 shrink-0 ml-3">
-                        {/* {actions.map(
-                          ({key,title, icon: ActionIcon, onClick, className}) => {
-                            const isDelete = title === 'delete';
-                            const btnBg = isDelete
-                              ? theme.deleteIconBg
-                              : theme.editIconBg;
-                            const btnText = isDelete
-                              ? theme.deleteIconText
-                              : theme.editIconText;
-
-                            return (
-                              <Tooltip key={title}>
-                                <TooltipTrigger asChild>
-                                  <button
-                                    key={title}
-                                    onClick={() => onClick(category)}
-                                    className={cn(
-                                      'flex items-center justify-center p-2 rounded-lg transition-all cursor-pointer',
-                                      'animate-in fade-in slide-in-from-right-2 duration-200 [@media(hover:hover)]:hidden [@media(hover:hover)]:group-hover:flex',
-                                      '[@media(hover:none)]:text-[#0B1514] dark:[@media(hover:none)]:text-white',
-                                      className,
-                                      btnBg,
-                                      btnText,
-                                    )}
-                                  >
-                                    <ActionIcon className="size-4 sm:size-5" />
-                                  </button>
-                                </TooltipTrigger>
-                                <TooltipContent
-                                  sideOffset={1}
-                                  className="border text-[#3A4A48] dark:text-[#BFD9D2] bg-[#fafafa] fill-[#eef3f2] dark:bg-[#0f453c]"
-                                >
-                                  <p>{key.toLocaleLowerCase()}</p>
-                                </TooltipContent>
-                              </Tooltip>
-                            );
-                          },
-                        )} */}
-
                         {actions.map(
                           ({key, title, icon, onClick, className}) => (
                             <ActionButtonWithTooltip
@@ -477,6 +440,8 @@ function CategoriesManager({
         )}
 
         <CategoryActionDialog
+          type={type}
+          categoryName={selectedCategoryName}
           open={!!confirm}
           onOpenChange={open => {
             if (!open) closeConfirm();
@@ -504,6 +469,8 @@ function CategoriesManager({
           }
           isPending={isDeleting || isArchiving || isRestoring}
           showTransfer={needsTransfer}
+          transferLabel={catT('modals.transferLabel')}
+          transferPlaceholder={catT('modals.transferPlaceholder')}
           transferOptions={transferOptions}
           selectedTransferId={transferId}
           onTransferChange={setTransferId}
