@@ -127,9 +127,11 @@
         "restoreConfirm": "Відновити",
         "deleteTitle": "Видалити категорію?",
         "deleteConfirm": "Видалити",
-        "deleteTransferDescription": "Ця категорія використовується. Виберіть нову категорію для перенесення транзакцій.",
+        "deleteTransferDescription": "Ця категорія має пов’язані операції.",
+        "deleteSubTextStart": "Щоб видалити",
+        "deleteSubTextEnd": "перенесіть пов’язані операції до іншої категорії.",
         "transferLabel": "Перенести до категорії",
-        "transferPlaceholder": "Виберіть категорію"
+        "transferPlaceholder": "Оберіть категорію"
       },
       "tooltip": {
         "archive": "Архівувати",
@@ -202,12 +204,14 @@
         "restoreConfirm": "Відновити",
         "deleteTitle": "Видалити категорію?",
         "deleteConfirm": "Видалити",
-        "deleteTransferDescription": "Ця категорія використовується. Виберіть нову категорію для перенесення транзакцій.",
+        "deleteTransferDescription": "Ця категорія має пов’язані операції.",
+        "deleteSubTextStart": "Щоб видалити",
+        "deleteSubTextEnd": "перенесіть пов’язані операції до іншої категорії.",
         "transferLabel": "Перенести до категорії",
-        "transferPlaceholder": "Виберіть категорію"
+        "transferPlaceholder": "Оберіть категорію"
       },
       "tooltip": {
-        "archive": "Аріхівувати",
+        "archive": "Архівувати",
         "restore": "Відновити",
         "delete": "Видалити",
         "edit": "Редагувати"

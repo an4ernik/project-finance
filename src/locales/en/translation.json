@@ -124,8 +124,10 @@
         "restoreConfirm": "Restore",
         "deleteTitle": "Delete category?",
         "deleteConfirm": "Delete",
-        "deleteTransferDescription": "This category is used in transactions. Select a new category to move the transactions.",
-        "transferLabel": "Transfer to category",
+        "deleteTransferDescription": "This category has linked transactions.",
+        "deleteSubTextStart": "To delete",
+        "deleteSubTextEnd": "category, please move the linked transactions to another category.",
+        "transferLabel": "Reassign transactions to",
         "transferPlaceholder": "Select category"
       },
       "tooltip": {
@@ -198,8 +200,10 @@
         "restoreConfirm": "Restore",
         "deleteTitle": "Delete category?",
         "deleteConfirm": "Delete",
-        "deleteTransferDescription": "This category is used in transactions. Select a new category to move the transactions.",
-        "transferLabel": "Transfer to category",
+        "deleteTransferDescription": "This category has linked transactions.",
+        "deleteSubTextStart": "To delete",
+        "deleteSubTextEnd": "category, please move the linked transactions to another category.",
+        "transferLabel": "Reassign transactions to",
         "transferPlaceholder": "Select category"
       },
       "tooltip": {
