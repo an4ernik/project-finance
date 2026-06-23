@@ -5,6 +5,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogDescription,
 } from '@/components/ui/dialog';
 import {
   Select,
@@ -16,7 +17,7 @@ import {
 import {cn} from '@/lib/utils';
 import type {CategoryResponseDTO} from '@/shared/api/models';
 import {OctagonAlert} from 'lucide-react';
-import { useTranslation } from 'react-i18next';
+import {useTranslation} from 'react-i18next';
 
 type Props = {
   type?: 'INCOME' | 'EXPENSE';
@@ -57,7 +58,7 @@ export default function CategoryActionDialog({
   transferLabel = 'Перенести до категорії',
   transferPlaceholder = 'Оберіть категорію',
 }: Props) {
-  const {t} = useTranslation()
+  const {t} = useTranslation();
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent
@@ -79,11 +80,11 @@ export default function CategoryActionDialog({
             {title}
             {/* Цю дію неможливо скасувати. */}
           </DialogTitle>
-          {/* {description && showTransfer ? (
-            <p className="text-[14px] leading-[1.167] text-muted-foreground">
-              {description} 
-            </p>
-          ) : null} */}
+          {description && !showTransfer && (
+            <DialogDescription className="text-[14px] leading-relaxed text-[#6f7e7c] dark:text-[#7f9e97] mt-1">
+              {description}
+            </DialogDescription>
+          )}
         </DialogHeader>
 
         {showTransfer ? (
@@ -99,7 +100,7 @@ export default function CategoryActionDialog({
                     `${type.toLowerCase()}.categories.modals.deleteSubTextStart`,
                   )}{' '}
                   <span className="font-semibold text-[12px] sm:text-[14px] text-foreground">
-                    {categoryName}, {' '}
+                    {categoryName},{' '}
                   </span>
                   {t(
                     `${type.toLowerCase()}.categories.modals.deleteSubTextEnd`,
