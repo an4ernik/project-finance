@@ -12,6 +12,7 @@ export * from './authRequestDTOCurrencyCode';
 export * from './authResponseDTO';
 export * from './authResponseDTOCurrencyCode';
 export * from './categoryResponseDTO';
+export * from './categoryResponseDTOScope';
 export * from './categoryResponseDTOStatus';
 export * from './categoryResponseDTOType';
 export * from './createCategoryDTO';

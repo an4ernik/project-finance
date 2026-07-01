@@ -23,7 +23,7 @@ function LangSelect() {
       <SelectTrigger className="h-12.5 w-20 cursor-pointer px-4 text-[#0b1514] dark:text-[#eaf6f3]">
         <SelectValue />
       </SelectTrigger>
-      <SelectContent>
+      <SelectContent className="z-[200]">
         <SelectItem value="EN">EN</SelectItem>
         <SelectItem value="UA">UA</SelectItem>
       </SelectContent>

@@ -251,17 +251,25 @@ export const VirtualItem = ({
           </div>
 
           <div className="flex justify-between lg:justify-end items-center gap-5 w-full flex-wrap">
+            <div
+            className={cn(
+              'flex items-center justify-end gap-2.5 text-[24px] font-semibold min-w-0',
+            )}
+          >
             <span
               className={cn(
-                'text-2xl font-semibold transition-colors duration-100 w-fit',
+                'text-2xl font-semibold transition-colors duration-100 w-fit break-all min-w-0',
                 theme.amountColor,
               )}
             >
-              {theme.amountPrefix} {itemAmount} {CURRENCY_SIGN}
+              {theme.amountPrefix} {itemAmount} 
             </span>
+            <span className={cn("shrink-0 self-end", theme.amountColor)}>{CURRENCY_SIGN}</span>
+          </div>
+            
 
             {/* BUTTONS */}
-            <div className="flex align-top gap-4 sm:gap-5 animate-in fade-in slide-in-from-right-2 duration-200 [@media(hover:hover)]:hidden [@media(hover:hover)]:group-hover:flex">
+            <div className="ml-auto self-end flex align-top gap-4 sm:gap-5 animate-in fade-in slide-in-from-right-2 duration-200 [@media(hover:hover)]:hidden [@media(hover:hover)]:group-hover:flex">
               <button
                 type="button"
                 onClick={e => {

@@ -15,4 +15,6 @@ export interface RequestUpdateUserProfileDTO {
   fullName?: string;
   /** User's main currency (ISO 4217) */
   currencyCode?: RequestUpdateUserProfileDTOCurrencyCode;
+  /** Delete current avatar if true */
+  deleteAvatar?: boolean;
 }

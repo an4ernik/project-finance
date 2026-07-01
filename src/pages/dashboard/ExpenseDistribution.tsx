@@ -11,6 +11,7 @@ import {useGetTransactions} from '@/shared/api/generated/transaction-management/
 import type {TransactionResponseDTO} from '@/shared/api/models';
 import {t} from 'i18next'; 
 import { useGetCurrencySign } from '@/shared/store/useCurrencySign';
+import { cn } from '@/lib/utils';
 
 const EMPTY_DISTRIBUTION_ITEM = {
   name: '',
@@ -96,6 +97,7 @@ const ExpenseDonutChart = () => {
   }, [activePeriod, transactions]);
 
   const currentHighest = expenseDistributionData.allItems[0] || null;
+  console.log(currentHighest, 'cur');
 
   useEffect(() => {
     const handleResize = () => {
@@ -126,7 +128,7 @@ const ExpenseDonutChart = () => {
         />
       </div>
 
-      <div className="flex flex-wrap flex-col lg:flex-row justify-center items-center gap-2 sm:gap-8">
+      <div className="flex flex-wrap justify-center items-center gap-8">
         <div className="w-[300px] h-[300px] relative">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
@@ -160,13 +162,13 @@ const ExpenseDonutChart = () => {
                           dy="-15"
                           className="fill-[#6F7E7C] dark:fill-[#7F9E97] text-[14px]"
                         >
-                          {currentHighest?.name}
+                          {currentHighest?.name.slice(0, 15) + (currentHighest?.name.length > 15 ? '...' : '')}
                         </tspan>
 
                         <tspan
                           x={cx}
                           dy="30"
-                          className="fill-[#0B1514] dark:fill-white text-xl font-bold"
+                          className={cn("fill-[#0B1514] dark:fill-white text-xl font-bold", currentHighest.value.toString().length > 10 && 'text-[16px]')}
                         >
                           {currentHighest && currentHighest.value > 1
                             ? formattedAmount(currentHighest.value)

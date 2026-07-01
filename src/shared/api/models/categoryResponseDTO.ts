@@ -5,6 +5,7 @@
  * REST API Documentation for MT Service
  * OpenAPI spec version: 1.0
  */
+import type { CategoryResponseDTOScope } from './categoryResponseDTOScope';
 import type { CategoryResponseDTOStatus } from './categoryResponseDTOStatus';
 import type { CategoryResponseDTOType } from './categoryResponseDTOType';
 
@@ -20,6 +21,8 @@ export interface CategoryResponseDTO {
   type?: CategoryResponseDTOType;
   /** Status */
   status?: CategoryResponseDTOStatus;
+  /** Scope */
+  scope?: CategoryResponseDTOScope;
   /** Icon */
   icon?: string;
 }
