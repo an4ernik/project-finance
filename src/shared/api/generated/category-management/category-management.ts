@@ -407,11 +407,16 @@ export type deleteCategoryResponse404 = {
   data: ProblemDetail
   status: 404
 }
+
+export type deleteCategoryResponse409 = {
+  data: ProblemDetail
+  status: 409
+}
     
 export type deleteCategoryResponseSuccess = (deleteCategoryResponse204) & {
   headers: Headers;
 };
-export type deleteCategoryResponseError = (deleteCategoryResponse400 | deleteCategoryResponse404) & {
+export type deleteCategoryResponseError = (deleteCategoryResponse400 | deleteCategoryResponse404 | deleteCategoryResponse409) & {
   headers: Headers;
 };
 
@@ -505,11 +510,16 @@ export type updateCategoryResponse404 = {
   data: ProblemDetail
   status: 404
 }
+
+export type updateCategoryResponse409 = {
+  data: ProblemDetail
+  status: 409
+}
     
 export type updateCategoryResponseSuccess = (updateCategoryResponse200) & {
   headers: Headers;
 };
-export type updateCategoryResponseError = (updateCategoryResponse404) & {
+export type updateCategoryResponseError = (updateCategoryResponse404 | updateCategoryResponse409) & {
   headers: Headers;
 };
 
@@ -596,11 +606,16 @@ export type unarchiveCategoryResponse404 = {
   data: ProblemDetail
   status: 404
 }
+
+export type unarchiveCategoryResponse409 = {
+  data: ProblemDetail
+  status: 409
+}
     
 export type unarchiveCategoryResponseSuccess = (unarchiveCategoryResponse204) & {
   headers: Headers;
 };
-export type unarchiveCategoryResponseError = (unarchiveCategoryResponse404) & {
+export type unarchiveCategoryResponseError = (unarchiveCategoryResponse404 | unarchiveCategoryResponse409) & {
   headers: Headers;
 };
 
@@ -685,11 +700,16 @@ export type archiveCategoryResponse404 = {
   data: ProblemDetail
   status: 404
 }
+
+export type archiveCategoryResponse409 = {
+  data: ProblemDetail
+  status: 409
+}
     
 export type archiveCategoryResponseSuccess = (archiveCategoryResponse204) & {
   headers: Headers;
 };
-export type archiveCategoryResponseError = (archiveCategoryResponse404) & {
+export type archiveCategoryResponseError = (archiveCategoryResponse404 | archiveCategoryResponse409) & {
   headers: Headers;
 };
 

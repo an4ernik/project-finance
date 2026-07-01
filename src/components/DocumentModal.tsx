@@ -4,6 +4,7 @@ import {Button} from './ui/button';
 import {useEffect, useState} from 'react';
 import {createPortal} from 'react-dom';
 import pdfIcon from '../assets/pdfIcon.svg';
+import { api } from '@/shared/api/axios';
 
 interface DocumentModalProps {
   isOpen: boolean;
@@ -21,33 +22,34 @@ const DocumentModal = ({isOpen, onClose, files}: DocumentModalProps) => {
       setActiveFile(files[0]);
     }
   }, [isOpen, files]);
-  const handleDownload = async () => {
-    if (!activeFile) return;
+const handleDownload = async () => {
+  if (!activeFile) return;
 
-    try {
-      const response = await fetch(activeFile);
-      const blob = await response.blob();
-      const url = window.URL.createObjectURL(blob);
+  try {
+    const response = await api.get(activeFile, {
+      responseType: 'blob',
+    });
+    
+    const blob = response.data; 
+    const url = window.URL.createObjectURL(blob);
 
-      const link = document.createElement('a');
-      link.href = url;
+    const link = document.createElement('a');
+    link.href = url;
 
-      // Extract filename from URL or provide a default
-      const filename = activeFile.split('/').pop() || 'download';
-      link.setAttribute('download', filename);
+    const filename = activeFile.split('/').pop() || 'download';
+    link.setAttribute('download', filename);
 
-      document.body.appendChild(link);
-      link.click();
+    document.body.appendChild(link);
+    link.click();
 
-      // Clean up
-      link.parentNode?.removeChild(link);
-      window.URL.revokeObjectURL(url);
-    } catch (error) {
-      console.error('Download failed:', error);
-      // Fallback: just open in new tab if fetch fails
-      window.open(activeFile, '_blank');
-    }
-  };
+    // Clean up
+    link.parentNode?.removeChild(link);
+    window.URL.revokeObjectURL(url);
+  } catch (error) {
+    console.error('Download failed via API instance:', error);
+    window.open(activeFile, '_blank');
+  }
+};
 
   if (!isOpen) return null;
 
@@ -79,14 +81,11 @@ const DocumentModal = ({isOpen, onClose, files}: DocumentModalProps) => {
         </div> 
          
         <div className="flex-1 min-h-0 my-2 overflow-y-auto custom-scrollbar flex items-stretch">
-          {/* 🎯 Трюк 1: flex-wrap + items-stretch змушує блоки адаптивно рости та заповнювати простір */}
           <div className="flex flex-wrap gap-4 w-full h-full content-start justify-center">
             {files?.map(file => (
               <div
                 key={file}
                 onClick={() => setActiveFile(file)}
-                // 🎯 Трюк 2: flex-1 (або flex-grow) з обмеженням min-w та max-w
-                // На мобілках базис [calc(50%-8px)], на десктопі [200px]. h-full або сувора висота залежно від кількості.
                 className={`relative flex-1 min-w-[140px] sm:min-w-[180px] max-w-full h-[160px] sm:h-[calc(50%-8px)] sm:min-h-[200px] bg-transparent overflow-hidden cursor-pointer border rounded-xl transition-all hover:border-gray-400 ${
                   activeFile === file
                     ? 'border-primary shadow-[0_0_0_2px_rgba(2,98,77,0.3)]'
@@ -104,7 +103,6 @@ const DocumentModal = ({isOpen, onClose, files}: DocumentModalProps) => {
                   }}
                 />
 
-                {/* Затемнення та підпис файлу */}
                 <span className="absolute bottom-0 left-0 w-full p-2 bg-[#02624db2] backdrop-blur-xs truncate text-xs text-white text-center font-medium rounded-b-xl">
                   {file.split('/').pop() || file}
                 </span>
@@ -113,7 +111,6 @@ const DocumentModal = ({isOpen, onClose, files}: DocumentModalProps) => {
           </div>
         </div>
 
-        {/* Footer Actions */}
         <div className="flex flex-wrap items-center justify-center sm:justify-end gap-4 shrink-0 pt-4">
           <Button
             variant="primary"

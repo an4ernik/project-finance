@@ -18,7 +18,7 @@ const ExpenseDistributionList = ({
   const CURRENCY_SIGN = useGetCurrencySign();
   
   return (
-    <ul className="flex w-full md:max-w-[340px] max-h-[300px] p-1 overflow-y-auto custom-scrollbar flex-col gap-2 flex-1">
+    <ul className="flex w-full min-w-[240px] md:max-w-[340px] max-h-[300px] lg:max-h-[200px] p-1 overflow-y-auto custom-scrollbar flex-col gap-2 flex-1">
       {expenseDistributionData.map(item => (
         <li
           key={item.name}

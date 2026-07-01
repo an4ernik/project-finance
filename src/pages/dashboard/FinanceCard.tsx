@@ -79,7 +79,7 @@ export function FinanceCard({type, total}: CardProps) {
       <div>
         <div
           className={cn(
-            'text-2xl font-bold tracking-tight break-words',
+            'text-2xl font-bold tracking-tight break-words min-w-0',
             theme.amountColor,
           )}
         >

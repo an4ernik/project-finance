@@ -281,7 +281,7 @@ const CashFlowChart = ({data = []}: Props) => {
       {/* Footer Section */}
       <div
         className={cn(
-          'sm:mt-5 border-t border-t-[#9AA7A5]! dark:border-t-[#5A736E]! flex justify-between items-center',
+          'pt-2 sm:mt-5 border-t border-t-[#9AA7A5]! dark:border-t-[#5A736E]! flex justify-between flex-wrap gap-2 items-center',
         )}
       >
         <span

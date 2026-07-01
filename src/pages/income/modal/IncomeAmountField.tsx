@@ -38,16 +38,23 @@ export const IncomeAmountField = <T extends FieldValues>({
         className={cn('h-10 sm:h-12 px-3 py-[7.5px]')}
         {...register(name, {
           onChange: e => {
-            const value = e.target.value;
-            let cleanedValue = value
-              .replace(/[^0-9.]/g, '')
-              .replace(/(\..*)\./g, '$1');
-            const dotIndex = cleanedValue.indexOf('.');
-            if (dotIndex !== -1) {
-              cleanedValue = cleanedValue.substring(0, dotIndex + 3);
+            let value = e.target.value;
+            value = value.replace(/[^0-9.,]/g, '');
+            value = value.replace(',', '.');
+            
+            const firstDotIndex = value.indexOf('.');
+            if (firstDotIndex !== -1) {
+              value =
+                value.substring(0, firstDotIndex + 1) +
+                value.substring(firstDotIndex + 1).replace(/\./g, '');
             }
 
-            e.target.value = cleanedValue;
+            const dotIndex = value.indexOf('.');
+            if (dotIndex !== -1) {
+              value = value.substring(0, dotIndex + 3);
+            }
+
+            e.target.value = value;
           },
         })}
       />

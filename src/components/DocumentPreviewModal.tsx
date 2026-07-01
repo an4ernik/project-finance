@@ -1,11 +1,3 @@
-// import {Button} from '@/components/ui/button';
-// import { Download } from 'lucide-react';
-
-// interface PreviewProps {
-//   onClose: () => void;
-//   urls: string[] | undefined;
-// }
-
 const triggerDownload = async (url: string, index: number) => {
   try {
     // 1. Fetch the file data
@@ -92,7 +84,7 @@ interface PreviewProps {
   onClose: () => void;
   urls: string[] | undefined;
 }
- 
+
 export function DocumentPreviewModal({onClose, urls}: PreviewProps) {
   // Grab the first URL if available
   const currentUrl = urls && urls.length > 0 ? urls[0] : null;
@@ -100,8 +92,10 @@ export function DocumentPreviewModal({onClose, urls}: PreviewProps) {
   if (!currentUrl) return null;
 
   return (
-    // Added z-[500] and fixed positioning
-    <div onClick={e => e.stopPropagation()} className="fixed w-full h-full flex justify-center items-center top-0 left-0 z-50 ">
+    <div
+      onClick={e => e.stopPropagation()}
+      className="fixed w-full h-full flex justify-center items-center top-0 left-0 z-50 "
+    >
       <div className="bg-[#142624] text-white rounded-xl flex flex-col w-full p-6 max-w-[900px] h-[90vh]">
         <header className="flex justify-between items-center mb-10">
           <div>

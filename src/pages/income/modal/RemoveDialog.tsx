@@ -109,7 +109,7 @@ const RemoveDialog = ({
             theme.previewBox,
           )}
         >
-          <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center justify-between mb-2 flex-wrap gap-1">
             <span
               className={cn(
                 'font-semibold text-lg capitalize',

@@ -19,21 +19,59 @@ import {useGetTransactions} from '@/shared/api/generated/transaction-management/
 import {endOfDay} from 'date-fns';
 import {useGetCurrencySign} from '@/shared/store/useCurrencySign';
 
-const calculateYAxisWidth = (min: number, max: number) => { 
+// const calculateYAxisWidth = (min: number, max: number) => {
+//   const extremeValue = Math.abs(min) > Math.abs(max) ? min : max;
+
+//   const formatted = (() => {
+//     const abs = Math.abs(extremeValue);
+
+//     if (abs >= 1_000_000_000) {
+//       return `${(abs / 1_000_000_000).toFixed(1)} B`;
+//     }
+
+//     if (abs >= 1_000_000) {
+//       return `${(abs / 1_000_000).toFixed(1)} M`;
+//     }
+
+//     if (abs >= 1_000) {
+//       return `${(abs / 1_000).toFixed(1)} K`;
+//     }
+
+//     return abs.toString();
+//   })();
+
+//   return Math.max(50, formatted.length);
+// };
+
+const formatAxisValue = (value: number) => {
+  const isNegative = value < 0;
+  const abs = Math.abs(value);
+
+  let formatted: string;
+
+  if (abs >= 1_000_000_000) {
+    formatted = `${(abs / 1_000_000_000).toFixed(1)}${' '}B`;
+  } else if (abs >= 1_000_000) {
+    formatted = `${(abs / 1_000_000).toFixed(1)}${' '}M`;
+  } else if (abs >= 1_000) {
+    formatted = `${(abs / 1_000).toFixed(1)}${' '}K`;
+  } else {
+    formatted = abs.toString();
+  }
+
+  return isNegative ? `-${formatted}` : formatted;
+};
+
+const calculateYAxisWidth = (min: number, max: number) => {
   const extremeValue = Math.abs(min) > Math.abs(max) ? min : max;
 
-  const formatted =
-    Math.abs(extremeValue) >= 1000
-      ? `${(extremeValue / 1000).toFixed(1)}K`
-      : extremeValue.toString();
- 
-  const estimatedWidth = 15 + formatted.length * 3;
+  const label = formatAxisValue(extremeValue);
 
-  return Math.min(Math.max(estimatedWidth, 50), 100);
+  return Math.max(50, label.length * 6 + 10);
 };
 
 const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
-  const {t} = useTranslation(); 
+  const {t} = useTranslation();
   const {data} = useGetTransactions({request: {limit: 1000}});
   const CURRENCY_SIGN = useGetCurrencySign();
 
@@ -111,8 +149,8 @@ const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
 
     if (activePeriod === 'year') {
       return Array.from({length: 12}, (_, m) => {
-        const monthStart = new Date(range.from.getFullYear(), m, 1) ;
-        const monthEnd = new Date(range.from.getFullYear(), m + 1, 0) ;
+        const monthStart = new Date(range.from.getFullYear(), m, 1);
+        const monthEnd = new Date(range.from.getFullYear(), m + 1, 0);
 
         if (monthStart > today) {
           return {
@@ -163,8 +201,7 @@ const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
     const actualMax = Math.max(...validValues);
     const actualMin = Math.min(...validValues);
 
-    // If the min is negative, use it; otherwise, default to 0
-    const padding = 1; // Add 10% breathing room
+    const padding = 1; 
     const bottom = actualMin < 0 ? Math.floor(actualMin * padding) : 0;
     const top = Math.max(1000, Math.ceil(actualMax * padding));
 
@@ -186,17 +223,22 @@ const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
     return calculateYAxisWidth(chartDomain[0], chartDomain[1]);
   }, [chartDomain]);
 
+  const chartLeftMargin = useMemo(() => {
+    return dynamicYAxisWidth; // extra padding
+  }, [dynamicYAxisWidth]);
+
+
   const hasData =
     chartData.length > 0 && chartData.some(item => item?.amount ?? 0 > 0);
 
   return (
     <>
-      <div className="w-full h-[280px] relative">
+      <div className="w-full h-full min-h-[280px] max-h-[500px] relative">
         {hasData ? (
           <ResponsiveContainer width="100%" height="100%">
             <LineChart
               data={chartData}
-              margin={{right: 35, left: 35, bottom: 10, top: 10}}
+              margin={{right: 35, left: chartLeftMargin, bottom: 10, top: 10}}
             >
               <defs>
                 {/* The Glow Effect Filter */}
@@ -232,20 +274,10 @@ const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
                 dy={10}
               />
               <YAxis
-                // 1. Keep your custom ticks
                 ticks={chartTicks}
-                // 2. FORCE every tick to render (this is the key!)
                 interval={0}
-                // 3. Ensure the scale can actually reach 10k
                 domain={chartDomain}
-                tickFormatter={value => {
-                  if (value === 0) return '0';
-                  // Handle negative formatting correctly
-                  const isNegative = value < 0;
-                  const absValue = Math.abs(value);
-                  const formatted = (absValue / 1000).toFixed(1);
-                  return `${isNegative ? '-' : ''}${formatted}K`;
-                }}
+                tickFormatter={formatAxisValue}
                 axisLine={false}
                 tickLine={false}
                 tick={{fill: '#7F9E97', fontSize: 14}}
@@ -289,7 +321,8 @@ const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
         )}
       </div>
 
-      <div className="mt-4 pt-2 border-t border-[#1c3f35] flex flex-col sm:flex-row justify-between items-center text-[14px]">
+      {/* Bottom Section */}
+      <div className="mt-4 pt-2 border-t border-[#1c3f35] flex flex-col sm:flex-row justify-around items-center text-[14px] flex-wrap gap-3">
         <div className="flex items-center gap-2">
           <span className="text-[#7F9E97]">
             {t('dashboard.dynamicsBalance.currentBalance')}
