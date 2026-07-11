@@ -39,6 +39,10 @@ import {
 import {useGetCategories} from '@/shared/api/generated/category-management/category-management';
 import type {CategoryResponseDTO} from '@/shared/api/models';
 import {ICONS_BY_ID} from './IconPicker';
+import {
+  getCategoryDisplayName,
+  sortGlobalCategoriesFirst,
+} from './categoryDisplay';
 
 const PERIOD_OPTIONS: PeriodOptions[] = [
   {val: 'all', icon: Calendar},
@@ -60,13 +64,15 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
     ? responseCategories
     : [];
 
-  const categories = categoryItems.filter(
-    (
-      category,
-    ): category is CategoryResponseDTO & {name: string; icon: string} =>
-      category.name !== undefined &&
-      category.icon !== undefined &&
-      category.type === type,
+  const categories = sortGlobalCategoriesFirst(
+    categoryItems.filter(
+      (
+        category,
+      ): category is CategoryResponseDTO & {name: string; icon: string} =>
+        category.name !== undefined &&
+        category.icon !== undefined &&
+        category.type === type,
+    ),
   );
 
   const {control, watch, register, setValue} = form;
@@ -81,7 +87,9 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
 
   const selectedCategoriesLabel = category.includes(ALL_CATEGORIES_VALUE)
     ? t(`incomeModal.filters.category.${ALL_CATEGORIES_VALUE}`)
-    : selectedCategories.map(cat => cat.name).join(', ') || '';
+    : selectedCategories
+        .map(cat => getCategoryDisplayName(cat, t))
+        .join(', ') || '';
 
   const selectedPeriod =
     PERIOD_OPTIONS.find(item => item.val === period) ?? PERIOD_OPTIONS[0];
@@ -92,7 +100,9 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
     <div className="w-full bg-secondary flex-wrap flex flex-col sm:flex-row  gap-7 dark:border-b dark:border-[#434e4b]">
       {/* Period filter */}
       <div className="flex flex-col gap-2 w-full lg:max-w-[240px] md:flex-1 md:min-w-[200px]">
-        <h2 className='text-[#BFD9D2]'>{t('incomeModal.filters.period.label')}</h2>
+        <h2 className="text-[#BFD9D2]">
+          {t('incomeModal.filters.period.label')}
+        </h2>
         <Popover open={periodOpen} onOpenChange={setPeriodOpen}>
           <PopoverTrigger asChild>
             <Button
@@ -315,7 +325,9 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
 
       {/* categories */}
       <div className="flex flex-col gap-2 w-full lg:max-w-[240px] md:flex-1 md:min-w-[200px]">
-        <h2 className='text-[#BFD9D2]'>{t('incomeModal.filters.category.label')}</h2>
+        <h2 className="text-[#BFD9D2]">
+          {t('incomeModal.filters.category.label')}
+        </h2>
 
         <Popover open={categoryOpen} onOpenChange={setCategoryOpen}>
           <PopoverTrigger asChild>
@@ -407,7 +419,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
                           {Icon ? (
                             <Icon className="size-5 text-[#6F7E7C] dark:text-[#7F9E97]" />
                           ) : null}
-                          {item.name}
+                          {getCategoryDisplayName(item, t)}
                         </FieldLabel>
                       </Field>
                     );
@@ -421,7 +433,9 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
 
       {/* search */}
       <div className="flex flex-col gap-2 w-full lg:max-w-[320px] md:flex-1 md:min-w-[200px]">
-        <h2 className='text-[#BFD9D2]'>{t('incomeModal.filters.search.label')}</h2>
+        <h2 className="text-[#BFD9D2]">
+          {t('incomeModal.filters.search.label')}
+        </h2>
         <Input
           disabled={categories?.length === 0}
           className="text-[#6F7E7C] dark:text-[#A9C1BB] placeholder:text-[#6F7E7C] dark:placeholder:text-[#A9C1BB] tracking-normal"

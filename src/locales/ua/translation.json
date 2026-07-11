@@ -6,6 +6,17 @@
 
   "tooltipInfo": "Спочатку створіть категорію",
 
+  "defaultCategories": {
+    "salary": "Зарплата",
+    "freelance": "Фріланс",
+    "gift": "Подарунок",
+    "products": "Продукти",
+    "transport": "Транспорт",
+    "cafesAndRestaurants": "Кафе та ресторани",
+    "health": "Здоров'я",
+    "clothing": "Одяг"
+  },
+
   "sidebar": {
     "dashboard": "Головна",
     "income": "Доходи",

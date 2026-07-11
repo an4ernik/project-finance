@@ -6,6 +6,17 @@
 
   "tooltipInfo": "Create a category first",
 
+  "defaultCategories": {
+    "salary": "Salary",
+    "freelance": "Freelance",
+    "gift": "Gift",
+    "products": "Products",
+    "transport": "Transport",
+    "cafesAndRestaurants": "Cafes and restaurants",
+    "health": "Health",
+    "clothing": "Clothing"
+  },
+
   "sidebar": {
     "dashboard": "Dashboard",
     "income": "Income",
