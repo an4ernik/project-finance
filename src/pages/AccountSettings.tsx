@@ -157,6 +157,7 @@ function AccountSettings() {
     control,
     name: 'avatar',
   });
+  const hasAvatar = Boolean(userData?.avatarUrl) && !deleteAvatar;
   const previewUrl = useMemo(() => {
     if (avatarFile instanceof FileList && avatarFile.length > 0) {
       return URL.createObjectURL(avatarFile[0]);
@@ -182,37 +183,31 @@ function AccountSettings() {
     const emailChanged = nextEmail !== (userData.email ?? '');
     const currencyChanged = nextCurrency !== (userData.currencyCode ?? 'UAH');
     const avatarChanged = !!nextAvatar;
-    const avatarDeleted = deleteAvatar && !!userData.avatarUrl;
 
     if (
       !fullNameChanged &&
       !emailChanged &&
       !currencyChanged &&
-      !avatarChanged &&
-      !avatarDeleted
+      !avatarChanged
     ) {
       toast.info(t('settings.account.nothingToUpdate'));
       return;
     }
 
     const needsProfileUpdate =
-      fullNameChanged || currencyChanged || avatarChanged || avatarDeleted;
+      fullNameChanged || currencyChanged || avatarChanged;
     const needsEmailUpdate = emailChanged;
 
     const dto: {
       fullName: string;
       currencyCode: RequestUpdateUserProfileDTOCurrencyCode;
-      deleteAvatar?: boolean;
     } = {
       fullName: nextFullName,
       currencyCode: nextCurrency as RequestUpdateUserProfileDTOCurrencyCode,
     };
-    if (avatarDeleted) {
-      dto.deleteAvatar = true;
-    }
     const profileData = {
       dto,
-      avatar: avatarDeleted ? undefined : nextAvatar,
+      avatar: nextAvatar,
     };
 
     const handleError = (error: unknown) => {
@@ -250,6 +245,35 @@ function AccountSettings() {
       handleSuccess();
     } catch (error) {
       handleError(error);
+    }
+  };
+
+  const handleDeleteAvatar = async () => {
+    if (!userData?.avatarUrl || isUpdatingProfile) return;
+
+    setDeleteAvatar(true);
+    setValue('avatar', undefined, {
+      shouldDirty: false,
+      shouldValidate: true,
+    });
+    setAvatarInputKey(prev => prev + 1);
+
+    try {
+      await updateMe({
+        data: {
+          dto: {
+            deleteAvatar: true,
+          },
+        },
+      });
+      void queryClient.invalidateQueries({
+        queryKey: getGetUserProfileQueryKey(),
+      });
+      void refetch();
+      toast.success(t('settings.account.saveSuccess'));
+    } catch {
+      setDeleteAvatar(false);
+      toast.error(t('common.error'));
     }
   };
 
@@ -304,14 +328,8 @@ function AccountSettings() {
                         variant="destructive"
                         className="h-9 rounded-lg tracking-normal"
                         icon={<Trash2 className="size-5" />}
-                        onClick={() => {
-                          setDeleteAvatar(true);
-                          setValue('avatar', undefined, {
-                            shouldDirty: true,
-                            shouldValidate: true,
-                          });
-                          setAvatarInputKey(prev => prev + 1);
-                        }}
+                        disabled={!hasAvatar || isUpdatingProfile}
+                        onClick={handleDeleteAvatar}
                       >
                         {t('settings.account.deletePhoto')}
                       </Button>
@@ -442,7 +460,7 @@ function AccountSettings() {
             <Button
               type="submit"
               className="w-full py-6 text-lg"
-              disabled={!isValid || !isDirty}
+              disabled={!isValid || !isDirty || isPending}
             >
               {isPending ? t('common.loading') : t('settings.account.save')}
             </Button>
