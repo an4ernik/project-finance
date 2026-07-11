@@ -6,6 +6,17 @@
 
   "tooltipInfo": "Create a category first",
 
+  "defaultCategories": {
+    "salary": "Salary",
+    "freelance": "Freelance",
+    "gift": "Gift",
+    "products": "Products",
+    "transport": "Transport",
+    "cafesAndRestaurants": "Cafes and restaurants",
+    "health": "Health",
+    "clothing": "Clothing"
+  },
+
   "sidebar": {
     "dashboard": "Dashboard",
     "income": "Income",
@@ -231,6 +242,7 @@
       "title": "Profile information",
       "subtitle": "Update account details and profile photo",
       "changePhoto": "Change photo",
+      "deletePhoto": "Delete photo",
       "photoHint": "JPG, PNG or GIF. Max size - 2 MB.",
       "fullName": "Full name",
       "fullNamePlaceholder": "Enter full name",

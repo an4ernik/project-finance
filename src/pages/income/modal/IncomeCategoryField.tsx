@@ -15,6 +15,10 @@ import {useGetCategories} from '@/shared/api/generated/category-management/categ
 import {ICONS_BY_ID} from '../IconPicker';
 import type {CategoryResponseDTO} from '@/shared/api/models';
 import {
+  getCategoryDisplayName,
+  sortGlobalCategoriesFirst,
+} from '../categoryDisplay';
+import {
   Controller,
   type Control,
   type FieldValues,
@@ -46,18 +50,20 @@ export const IncomeCategoryField = <
       : (categoriesResponse?.data ?? [])
   ) as CategoryResponseDTO[];
 
-  const categories = categoryItems.filter(
-    (
-      category,
-    ): category is CategoryResponseDTO & {
-      id: number;
-      name: string;
-      icon: string;
-    } =>
-      category.id !== undefined &&
-      category.name !== undefined &&
-      category.icon !== undefined &&
-      category.type === type,
+  const categories = sortGlobalCategoriesFirst(
+    categoryItems.filter(
+      (
+        category,
+      ): category is CategoryResponseDTO & {
+        id: number;
+        name: string;
+        icon: string;
+      } =>
+        category.id !== undefined &&
+        category.name !== undefined &&
+        category.icon !== undefined &&
+        category.type === type,
+    ),
   );
 
   return (
@@ -93,13 +99,14 @@ export const IncomeCategoryField = <
             </SelectTrigger>
 
             <SelectContent className="w-full">
-              {categories.map(({name, icon, id}) => {
-                const Icon = ICONS_BY_ID[icon];
+              {categories.map(category => {
+                const Icon = ICONS_BY_ID[category.icon];
+
                 return (
-                  <SelectItem key={id} value={String(id)}>
+                  <SelectItem key={category.id} value={String(category.id)}>
                     <div className="flex items-center gap-4 text-[16px]">
                       {Icon ? <Icon className="size-4 shrink-0" /> : null}
-                      {name}
+                      {getCategoryDisplayName(category, t)}
                     </div>
                   </SelectItem>
                 );

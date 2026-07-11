@@ -11,7 +11,7 @@ import {
   ArchiveRestore,
   X,
 } from 'lucide-react';
-
+import {Tooltip, TooltipContent, TooltipTrigger} from '@/components/ui/tooltip';
 import {useEffect, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {toast} from 'sonner';
@@ -35,7 +35,11 @@ import {TRANSACTION_THEMES} from '@/constances/constances';
 import {getGetTransactionsQueryKey} from '@/shared/api/generated/transaction-management/transaction-management';
 import MobileHeader from '@/components/MobileHeader';
 import SideBar from '@/components/ui/SideBar';
-import ActionButtonWithTooltip from '@/components/ActionButtonWithTooltip';
+import {
+  getCategoryDisplayName,
+  isGlobalCategory,
+  sortGlobalCategoriesFirst,
+} from './categoryDisplay';
 
 type Props = {
   onClose: () => void;
@@ -104,7 +108,7 @@ function CategoriesManager({
       ? activeCategoriesResponse
       : [];
 
-  const visibleCategories = categories;
+  const visibleCategories = sortGlobalCategoriesFirst(categories);
 
   const listTitle = isArchive ? catT('archivedTitle') : catT('categoryType');
 
@@ -116,7 +120,13 @@ function CategoriesManager({
   };
 
   const handleToggleArchive = async (category: CategoryResponseDTO) => {
-    if (!category.id || isArchiving || isRestoring) return;
+    if (
+      !category.id ||
+      isGlobalCategory(category) ||
+      isArchiving ||
+      isRestoring
+    )
+      return;
     try {
       if (isArchive) {
         await unarchiveCategory({categoryId: category.id});
@@ -131,7 +141,7 @@ function CategoriesManager({
   };
 
   const handleDelete = async (category: CategoryResponseDTO) => {
-    if (!category.id || isDeleting) return;
+    if (!category.id || isGlobalCategory(category) || isDeleting) return;
     try {
       await deleteCategory({
         categoryId: category.id,
@@ -326,6 +336,9 @@ function CategoriesManager({
                   const Icon = category.icon
                     ? ICONS_BY_ID[category.icon]
                     : null;
+                  const canManageCategory = !isGlobalCategory(category);
+                  const categoryName = getCategoryDisplayName(category, t);
+
                   return (
                     <div
                       key={category.id ?? `${category.type}-${category.name}`}
@@ -357,7 +370,7 @@ function CategoriesManager({
                               theme.textTitle,
                             )}
                           >
-                            {category.name}
+                            {categoryName}
                           </span>
 
                           <span
@@ -374,22 +387,54 @@ function CategoriesManager({
                       </div>
 
                       {/* ACTIONS */}
-                      <div className="flex items-center gap-2 shrink-0 ml-3">
-                        {actions.map(
-                          ({key, title, icon, onClick, className}) => (
-                            <ActionButtonWithTooltip
-                              key={title}
-                              title={title}
-                              tooltipText={key}
-                              icon={icon}
-                              theme={theme}
-                              className={className}
-                              responsiveHoverHide={true}
-                              onClick={() => onClick(category)}
-                            />
-                          ),
-                        )}
-                      </div>
+                      {canManageCategory && (
+                        <div className="flex items-center gap-2 shrink-0 ml-3">
+                          {actions.map(
+                            ({
+                              key,
+                              title,
+                              icon: ActionIcon,
+                              onClick,
+                              className,
+                            }) => {
+                              const isDelete = title === 'delete';
+                              const btnBg = isDelete
+                                ? theme.deleteIconBg
+                                : theme.editIconBg;
+                              const btnText = isDelete
+                                ? theme.deleteIconText
+                                : theme.editIconText;
+
+                              return (
+                                <Tooltip key={title}>
+                                  <TooltipTrigger asChild>
+                                    <button
+                                      key={title}
+                                      onClick={() => onClick(category)}
+                                      className={cn(
+                                        'flex items-center justify-center p-2 rounded-lg transition-all cursor-pointer',
+                                        'animate-in fade-in slide-in-from-right-2 duration-200 [@media(hover:hover)]:hidden [@media(hover:hover)]:group-hover:flex',
+                                        '[@media(hover:none)]:text-[#0B1514] dark:[@media(hover:none)]:text-white',
+                                        className,
+                                        btnBg,
+                                        btnText,
+                                      )}
+                                    >
+                                      <ActionIcon className="size-4 sm:size-5" />
+                                    </button>
+                                  </TooltipTrigger>
+                                  <TooltipContent
+                                    sideOffset={1}
+                                    className="border text-[#3A4A48] dark:text-[#BFD9D2] bg-[#fafafa] fill-[#eef3f2] dark:bg-[#0f453c]"
+                                  >
+                                    <p>{key.toLocaleLowerCase()}</p>
+                                  </TooltipContent>
+                                </Tooltip>
+                              );
+                            },
+                          )}
+                        </div>
+                      )}
                     </div>
                   );
                 })}

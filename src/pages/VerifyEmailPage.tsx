@@ -6,6 +6,26 @@ import {useTranslation} from 'react-i18next';
 import {useAuthStore} from '@/shared/store/useAuthStore';
 import {verifyToken} from '@/shared/api/generated/authentication/authentication';
 import {verifyEmail} from '@/shared/api/generated/user-identity/user-identity';
+import {type JwtResponseDTO, type ProblemDetail} from '@/shared/api/models';
+
+const parseJwt = (token: string) => {
+  try {
+    const base64Url = token.split('.')[1];
+    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    const jsonPayload = decodeURIComponent(
+      window
+        .atob(base64)
+        .split('')
+        .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+        .join(''),
+    );
+    return JSON.parse(jsonPayload);
+  } catch {
+    return null;
+  }
+};
+
+type VerificationFlow = 'registration' | 'email_change' | 'unknown';
 
 function VerifyEmailPage() {
   const {t} = useTranslation();
@@ -23,8 +43,29 @@ function VerifyEmailPage() {
     }
 
     const runVerification = async () => {
+      const decoded = parseJwt(token);
+      const purpose = decoded?.purpose;
+
+      const flow: VerificationFlow =
+        purpose === 'email_verification'
+          ? 'registration'
+          : purpose === 'email_update_verification' ||
+              purpose === 'email_change'
+            ? 'email_change'
+            : 'unknown';
+
       try {
-        const authResponse = (await verifyToken({token})) as any;
+        if (flow === 'email_change') {
+          await verifyEmail({token});
+          toast.success(t('auth.verify.activationSuccess'));
+          navigate('/settings', {replace: true});
+          return;
+        }
+
+        // Try registration verification flow (default/registration/unknown)
+        const authResponse = (await verifyToken({
+          token,
+        })) as unknown as JwtResponseDTO;
         const accessToken = authResponse?.accessToken;
 
         if (accessToken) {
@@ -37,11 +78,16 @@ function VerifyEmailPage() {
       } catch (error) {
         if (axios.isAxiosError(error)) {
           const status = error.response?.status;
-          const detail = (error.response?.data as any)?.detail;
+          const detail = (error.response?.data as ProblemDetail)?.detail;
 
           if (status === 409) {
-            toast.info(t('auth.verify.accountAlreadyActivated'));
-            navigate('/login', {replace: true});
+            if (flow === 'email_change') {
+              toast.info(t('auth.verify.accountAlreadyActivated'));
+              navigate('/settings', {replace: true});
+            } else {
+              toast.info(t('auth.verify.accountAlreadyActivated'));
+              navigate('/login', {replace: true});
+            }
             return;
           }
 
@@ -50,7 +96,7 @@ function VerifyEmailPage() {
             typeof detail === 'string' &&
             detail.includes('Invalid token type');
 
-          if (isWrongTokenType || status === 400) {
+          if (flow === 'unknown' && (isWrongTokenType || status === 400)) {
             try {
               await verifyEmail({token});
               toast.success(t('auth.verify.activationSuccess'));
@@ -64,13 +110,18 @@ function VerifyEmailPage() {
           }
           if (status === 404) {
             toast.info(t('auth.verify.tokenHasExpired'));
-            navigate('/?token_expired=true', {replace: true});
+            navigate(
+              flow === 'email_change' ? '/settings' : '/?token_expired=true',
+              {replace: true},
+            );
             return;
           }
         }
 
         toast.error(t('auth.verify.activationError'));
-        navigate('/signup', {replace: true});
+        navigate(flow === 'email_change' ? '/settings' : '/signup', {
+          replace: true,
+        });
       } finally {
         setIsLoading(false);
       }

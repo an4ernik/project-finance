@@ -2,7 +2,7 @@ import {useEffect, useMemo, useState} from 'react';
 import {Controller, useForm, useWatch} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
-import {Camera, Mail, PenLine, User} from 'lucide-react';
+import {Camera, Mail, PenLine, Trash2, User} from 'lucide-react';
 import {toast} from 'sonner';
 import {useTranslation} from 'react-i18next';
 import defaultAvatar from '@/assets/default-photo.png';
@@ -69,6 +69,8 @@ function AccountSettings() {
     useUpdateEmail();
   const [fullNameInput, setFullNameInput] = useState<boolean>(false);
   const [emailInput, setEmailInput] = useState<boolean>(false);
+  const [deleteAvatar, setDeleteAvatar] = useState<boolean>(false);
+  const [avatarInputKey, setAvatarInputKey] = useState(0);
   const regDate = userData?.createdAt ? parseISO(userData.createdAt) : null;
   const isPending = isUpdatingProfile || isUpdatingEmail;
   const [isOpenDeleteAccountModal, setIsOpenDeleteAccountModal] =
@@ -133,6 +135,7 @@ function AccountSettings() {
     control,
     handleSubmit,
     reset,
+    setValue,
     formState: {errors, isValid, isDirty},
   } = useForm<FormFields>({
     resolver: zodResolver(schema),
@@ -154,6 +157,7 @@ function AccountSettings() {
     control,
     name: 'avatar',
   });
+  const hasAvatar = Boolean(userData?.avatarUrl) && !deleteAvatar;
   const previewUrl = useMemo(() => {
     if (avatarFile instanceof FileList && avatarFile.length > 0) {
       return URL.createObjectURL(avatarFile[0]);
@@ -194,7 +198,10 @@ function AccountSettings() {
       fullNameChanged || currencyChanged || avatarChanged;
     const needsEmailUpdate = emailChanged;
 
-    const dto = {
+    const dto: {
+      fullName: string;
+      currencyCode: RequestUpdateUserProfileDTOCurrencyCode;
+    } = {
       fullName: nextFullName,
       currencyCode: nextCurrency as RequestUpdateUserProfileDTOCurrencyCode,
     };
@@ -222,6 +229,7 @@ function AccountSettings() {
       void refetch();
       setCurrencySign(dto.currencyCode);
       toast.success(t('settings.account.saveSuccess'));
+      setDeleteAvatar(false);
       reset();
     };
 
@@ -237,6 +245,35 @@ function AccountSettings() {
       handleSuccess();
     } catch (error) {
       handleError(error);
+    }
+  };
+
+  const handleDeleteAvatar = async () => {
+    if (!userData?.avatarUrl || isUpdatingProfile) return;
+
+    setDeleteAvatar(true);
+    setValue('avatar', undefined, {
+      shouldDirty: false,
+      shouldValidate: true,
+    });
+    setAvatarInputKey(prev => prev + 1);
+
+    try {
+      await updateMe({
+        data: {
+          dto: {
+            deleteAvatar: true,
+          },
+        },
+      });
+      void queryClient.invalidateQueries({
+        queryKey: getGetUserProfileQueryKey(),
+      });
+      void refetch();
+      toast.success(t('settings.account.saveSuccess'));
+    } catch {
+      setDeleteAvatar(false);
+      toast.error(t('common.error'));
     }
   };
 
@@ -268,27 +305,46 @@ function AccountSettings() {
           <FieldGroup className="gap-4">
             <Field className="gap-2">
               <FieldContent>
-                <div className="flex items-center gap-4">
+                <div className="flex items-center gap-[18px]">
                   <img
-                    src={previewUrl || userData?.avatarUrl || defaultAvatar}
+                    src={
+                      deleteAvatar
+                        ? defaultAvatar
+                        : previewUrl || userData?.avatarUrl || defaultAvatar
+                    }
                     alt="avatar"
-                    className="h-20 w-20 rounded-2xl object-cover"
+                    className="h-24 w-24 rounded-[20px] object-cover"
                   />
-                  <div>
-                    <label htmlFor="avatar-upload">
-                      <span className="inline-flex h-10 cursor-pointer items-center justify-center gap-2 rounded-[10px] border px-4 text-base tracking-normal [background:var(--light-btn-bg-full)] text-[#eaf6f3] backdrop-blur-[5px] dark:[background:linear-gradient(to_bottom,rgba(49,95,85,0.55),rgba(49,95,85,0.18))]">
-                        {t('settings.account.changePhoto')}
-                        <Camera className="size-5" />
-                      </span>
-                    </label>
+                  <div className="flex flex-1 flex-col gap-2">
+                    <div className="grid grid-cols-2 gap-2">
+                      <label htmlFor="avatar-upload">
+                        <span className="flex h-9 cursor-pointer items-center justify-center gap-2 rounded-lg border border-transparent bg-[var(--glass-bg)] px-4 text-base font-medium leading-[1.167] tracking-normal text-foreground [box-shadow:var(--glass-shadow)] backdrop-blur-[7px] transition-all duration-200 hover:[background:var(--btn-primary-hover)] hover:text-[#eaf6f3] focus-visible:ring-[3px] focus-visible:ring-[#02A078]/30">
+                          {t('settings.account.changePhoto')}
+                          <Camera className="size-5" />
+                        </span>
+                      </label>
+                      <Button
+                        type="button"
+                        variant="destructive"
+                        className="h-9 rounded-lg tracking-normal"
+                        icon={<Trash2 className="size-5" />}
+                        disabled={!hasAvatar || isUpdatingProfile}
+                        onClick={handleDeleteAvatar}
+                      >
+                        {t('settings.account.deletePhoto')}
+                      </Button>
+                    </div>
                     <input
+                      key={avatarInputKey}
                       id="avatar-upload"
                       type="file"
                       className="hidden"
                       accept=".jpg,.jpeg,.png,.gif,image/jpeg,image/png,image/gif"
-                      {...register('avatar')}
+                      {...register('avatar', {
+                        onChange: () => setDeleteAvatar(false),
+                      })}
                     />
-                    <FieldDescription className="mt-2 text-sm">
+                    <FieldDescription className="text-sm">
                       {t('settings.account.photoHint')}
                     </FieldDescription>
                     <FieldError className="mt-1 text-[10px]">
@@ -404,7 +460,7 @@ function AccountSettings() {
             <Button
               type="submit"
               className="w-full py-6 text-lg"
-              disabled={!isValid || !isDirty}
+              disabled={!isValid || !isDirty || isPending}
             >
               {isPending ? t('common.loading') : t('settings.account.save')}
             </Button>
