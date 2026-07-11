@@ -499,7 +499,15 @@ function CategoriesManager({
                 : catT('modals.deleteTitle')
           }
           description={
-            needsTransfer ? catT('modals.deleteTransferDescription') : undefined
+            needsTransfer
+              ? catT('modals.deleteTransferDescription')
+              : confirm?.action === 'archive'
+                ? catT('modals.archiveDescription')
+                : confirm?.action === 'restore'
+                  ? catT('modals.restoreDescription')
+                  : confirm?.action === 'delete'
+                    ? catT('modals.deleteDescription')
+                    : undefined
           }
           cancelLabel={catT('modals.cancel')}
           confirmLabel={
