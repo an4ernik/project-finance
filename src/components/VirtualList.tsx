@@ -179,9 +179,7 @@ const VirtualList = ({type, formFilters, setTotalAmount}: VirtualListProps) => {
   const transactions = useMemo<TransactionUI[]>(() => {
     if (!data?.pages) return [];
     const pageItems = data.pages.flatMap(page => {
-      // Якщо сервер повертає масив прямо в page.data:
       if (Array.isArray(page?.data)) return page.data;
-      // Якщо сервер повертає об'єкт типу { transactions: [...] }:
       if (Array.isArray(page?.transactions)) return page.transactions;
       return [];
     });

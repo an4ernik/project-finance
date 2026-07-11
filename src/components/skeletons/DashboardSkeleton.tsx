@@ -7,7 +7,7 @@ const SkeletonBox = ({className}: {className?: string}) => (
       className,
     )}
   />
-);
+);      
 
 export const DashboardSkeleton = () => {
   return (

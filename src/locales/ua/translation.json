@@ -522,15 +522,16 @@
     "fields": {
       "amount": {
         "INCOME": "Сума",
-        "EXPENSE": "Сума"
+        "EXPENSE": "Сума",
+        "placeholder": "Введіть суму"
       },
       "category": {
         "INCOME": "Категорія доходу",
         "EXPENSE": "Категорія витрати"
       },
       "date": {
-        "INCOME": "Дата доходу",
-        "EXPENSE": "Дата витрати"
+        "INCOME": "Дата",
+        "EXPENSE": "Дата"
       },
       "description": "Опис (необов’язково)",
       "descriptionPlaceholder": "Додайте примітку..."
@@ -551,7 +552,7 @@
     },
 
     "categories": {
-      "categoryPlaceholder": "Виберіть категорію",
+      "categoryPlaceholder": "Оберіть категорію",
       "salary": "Заробітна плата",
       "freelance": "Фріланс",
       "investments": "Інвестиції",

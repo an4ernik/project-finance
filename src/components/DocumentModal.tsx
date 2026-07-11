@@ -28,6 +28,7 @@ const handleDownload = async () => {
   try {
     const response = await api.get(activeFile, {
       responseType: 'blob',
+      withCredentials: true,
     });
     
     const blob = response.data; 
@@ -81,12 +82,12 @@ const handleDownload = async () => {
         </div> 
          
         <div className="flex-1 min-h-0 my-2 overflow-y-auto custom-scrollbar flex items-stretch">
-          <div className="flex flex-wrap gap-4 w-full h-full content-start justify-center">
+          <div className="flex flex-wrap gap-4 w-full h-full content-start justify-center ${files?.length === 1 ? 'h-full' : 'h-full'}">
             {files?.map(file => (
               <div
                 key={file}
                 onClick={() => setActiveFile(file)}
-                className={`relative flex-1 min-w-[140px] sm:min-w-[180px] max-w-full h-[160px] sm:h-[calc(50%-8px)] sm:min-h-[200px] bg-transparent overflow-hidden cursor-pointer border rounded-xl transition-all hover:border-gray-400 ${
+                className={`relative flex-1 min-w-[140px] sm:min-w-[180px] max-w-full h-[160px] sm:h-[calc(50%-8px)] sm:min-h-[180px] bg-transparent overflow-hidden cursor-pointer border rounded-xl transition-all hover:border-gray-400 ${
                   activeFile === file
                     ? 'border-primary shadow-[0_0_0_2px_rgba(2,98,77,0.3)]'
                     : 'border-white/10 bg-black/5 dark:bg-white/5'

@@ -29,7 +29,6 @@ function App() {
   return (
     <ThemeProvider>
       <Toaster />
-      {/* <Suspense fallback={<MainDashboardSkeleton />}> */}
       <Routes>
         <Route element={<ProtectedRoute />}>
           <Route
@@ -64,7 +63,6 @@ function App() {
         <Route path="/verify" element={<VerifyEmailPage />} />
         <Route path="*" element={<NotFound />} />
       </Routes>
-      {/* </Suspense> */}
     </ThemeProvider>
   );
 }

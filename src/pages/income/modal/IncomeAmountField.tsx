@@ -32,16 +32,28 @@ export const IncomeAmountField = <T extends FieldValues>({
         type="text"
         inputMode="decimal"
         label={`${t(`incomeModal.fields.amount.${type}`)}*`}
-        placeholder="6000"
+        placeholder={t(`incomeModal.fields.amount.placeholder`)}
         error={!!error}
         errorMessage={error}
-        className={cn('h-10 sm:h-12 px-3 py-[7.5px]')}
+        className={cn('h-10 sm:h-12 py-[7.5px]')}
         {...register(name, {
           onChange: e => {
             let value = e.target.value;
             value = value.replace(/[^0-9.,]/g, '');
             value = value.replace(',', '.');
-            
+ 
+            if (/^0[0-9]+$/.test(value)) {
+              if (value.length === 2) {
+                // e.g., "01" -> "0.1"
+                value = `0.${value[1]}`;
+              } else if (value.length === 3) {
+                // e.g., "011" -> "0.11"
+                value = `0.${value[1]}${value[2]}`;
+              } else { 
+                value = (parseInt(value, 10) / 100).toString();
+              }
+            }
+
             const firstDotIndex = value.indexOf('.');
             if (firstDotIndex !== -1) {
               value =

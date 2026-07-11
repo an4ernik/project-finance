@@ -97,7 +97,6 @@ const ExpenseDonutChart = () => {
   }, [activePeriod, transactions]);
 
   const currentHighest = expenseDistributionData.allItems[0] || null;
-  console.log(currentHighest, 'cur');
 
   useEffect(() => {
     const handleResize = () => {
