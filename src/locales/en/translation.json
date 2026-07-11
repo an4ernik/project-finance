@@ -534,15 +534,16 @@
     "fields": {
       "amount": {
         "INCOME": "Amount",
-        "EXPENSE": "Amount"
+        "EXPENSE": "Amount",
+        "placeholder": "Enter amount"
       },
       "category": {
         "INCOME": "Income category",
         "EXPENSE": "Expense category"
       },
       "date": {
-        "INCOME": "Income date",
-        "EXPENSE": "Expense date"
+        "INCOME": "Date",
+        "EXPENSE": "Date"
       },
       "description": "Description (optional)",
       "descriptionPlaceholder": "Add a note..."

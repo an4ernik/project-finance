@@ -3,6 +3,7 @@ import {useTranslation} from 'react-i18next';
 import DisplayError from '@/components/DisplayError';
 import {cn} from '@/lib/utils';
 import {Button} from '@/components/ui/button'; 
+import { forwardRef } from 'react';
 
 const fileLabel = cn(
   'text-[#eaf6f3] border-transparent bg-linear-to-b from-[rgba(11,21,20,0.01)] via-[rgba(49,95,85,0.1)] to-[rgba(144,208,182,0.05)] backdrop-blur-[7px] [box-shadow:inset_0px_1px_0px_0px_rgba(255,255,255,0.25),0px_4px_4px_0px_rgba(75,75,75,0.35)] hover:[background:linear-gradient(0deg,rgba(2,160,120,0.3)_0%,rgba(2,160,120,0.5)_50%,rgba(2,160,120,0.8)_100%)] hover:border-transparent focus-visible:[background:linear-gradient(0deg,rgba(2,98,77,0.6)_0%,rgba(4,200,158,1)_100%)]',
@@ -19,8 +20,8 @@ type Props = {
   repeat: 'ONCE' | 'MONTHLY' | 'YEARLY' | undefined;
   mode: 'create' | 'update';
 };
-
-export const IncomeFileField = ({
+ 
+export const IncomeFileField = forwardRef<HTMLInputElement, Props>(({
   files,
   error,
   onChange,
@@ -28,7 +29,7 @@ export const IncomeFileField = ({
   disabled,
   repeat,
   mode,
-}: Props) => {
+}, ref) => { // 3. Accept 'ref' as the second argument
   const {t} = useTranslation();
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLLabelElement>) => {
@@ -60,9 +61,10 @@ export const IncomeFileField = ({
           type="file"
           multiple
           className="hidden"
-          accept=".jpg,.jpeg,.png,.pdf"
+          accept=".jpg,.jpeg,.png,.heic,.heif,.pdf"
           onChange={onChange}
           disabled={disabled}
+          ref={ref} // 4. Attach the forwarded ref right here to the underlying input element!
         />
         <ArrowDownToLine className="size-4 mb-1 text-dark-background shrink-0" />
 
@@ -87,9 +89,9 @@ export const IncomeFileField = ({
               >
                 {isPdf ? (
                   /* PDF BLOCK */
-                  <div className="flex flex-col items-center justify-center w-full h-full gap-2 truncate">
+                  <div className="flex flex-col items-center justify-center w-full h-full gap-2 truncate p-1">
                     <FileText />
-                    {file.name}
+                    <span className="truncate w-full text-center px-1">{file.name}</span>
                   </div>
                 ) : (
                   /* IMAGE PREVIEW BLOCK */
@@ -146,6 +148,6 @@ export const IncomeFileField = ({
       />
     </div>
   );
-};
+});
 
 export default IncomeFileField;

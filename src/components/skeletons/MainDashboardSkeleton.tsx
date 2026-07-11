@@ -5,7 +5,7 @@ const MainDashboardSkeleton = () => {
     <div className="flex h-screen w-full bg-[#EEF3F2] dark:bg-[#0C1412] font-sans antialiased text-slate-800 dark:text-slate-200 transition-colors duration-300">
       
       {/* SIDEBAR SKELETON */}
-      <aside className="w-64 border-r border-slate-200 dark:border-emerald-900/30 bg-white dark:bg-[#091816] flex flex-col justify-between p-6 h-full shrink-0">
+      <aside className="hidden sm:flex w-64 border-r border-slate-200 dark:border-emerald-900/30 bg-white dark:bg-[#091816] flex-col justify-between p-6 h-full shrink-0">
         <div>
           {/* Logo Brand */} 
           <div className="flex items-center gap-3 mb-12 animate-pulse">

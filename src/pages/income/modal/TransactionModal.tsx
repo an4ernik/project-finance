@@ -1,4 +1,4 @@
-import {useEffect, useMemo, useState} from 'react';
+import {useEffect, useMemo, useRef, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {useTranslation} from 'react-i18next';
@@ -30,6 +30,8 @@ const MAX_FILE_SIZE = 5 * 1024 * 1024;
 const ACCEPTED_FILE_TYPES = [
   'image/jpeg',
   'image/png',
+  'image/heif',
+  'image/heic',
   'application/pdf',
 ] as const;
 
@@ -189,6 +191,8 @@ const TransactionModal = ({
     }
   }, [watchedDescription, setValue]);
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const newFiles = Array.from(e.target.files || []);
     const currentFiles = watchedFile ?? [];
@@ -202,12 +206,20 @@ const TransactionModal = ({
 
     setValue('file', updated, {shouldValidate: true, shouldDirty: true});
     await trigger('file');
+
+    if (e.target) {
+      e.target.value = '';
+    }
   };
 
   const removeFile = (fileName: string) => {
     const filteredFiles = (watchedFile ?? []).filter(f => f.name !== fileName);
     setValue('file', filteredFiles, {shouldValidate: true, shouldDirty: true});
     trigger('file');
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const displayTitle = t(`incomeModal.title.${mode}.${type}`);
@@ -484,6 +496,7 @@ const TransactionModal = ({
 
             {/* FILE */}
             <IncomeFileField
+              ref={fileInputRef}
               files={watchedFile}
               error={errors.file?.message}
               onChange={handleFileChange}

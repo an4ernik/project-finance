@@ -66,7 +66,6 @@ export function TransactionsPageTemplate({
 
   const filters = form.watch();
 
-  // Dynamic theme colors for the Total balance text indicator
   const totalColorClass =
     type === 'INCOME'
       ? 'text-[#00AA85]'

@@ -33,7 +33,7 @@ function AppLayout({
   const resolvedTitle = title ?? t('settings.welcomeBack');
   const resolvedSubtitle = subtitle ?? t('settings.welcomeSubtitle');
   const [menuOpen, setMenuOpen] = useState(false);
- 
+
   return (
     <div
       className={cn(
@@ -120,7 +120,7 @@ function AppLayout({
           </div>
         </div>
 
-        <main className="mt-[15px] min-h-0 flex-1 scrollbar-hide">
+        <main className="mt-[15px] min-h-[calc(100vh-33.5px)] flex-1 scrollbar-hide">
           {children ?? <Outlet />}
         </main>
       </div>

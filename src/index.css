@@ -26,35 +26,7 @@ body,
   /* 3. Для старих версій Internet Explorer та Edge */
   -ms-overflow-style: none;
 }
-
-/* @layer utilities {
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
-  }
-
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-  }
  
-  .custom-scrollbar::-webkit-scrollbar {
-    width: 5px;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-track {
-    background: #0b1514;
-    border-radius: 10px;
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb {
-    background: #162e27;
-    border-radius: 10px; 
-  }
-
-  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-    background: #081a16;
-  }
-} */
 
 @layer utilities {
   .scrollbar-hide::-webkit-scrollbar {

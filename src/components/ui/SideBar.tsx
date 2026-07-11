@@ -97,7 +97,7 @@ function SideBar({
         )}
       </div>
 
-      <div className="flex-1 flex flex-col justify-between overflow-hidden">
+      <div className="flex-1 flex flex-col justify-between overflow-y-auto scrollbar-hide">
         <ul className="flex flex-col items-start md:items-center lg:items-start px-[70px] md:px-3  space-y-[4px]">
           {SIDEBAR_LINKS.map(link => (
             <NavItem
