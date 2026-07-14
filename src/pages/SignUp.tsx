@@ -66,12 +66,12 @@ function SignUp() {
             .string()
             .min(8, t('auth.errors.tooShort'))
             .max(72, t('auth.errors.tooLong'))
+            .regex(/^\S*$/, t('auth.errors.space'))
             .regex(/^[a-zA-Z0-9!@#$%^&*._\-+=?]*$/, t('auth.errors.latinOnly'))
+            .regex(/[!@#$%^&*._\-+=?]/, t('auth.errors.symbol'))
             .regex(/[A-Z]/, t('auth.errors.uppercase'))
             .regex(/[a-z]/, t('auth.errors.lowercase'))
-            .regex(/[0-9]/, t('auth.errors.number'))
-            .regex(/[!@#$%^&*._\-+=?]/, t('auth.errors.symbol'))
-            .regex(/^\S*$/, t('auth.errors.space')),
+            .regex(/[0-9]/, t('auth.errors.number')),
           confirmPassword: z.string().min(1, t('auth.errors.confirmRequired')),
           fullName: z
             .string()
