@@ -27,8 +27,7 @@ const handleDownload = async () => {
 
   try {
     const response = await api.get(activeFile, {
-      responseType: 'blob',
-      withCredentials: true,
+      responseType: 'blob', 
     });
     
     const blob = response.data; 

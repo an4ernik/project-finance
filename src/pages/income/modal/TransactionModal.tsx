@@ -99,7 +99,11 @@ const TransactionModal = ({
         date: z.date(),
         description: z
           .string()
+          .max(255, t(`incomeModal.errors.descriptionMaxLength`))
           .optional()
+          .refine(val => !val || val.trim().length >= 3, {
+            message: t(`incomeModal.errors.descriptionMinLength`),
+          })
           .transform(val => {
             if (!val) return val;
             return val
@@ -453,6 +457,7 @@ const TransactionModal = ({
             {/* DESCRIPTION */}
             <IncomeDescriptionField
               register={register}
+              error={errors.description?.message}
               inputValue={watchedDescription}
             />
 

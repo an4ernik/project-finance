@@ -33,7 +33,6 @@ import type {UseFormReturn} from 'react-hook-form';
 import {
   ALL_CATEGORIES_VALUE,
   type PeriodOptions,
-  type TransactionFiltersFormValues,
   type TransactionType,
 } from '@/types/types';
 import {useGetCategories} from '@/shared/api/generated/category-management/category-management';
@@ -43,6 +42,8 @@ import {
   getCategoryDisplayName,
   sortGlobalCategoriesFirst,
 } from './categoryDisplay';
+import type {filtersSchema} from '@/helpers/helpers';
+import type z from 'zod';
 
 const PERIOD_OPTIONS: PeriodOptions[] = [
   {val: 'all', icon: Calendar},
@@ -53,12 +54,16 @@ const PERIOD_OPTIONS: PeriodOptions[] = [
   {val: 'custom', icon: CalendarSearch},
 ];
 
+type FiltersFormInput = z.input<typeof filtersSchema>;
+type FiltersFormOutput = z.output<typeof filtersSchema>;
+
 type Props = {
-  form: UseFormReturn<TransactionFiltersFormValues>;
+  form: UseFormReturn<FiltersFormInput, FiltersFormOutput, FiltersFormOutput>;
   type?: TransactionType;
+  errors?: Record<string, any>;
 };
 
-const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
+const TransactionFilters = ({form, errors, type = 'INCOME'}: Props) => {
   const {data: responseCategories} = useGetCategories();
   const categoryItems = Array.isArray(responseCategories)
     ? responseCategories
@@ -80,6 +85,13 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
   const [periodOpen, setPeriodOpen] = useState(false);
   const [categoryOpen, setCategoryOpen] = useState(false);
   const {period, fromDate, toDate, category = [ALL_CATEGORIES_VALUE]} = watch();
+
+  const searchError = (errors?.search as any)?.value || (errors?.search as any);
+  const errorKey = searchError?.message;  
+
+  const translatedErrorMessage = errorKey
+    ? t(`incomeModal.errors.${errorKey}`)
+    : undefined;
 
   const selectedCategories = categories?.filter(cat =>
     category.includes(cat.name),
@@ -185,7 +197,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
                             className={cn(
                               'flex flex-1 cursor-pointer items-center gap-3 text-[16px] font-normal',
                               isSelected
-                                ? '!text-[#0B1514] dark:!text-[#EAF6F3]'  
+                                ? '!text-[#0B1514] dark:!text-[#EAF6F3]'
                                 : 'text-[#7F9E97]',
                             )}
                           >
@@ -258,7 +270,7 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
                     </Popover>
                   </div>
 
-                  {/* Календар TO */}
+                  {/* calendar TO */}
                   <div className="flex flex-col w-full gap-1.5">
                     <label className="text-[14px] text-[#3A4A48] dark:text-[#BFD9D2] ml-1">
                       {t('incomeModal.filters.period.to')}
@@ -436,15 +448,33 @@ const TransactionFilters = ({form, type = 'INCOME'}: Props) => {
         <h2 className="text-[#BFD9D2]">
           {t('incomeModal.filters.search.label')}
         </h2>
+
         <Input
-          disabled={categories?.length === 0}
-          className="text-[#6F7E7C] dark:text-[#A9C1BB] placeholder:text-[#6F7E7C] dark:placeholder:text-[#A9C1BB] tracking-normal"
+          errorClassName="text-xs"
+          placeholder={t(`incomeModal.filters.search.placeholder.${type}`)}
+          value={
+            (form.watch('search') as {value: string; isPaste: boolean})
+              ?.value || ''
+          }
           icon={
             <Search className="size-5 text-[#0B1514] dark:text-[#EAF6F3]" />
           }
-          placeholder={t(`incomeModal.filters.search.placeholder.${type}`)}
-          type="text"
-          {...register('search')}
+          error={!!errors?.search}
+          errorMessage={translatedErrorMessage}
+          {...register('search', {
+            onChange: (e: React.ChangeEvent<HTMLInputElement>) => {
+              const nativeEvent = e.nativeEvent as InputEvent;
+              const isPasteAction = nativeEvent.inputType === 'insertFromPaste';
+              form.setValue(
+                'search',
+                {
+                  value: e.target.value,
+                  isPaste: isPasteAction,
+                } as {value: string; isPaste: boolean},
+                {shouldValidate: true},
+              );
+            },
+          })}
         />
       </div>
     </div>

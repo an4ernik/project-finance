@@ -27,6 +27,7 @@ interface VirtualListProps {
   type: 'INCOME' | 'EXPENSE';
   formFilters: TransactionFiltersFormValues;
   setTotalAmount: (amount: number) => void;
+  isPaste?: boolean; // Optional prop to indicate if the search input was pasted
 }
 
 const LIMIT = 20;
@@ -77,8 +78,8 @@ const VirtualList = ({type, formFilters, setTotalAmount}: VirtualListProps) => {
         period: formFilters.period,
         fromDate: formFilters.fromDate,
         toDate: formFilters.toDate,
-      }); 
-      
+      });
+
       const requestParams: TransactionCursorRequest = {
         type,
         limit: LIMIT,
@@ -108,7 +109,10 @@ const VirtualList = ({type, formFilters, setTotalAmount}: VirtualListProps) => {
 
   const parentRef = useRef<HTMLDivElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
-  const [debouncedSearch, setDebouncedSearch] = useState('');
+  const [debouncedSearch, setDebouncedSearch] = useState({
+    value: '',
+    isPaste: false,
+  });
   const [listScrollMargin, setListScrollMargin] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<TransactionUI | null>(null);
@@ -167,12 +171,34 @@ const VirtualList = ({type, formFilters, setTotalAmount}: VirtualListProps) => {
     setIsModalOpen(false);
     setSelectedItem(null);
   };
-
-  // 2. Localized debounce cycle
+ 
   useEffect(() => {
+    // Extract the tracking parameters safely out of your search object state
+    const searchValue = formFilters.search?.value?.slice(0, 255) || '';
+    const isPasteAction = formFilters.search?.isPaste || false; 
+
+    // Case 1: Search was cleared completely -> Update instantly
+    if (searchValue.length === 0) {
+      setDebouncedSearch({value: '', isPaste: false});
+      return;
+    }
+
+    // Case 2: User pasted content -> Trigger request instantly without any debounce delay
+    if (isPasteAction) {
+      setDebouncedSearch({value: searchValue, isPaste: true});
+      return;
+    }
+
+    // Case 3: User is typing -> Block until at least 3 characters are entered
+    if (searchValue.length < 3) {
+      return;
+    }
+
+    // Case 4: User is typing AND has entered 3 or more characters -> Run the 800ms debounce
     const timeout = setTimeout(() => {
-      setDebouncedSearch(formFilters.search ?? '');
+      setDebouncedSearch({value: searchValue, isPaste: false});
     }, 800);
+
     return () => clearTimeout(timeout);
   }, [formFilters.search]);
 
@@ -208,7 +234,7 @@ const VirtualList = ({type, formFilters, setTotalAmount}: VirtualListProps) => {
       fromDate: formFilters.fromDate,
       toDate: formFilters.toDate,
       category: formFilters.category ?? [ALL_CATEGORIES_VALUE],
-      search: formFilters.search ?? '',
+      search: formFilters.search?.value ?? '',
     };
     return applyFilters(transactions, normalized, debouncedSearch);
   }, [transactions, formFilters, debouncedSearch]);

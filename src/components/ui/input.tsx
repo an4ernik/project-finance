@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {Eye, EyeOff} from 'lucide-react';
-import {cn} from '@/lib/utils'; 
+import {cn} from '@/lib/utils';
 import DisplayError from '../DisplayError';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -11,12 +11,14 @@ export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> 
   variant?: 'text' | 'password';
   showErrorSlot?: boolean;
   className?: string;
+  errorClassName?: string;
 }
 
 const Input = React.forwardRef<HTMLInputElement, InputProps>(
   (
     {
       className,
+      errorClassName,
       icon,
       error,
       errorMessage,
@@ -43,7 +45,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
       if (value !== undefined) {
         setInternalValue(value as string | number);
       }
-    }, [value]);
+    }, [value]); 
 
     const hasValue = String(internalValue ?? '').length > 0;
     const isDisabled = disabled || false;
@@ -88,7 +90,7 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               defaultValue={defaultValue}
               disabled={disabled}
               onChange={event => {
-                setInternalValue(event.target.value);
+                // setInternalValue(event.target.value);
                 onChange?.(event);
               }}
               {...props}
@@ -108,7 +110,9 @@ const Input = React.forwardRef<HTMLInputElement, InputProps>(
               </button>
             )}
           </div>
-          {showErrorSlot || error ? <DisplayError errorText={errorMessage} /> : null}
+          {showErrorSlot || error ? (
+            <DisplayError errorText={errorMessage} className={errorClassName} />
+          ) : null}
         </div>
       </div>
     );
