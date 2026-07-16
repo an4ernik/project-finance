@@ -4,17 +4,23 @@ import {useTranslation} from 'react-i18next';
 import {Label} from '@/components/ui/label';
 import {Textarea} from '@/components/ui/textarea';
 import {cn} from '@/lib/utils';
+import DisplayError from '@/components/DisplayError';
 
 type Props = {
   register: UseFormRegister<any>;
   inputValue?: string;
+  error?: string;
 };
 
 const MAX_LENGTH = 255;
 
-export const IncomeDescriptionField = ({register, inputValue = ''}: Props) => {
+export const IncomeDescriptionField = ({
+  register,
+  inputValue = '',
+  error,
+}: Props) => {
   const {t} = useTranslation();
- 
+
   const isTooLong = inputValue.length > MAX_LENGTH;
 
   return (
@@ -31,17 +37,15 @@ export const IncomeDescriptionField = ({register, inputValue = ''}: Props) => {
       />
 
       <div className="flex justify-between items-center min-h-[20px]">
-        {isTooLong ? (
-          <p className="text-[12px] text-red-500">
-            {t('incomeModal.errors.descriptionMax')}
-          </p>
+        {error ? (
+          <DisplayError errorText={error} className="text-xs" />
         ) : (
           <div />
         )}
 
         <span
           className={cn(
-            'text-[12px]',
+            'text-xs',
             isTooLong ? 'text-red-500' : 'text-muted-foreground/30',
           )}
         >

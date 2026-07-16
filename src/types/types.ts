@@ -147,7 +147,10 @@ export type TransactionFiltersFormValues = {
   fromDate?: Date;
   toDate?: Date ;
   category?: string[];
-  search?: string;
+  search?: {
+    value: string;
+    isPaste: boolean;
+  };
 };
 
 // *for statistics 

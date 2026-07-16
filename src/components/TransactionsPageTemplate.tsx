@@ -2,6 +2,7 @@ import {useMemo, useState} from 'react';
 import {useTranslation} from 'react-i18next';
 import {useForm} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
+import {z} from 'zod';
 import {Cog, Plus} from 'lucide-react';
 
 import AppLayout from '@/layouts/AppLayout';
@@ -19,10 +20,7 @@ import {cn} from '@/lib/utils';
 import {filtersSchema, formattedAmount} from '@/helpers/helpers';
 import {useGetCategories} from '@/shared/api/generated/category-management/category-management';
 import {GetCategoriesTypeItem} from '@/shared/api/models';
-import {
-  ALL_CATEGORIES_VALUE,
-  type TransactionFiltersFormValues,
-} from '@/types/types';
+import {ALL_CATEGORIES_VALUE} from '@/types/types';
 import {useGetCurrencySign} from '@/shared/store/useCurrencySign';
 
 interface TransactionsPageTemplateProps {
@@ -53,16 +51,20 @@ export function TransactionsPageTemplate({
     );
   }, [categoriesResponse, type]);
 
-  const form = useForm<TransactionFiltersFormValues>({
+  type FiltersFormInput = z.input<typeof filtersSchema>; // search: { value: string; isPaste: boolean; }
+  type FiltersFormOutput = z.output<typeof filtersSchema>; // search: string
+
+  const form = useForm<FiltersFormInput, FiltersFormOutput, FiltersFormOutput>({
     resolver: zodResolver(filtersSchema),
+    mode: 'onChange',
     defaultValues: {
       period: 'all',
       fromDate: undefined,
       toDate: undefined,
       category: [ALL_CATEGORIES_VALUE],
-      search: '',
+      search: {value: '', isPaste: false},  
     },
-  });
+  }); 
 
   const filters = form.watch();
 
@@ -70,12 +72,15 @@ export function TransactionsPageTemplate({
     type === 'INCOME'
       ? 'text-[#00AA85]'
       : 'text-[#FF7C02CC] dark:text-[#AA7D00]';
- 
+
   return (
-    <AppLayout 
+    <AppLayout
       title={t(`${lowercaseType}.title`)}
       subtitle={t(`${lowercaseType}.subtitle`)}
-      className={cn(isManageOpen ? 'overflow-hidden' : 'overflow-y-auto', 'scrollbar-hide')}
+      className={cn(
+        isManageOpen ? 'overflow-hidden' : 'overflow-y-auto',
+        'scrollbar-hide',
+      )}
       action={
         <CreateButtonsWrapper>
           <Button
@@ -134,7 +139,7 @@ export function TransactionsPageTemplate({
       )}
 
       <FiltersWrapper>
-        <TransactionFilters type={type} form={form} />
+        <TransactionFilters type={type} form={form} errors={form.formState.errors} />
         <div className="flex justify-between items-center min-w-[140px] gap-4 flex-wrap">
           <span className="dark:text-[#BFD9D2]">
             {t(`incomeModal.filters.total.${type}`)}
@@ -146,7 +151,7 @@ export function TransactionsPageTemplate({
             )}
           >
             <span className="break-all min-w-0">
-              {formattedAmount(totalAmount) || '0'} 
+              {formattedAmount(totalAmount) || '0'}
             </span>
             <span className="shrink-0 self-end">{CURRENCY_SIGN}</span>
           </div>

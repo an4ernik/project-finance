@@ -118,13 +118,13 @@ export const isToday = (date: Date) => {
 export const applyFilters = (
     items: TransactionUI[],
     filters: Filters,
-    search: string
+    search: { value: string; isPaste: boolean }
 ) => {
     let result = [...items];
 
     // 🔍 SEARCH
     if (search) {
-        const normalized = search.toLowerCase();
+        const normalized = search.value?.toLowerCase();
 
         result = result.filter(item =>
             (item.description ?? "")
@@ -174,7 +174,41 @@ export const filtersSchema = z.object({
     fromDate: z.date().optional(),
     toDate: z.date().optional(),
     category: z.array(z.string()).default([ALL_CATEGORIES_VALUE]),
-    search: z.string().default(''),
+    search: z
+        .preprocess(
+            (val: { value: string; isPaste: boolean }) => {
+                // If the field is missing or empty, return an empty tracking state
+                if (!val) return { value: '', isPaste: false };
+                if (!val.value) return val;
+
+                // If it was pasted, pad it so it clears the upcoming .min(3) rule
+                if (val.isPaste) {
+                    const truncatedValue = val.value.slice(0, 255);
+                    return {
+                        ...val,
+                        value: truncatedValue.length < 3 ? truncatedValue.padStart(3, ' ') : truncatedValue
+                    };
+                }
+                return val;
+            },
+            // The core validation structure 
+            z.object({
+                value: z.string()
+                    .min(3, { message: 'searchMinLength' }) // 💡 Store the translation key instead of the translated string
+                    .max(255, { message: 'searchMaxLength' })
+                    .or(z.literal('')),
+                isPaste: z.boolean().default(false),
+            })
+        )
+        // 1. Pipe handles the structural transformation validation
+        .pipe(
+            z.object({
+                value: z.string(),
+                isPaste: z.boolean(),
+            }).transform((data) => data.value.trim())
+        )
+        // 2. Default sits nicely at the very end of the line
+        .default(''),
 });
 
 export const getColors = (length: number): string[] => {

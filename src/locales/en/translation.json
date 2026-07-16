@@ -610,6 +610,10 @@
         "INCOME": "Income date is required",
         "EXPENSE": "Expense date is required"
       },
+      "searchMinLength": "Enter at least 3 characters",
+      "searchMaxLength": "Search cannot exceed more than 255 characters",
+      "descriptionMinLength": "Description must be at least 3 characters long",
+      "descriptionMaxLength": "Description cannot exceed more than 255 characters",
       "futureDate": "The date cannot be in the future",
       "noPastDates": "The date cannot be in the past",
       "fileFormat": "Unsupported file format. Allowed formats: JPG, PNG, or PDF.",
