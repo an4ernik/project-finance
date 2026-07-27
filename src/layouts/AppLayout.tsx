@@ -37,9 +37,7 @@ function AppLayout({
   return (
     <div
       className={cn(
-        ` max-w-[2060px] mx-auto relative flex h-screen bg-background text-foreground scrollbar-hide ${
-          menuOpen ? 'overflow-hidden' : 'overflow-y-auto'
-        }`,
+        ` max-w-[2060px] mx-auto relative flex h-screen bg-background text-foreground scrollbar-hide overflow-hidden`,
         className,
       )}
     >
@@ -63,7 +61,7 @@ function AppLayout({
         className="z-[200]"
       />
 
-      <div className="flex h-auto sm:h-full min-h-0 flex-1 flex-col overflow-y-auto scrollbar-hide py-[33.5px] px-[25px] md:pr-[50px] pt-16.25 md:pt-0">
+      <div className="flex h-auto min-h-[calc(100vh-60px)] flex-1 flex-col overflow-y-auto scrollbar-hide py-[33.5px] px-[25px] md:pr-[50px] pt-16.25 md:pt-0">
         <div
           className={cn(
             'mt-[35px] w-full',
@@ -120,7 +118,7 @@ function AppLayout({
           </div>
         </div>
 
-        <main className="mt-[15px] min-h-[calc(100vh-33.5px)] flex-1 scrollbar-hide">
+        <main className="mt-[15px] min-h-[calc(100vh-55px)] flex-1 scrollbar-hide">
           {children ?? <Outlet />}
         </main>
       </div>

@@ -17,6 +17,10 @@ export interface TransactionCursorRequest {
   categoryId?: number;
   /** Filter by transaction type (INCOME or EXPENSE) */
   type?: TransactionCursorRequestType;
+  /** Search by transaction description. Case-insensitive partial match.
+Must be at least 3 characters long
+ */
+  description?: string;
   /** Start date for filtering (inclusive). Format: YYYY-MM-DD */
   dateFrom?: string;
   /** End date for filtering (inclusive). Format: YYYY-MM-DD */
@@ -34,4 +38,5 @@ export interface TransactionCursorRequest {
    */
   limit?: number;
   dateRangeValid?: boolean;
+  descriptionValid?: boolean;
 }

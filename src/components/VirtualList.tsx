@@ -1,4 +1,4 @@
-import {useRef, useState, useEffect, useLayoutEffect, useMemo} from 'react';
+import {useRef, useState, useEffect, useMemo} from 'react';
 import {useVirtualizer} from '@tanstack/react-virtual';
 
 import VirtualItem from './VirtualItem';
@@ -22,6 +22,7 @@ import type {TransactionCursorRequest} from '@/shared/api/models/transactionCurs
 import {api} from '@/shared/api/axios';
 import {format} from 'date-fns';
 import {cn} from '@/lib/utils';
+import {useMediaQuery} from '@/hooks/useMediaQuery';
 
 interface VirtualListProps {
   type: 'INCOME' | 'EXPENSE';
@@ -113,7 +114,7 @@ const VirtualList = ({type, formFilters, setTotalAmount}: VirtualListProps) => {
     value: '',
     isPaste: false,
   });
-  const [listScrollMargin, setListScrollMargin] = useState(0);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedItem, setSelectedItem] = useState<TransactionUI | null>(null);
   const [modalMode, setModalMode] = useState<'create' | 'update'>('update');
@@ -171,11 +172,11 @@ const VirtualList = ({type, formFilters, setTotalAmount}: VirtualListProps) => {
     setIsModalOpen(false);
     setSelectedItem(null);
   };
- 
+
   useEffect(() => {
     // Extract the tracking parameters safely out of your search object state
     const searchValue = formFilters.search?.value?.slice(0, 255) || '';
-    const isPasteAction = formFilters.search?.isPaste || false; 
+    const isPasteAction = formFilters.search?.isPaste || false;
 
     // Case 1: Search was cleared completely -> Update instantly
     if (searchValue.length === 0) {
@@ -249,36 +250,13 @@ const VirtualList = ({type, formFilters, setTotalAmount}: VirtualListProps) => {
   const hasEarlierItems = earlierRows.length > 0;
   const isFilteredListEmpty = filteredData.length === 0;
 
-  useLayoutEffect(() => {
-    const parent = parentRef.current;
-    const list = listRef.current;
-    if (!parent || !list) return;
-
-    const updateListScrollMargin = () => {
-      const parentRect = parent.getBoundingClientRect();
-      const listRect = list.getBoundingClientRect();
-      setListScrollMargin(listRect.top - parentRect.top + parent.scrollTop);
-    };
-
-    updateListScrollMargin();
-
-    const resizeObserver = new ResizeObserver(updateListScrollMargin);
-    resizeObserver.observe(parent);
-    resizeObserver.observe(list);
-    window.addEventListener('resize', updateListScrollMargin);
-
-    return () => {
-      resizeObserver.disconnect();
-      window.removeEventListener('resize', updateListScrollMargin);
-    };
-  }, [hasTodayItems, hasEarlierItems, todayRows.length, earlierRows.length]);
+  const isMobile = useMediaQuery('(max-width: 767px)');
 
   const rowVirtualizer = useVirtualizer({
     count: totalRowsCount,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 140,
-    scrollMargin: listScrollMargin,
-    overscan: 6,
+    estimateSize: () => (isMobile ? 240 : 112),
+    overscan: 12,
   });
 
   const virtualItems = rowVirtualizer.getVirtualItems();
@@ -308,7 +286,7 @@ const VirtualList = ({type, formFilters, setTotalAmount}: VirtualListProps) => {
   if (isLoading && !isFetchingNextPage) return <VirtualItemSkeleton />;
 
   return (
-    <div className="flex flex-col h-svh w-full pt-8 md:h-full md:overflow-hidden">
+    <div className="flex flex-col h-[calc(100vh-135px)] w-full pt-8 md:h-full md:overflow-hidden">
       {isModalOpen && (
         <TransactionModal
           type={type}
@@ -378,9 +356,7 @@ const VirtualList = ({type, formFilters, setTotalAmount}: VirtualListProps) => {
                       ref={rowVirtualizer.measureElement}
                       className="absolute top-0 left-0 w-full pb-4"
                       style={{
-                        transform: `translateY(${
-                          virtualRow.start - listScrollMargin
-                        }px)`,
+                        transform: `translateY(${virtualRow.start}px)`,
                       }}
                     >
                       {isLoaderRow ? (

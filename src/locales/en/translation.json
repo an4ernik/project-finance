@@ -44,7 +44,9 @@
     "noExpenses": "No expenses for this period",
     "noExpensesCashFlow": "No cash flow for this period",
     "noBalance": "Balance empty for this period",
+
     "thisMonth": "This month",
+     "total": "Total",
     "periods": {
       "week": "Week",
       "month": "Month",
