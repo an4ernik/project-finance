@@ -87,7 +87,7 @@ const TransactionFilters = ({form, errors, type = 'INCOME'}: Props) => {
   const {period, fromDate, toDate, category = [ALL_CATEGORIES_VALUE]} = watch();
 
   const searchError = (errors?.search as any)?.value || (errors?.search as any);
-  const errorKey = searchError?.message;  
+  const errorKey = searchError?.message;
 
   const translatedErrorMessage = errorKey
     ? t(`incomeModal.errors.${errorKey}`)

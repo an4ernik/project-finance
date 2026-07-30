@@ -12,7 +12,8 @@
 export interface LoginRequestDto {
   /**
    * User's email address
-   * @minLength 1
+   * @minLength 0
+   * @maxLength 254
    */
   email: string;
   /**

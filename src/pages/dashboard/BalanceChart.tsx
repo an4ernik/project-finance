@@ -19,42 +19,19 @@ import {useGetTransactions} from '@/shared/api/generated/transaction-management/
 import {endOfDay} from 'date-fns';
 import {useGetCurrencySign} from '@/shared/store/useCurrencySign';
 
-// const calculateYAxisWidth = (min: number, max: number) => {
-//   const extremeValue = Math.abs(min) > Math.abs(max) ? min : max;
-
-//   const formatted = (() => {
-//     const abs = Math.abs(extremeValue);
-
-//     if (abs >= 1_000_000_000) {
-//       return `${(abs / 1_000_000_000).toFixed(1)} B`;
-//     }
-
-//     if (abs >= 1_000_000) {
-//       return `${(abs / 1_000_000).toFixed(1)} M`;
-//     }
-
-//     if (abs >= 1_000) {
-//       return `${(abs / 1_000).toFixed(1)} K`;
-//     }
-
-//     return abs.toString();
-//   })();
-
-//   return Math.max(50, formatted.length);
-// };
-
 const formatAxisValue = (value: number) => {
   const isNegative = value < 0;
   const abs = Math.abs(value);
+  console.log(abs, 'abs in formatAxisValue');
 
   let formatted: string;
 
   if (abs >= 1_000_000_000) {
-    formatted = `${(abs / 1_000_000_000).toFixed(1)}${' '}B`;
+    formatted = `${(abs / 1_000_000_000).toFixed(1)}B`;
   } else if (abs >= 1_000_000) {
-    formatted = `${(abs / 1_000_000).toFixed(1)}${' '}M`;
+    formatted = `${(abs / 1_000_000).toFixed(1)}M`;
   } else if (abs >= 1_000) {
-    formatted = `${(abs / 1_000).toFixed(1)}${' '}K`;
+    formatted = `${(abs / 1_000).toFixed(1)}K`;
   } else {
     formatted = abs.toString();
   }
@@ -204,6 +181,8 @@ const BalanceChart = ({activePeriod}: {activePeriod: Period}) => {
     const padding = 1; 
     const bottom = actualMin < 0 ? Math.floor(actualMin * padding) : 0;
     const top = Math.max(1000, Math.ceil(actualMax * padding));
+
+    console.log('chartDomain:', {bottom, top, actualMin, actualMax});
 
     return [bottom, top];
   }, [chartData]);
