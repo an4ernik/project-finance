@@ -7,7 +7,7 @@
   },
   "servers": [
     {
-      "url": "https://37tsyfkuv9.eu-central-1.awsapprunner.com",
+      "url": "https://recount-confiding-substance.ngrok-free.dev",
       "description": "Generated server url"
     }
   ],
