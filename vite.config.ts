@@ -65,7 +65,7 @@ export default defineConfig(() => {
       port: 5173,
       proxy: {
         '/api': {
-          target: 'https://37tsyfkuv9.eu-central-1.awsapprunner.com',
+          target: 'https://recount-confiding-substance.ngrok-free.dev/api-docs',
           changeOrigin: true,
           secure: false,
         },

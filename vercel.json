@@ -2,7 +2,7 @@
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://37tsyfkuv9.eu-central-1.awsapprunner.com/api/:path*"
+      "destination": "https://recount-confiding-substance.ngrok-free.dev/api/:path*"
     },
     {
       "source": "/(.*)",

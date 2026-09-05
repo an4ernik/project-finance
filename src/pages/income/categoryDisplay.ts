@@ -31,6 +31,7 @@ const DEFAULT_CATEGORY_TRANSLATION_KEYS: Record<string, string> = {
   cafes_restaurants: 'cafesAndRestaurants',
   cafesrestaurants: 'cafesAndRestaurants',
   кафе_та_ресторани: 'cafesAndRestaurants',
+  dining_out: 'cafesAndRestaurants',
   health: 'health',
   healthcare: 'health',
   "здоров'я": 'health',

@@ -3,7 +3,7 @@ import {defineConfig} from 'orval';
 export default defineConfig({
   financeApi: {
     input: {
-      target: 'https://37tsyfkuv9.eu-central-1.awsapprunner.com/api-docs',
+      target: 'https://recount-confiding-substance.ngrok-free.dev/api-docs',
     },
     output: {
       client: 'react-query',
